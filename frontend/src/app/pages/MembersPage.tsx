@@ -18,12 +18,7 @@ import {
   ErrorState,
   SegmentedControl,
   Skeleton,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeaderCell,
-  TableRow,
+  VirtualTable,
 } from "../../components/ui";
 import type { Presence } from "../../types";
 import styles from "./MembersPage.module.css";
@@ -126,54 +121,68 @@ export default function MembersPage() {
               description="Invite the analysts of this team to see them here."
             />
           ) : (
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableHeaderCell>Member</TableHeaderCell>
-                  <TableHeaderCell>Role</TableHeaderCell>
-                  <TableHeaderCell>Presence</TableHeaderCell>
-                  <TableHeaderCell align="right">Solves</TableHeaderCell>
-                  <TableHeaderCell align="right">Points</TableHeaderCell>
-                  <TableHeaderCell align="right">Joined</TableHeaderCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {rows.map((member) => {
-                  const stats = contributionById.get(member.id);
-                  return (
-                    <TableRow key={member.id}>
-                      <TableCell>
-                        <span className={styles.memberCell}>
-                          <Avatar
-                            name={member.display_name}
-                            size="sm"
-                            presence={member.presence as Presence}
-                          />
-                          <span className={styles.memberName}>
-                            <span className={styles.memberLabel}>{member.display_name}</span>
-                            <span className={styles.memberHandle}>@{member.handle}</span>
-                          </span>
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <Badge tone={ROLE_TONES[member.role] ?? "neutral"}>{member.role}</Badge>
-                      </TableCell>
-                      <TableCell>
-                        <span className={styles.presence}>
-                          <Radio size={12} aria-hidden="true" />
-                          {member.presence}
-                        </span>
-                      </TableCell>
-                      <TableCell align="right">{formatNumber(stats?.solves ?? 0)}</TableCell>
-                      <TableCell align="right">{formatNumber(stats?.points ?? 0)}</TableCell>
-                      <TableCell align="right">
-                        {formatRelativeTime(member.joined_at)}
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
+            <VirtualTable
+              rows={rows}
+              rowKey={(member) => member.id}
+              rowHeight={48}
+              height={420}
+              columns={[
+                {
+                  key: "member",
+                  header: "Member",
+                  render: (member) => (
+                    <span className={styles.memberCell}>
+                      <Avatar
+                        name={member.display_name}
+                        size="sm"
+                        presence={member.presence as Presence}
+                      />
+                      <span className={styles.memberName}>
+                        <span className={styles.memberLabel}>{member.display_name}</span>
+                        <span className={styles.memberHandle}>@{member.handle}</span>
+                      </span>
+                    </span>
+                  ),
+                },
+                {
+                  key: "role",
+                  header: "Role",
+                  render: (member) => (
+                    <Badge tone={ROLE_TONES[member.role] ?? "neutral"}>{member.role}</Badge>
+                  ),
+                },
+                {
+                  key: "presence",
+                  header: "Presence",
+                  render: (member) => (
+                    <span className={styles.presence}>
+                      <Radio size={12} aria-hidden="true" />
+                      {member.presence}
+                    </span>
+                  ),
+                },
+                {
+                  key: "solves",
+                  header: "Solves",
+                  align: "right",
+                  render: (member) =>
+                    formatNumber(contributionById.get(member.id)?.solves ?? 0),
+                },
+                {
+                  key: "points",
+                  header: "Points",
+                  align: "right",
+                  render: (member) =>
+                    formatNumber(contributionById.get(member.id)?.points ?? 0),
+                },
+                {
+                  key: "joined",
+                  header: "Joined",
+                  align: "right",
+                  render: (member) => formatRelativeTime(member.joined_at),
+                },
+              ]}
+            />
           )}
         </CardContent>
       </Card>
