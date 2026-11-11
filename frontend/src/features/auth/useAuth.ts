@@ -3,10 +3,11 @@
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ApiError } from "../../api";
+import { ApiError, configureAuth } from "../../api";
 import * as authApi from "./api";
 import {
   clearSession,
+  getAccessToken,
   getRefreshToken,
   hasValidAccessToken,
   readUser,
@@ -32,6 +33,11 @@ export interface AuthState {
 }
 
 let refreshInFlight: Promise<boolean> | null = null;
+
+configureAuth(
+  () => getAccessToken(),
+  () => refreshSessionOnce(),
+);
 
 /**
  * Refresh the session once and share the result between callers.
