@@ -60,10 +60,22 @@ asyncio_default_fixture_loop_scope = "function"
 [tool.coverage.run]
 branch = true
 source = ["ctf_team_dashboard"]
+omit = [
+  "src/ctf_team_dashboard/__main__.py",
+  "src/ctf_team_dashboard/seed.py",
+]
 
 [tool.coverage.report]
 show_missing = true
 skip_covered = true
+fail_under = 70
+precision = 1
+exclude_also = [
+  "if TYPE_CHECKING:",
+  "raise NotImplementedError",
+  "\\.\\.\\.",
+  "@overload",
+]
 exclude_lines = [
   "if __name__ == .__main__.:",
   "raise NotImplementedError",
