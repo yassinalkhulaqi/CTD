@@ -220,7 +220,7 @@ export interface SegmentOption<T extends string = string> {
 /** Props accepted by {@link SegmentedControl}. */
 export interface SegmentedControlProps<T extends string = string> {
   /** The available options. */
-  options: SegmentOption<T>[];
+  options: readonly SegmentOption<T>[];
   /** The currently selected option. */
   value: T;
   /** Called when the selection changes. */
