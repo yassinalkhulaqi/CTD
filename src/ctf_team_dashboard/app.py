@@ -32,6 +32,7 @@ from ctf_team_dashboard.routers import (
     stats,
     teams,
 )
+from ctf_team_dashboard.security.cache_middleware import CacheMiddleware
 from ctf_team_dashboard.security.headers import apply_security_headers
 from ctf_team_dashboard.seed import persist_seed_data
 
@@ -116,6 +117,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         openapi_url="/openapi.json",
     )
     app.state.settings = resolved
+
+    app.add_middleware(CacheMiddleware)
 
     app.add_middleware(
         CORSMiddleware,

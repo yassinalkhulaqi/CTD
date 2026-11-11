@@ -1,0 +1,12 @@
+.viewport {
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-raised);
+}
+
+.viewport:focus-visible {
+  outline: 2px solid var(--accent-base);
+  outline-offset: -2px;
+}
