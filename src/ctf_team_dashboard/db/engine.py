@@ -151,10 +151,14 @@ def set_database(database: Database | None) -> None:
 
 def init_database(settings: Settings | None = None) -> Database:
     """Initialise the database and ensure the schema exists."""
+    global _database
     resolved = settings or get_settings()
-    database = get_database()
-    if database.path != resolved.database_path:
-        database.close()
-        set_database(Database(resolved.database_path))
-    database.migrate()
-    return get_database()
+    with _database_lock:
+        database = _database
+        if database is None or database.path != resolved.database_path:
+            if database is not None:
+                database.close()
+            database = Database(resolved.database_path)
+            _database = database
+        database.migrate()
+        return database

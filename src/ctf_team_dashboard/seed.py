@@ -6,10 +6,11 @@ be demonstrated, screenshot and tested without an external CTF platform.
 
 from __future__ import annotations
 
+import itertools
 import random
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
-from uuid import uuid4
 
 from ctf_team_dashboard.domain.enums import (
     ChallengeCategory,
@@ -183,9 +184,19 @@ _ROLE_CYCLE: tuple[MemberRole, ...] = (
 )
 
 
-def _suffix(index: int) -> str:
-    """Return a short unique suffix used for generated identifiers."""
-    return f"{index:02d}{uuid4().hex[:4]}"
+def _make_id_factory() -> Callable[[str], str]:
+    """Return a factory producing deterministic, unique identifiers.
+
+    The identifiers are stable across runs so the seeded dataset can be
+    compared between two instances of the dashboard.
+    """
+    counter = itertools.count(1)
+
+    def factory(prefix: str) -> str:
+        """Return the next identifier for the given prefix."""
+        return f"{prefix}-{next(counter):04d}"
+
+    return factory
 
 
 def build_seed_data(
@@ -205,6 +216,7 @@ def build_seed_data(
         A tuple of ``(teams, members, challenges, solves)``.
     """
     rng = random.Random(seed)
+    uid = _make_id_factory()
     now = datetime.now(timezone.utc)
     starts_at = now - timedelta(hours=competition_hours // 2)
     ends_at = now + timedelta(hours=competition_hours // 2)
@@ -216,8 +228,8 @@ def build_seed_data(
     challenges: list[Challenge] = []
     solves: list[Solve] = []
 
-    for team_index, blueprint in enumerate(blueprints):
-        team_id = f"team-{_suffix(team_index)}"
+    for blueprint in blueprints:
+        team_id = uid("team")
         teams.append(
             Team(
                 id=team_id,
@@ -235,7 +247,7 @@ def build_seed_data(
             )
             members.append(
                 Member(
-                    id=f"member-{_suffix(member_index)}",
+                    id=uid("member"),
                     team_id=team_id,
                     handle=handle,
                     display_name=handle.replace("_", " ").title(),
@@ -245,12 +257,12 @@ def build_seed_data(
                 )
             )
 
-        for challenge_index, challenge_blueprint in enumerate(CHALLENGE_BLUEPRINTS):
+        for challenge_blueprint in CHALLENGE_BLUEPRINTS:
             offset_hours = rng.randint(-12, 12)
             window_start = starts_at + timedelta(hours=offset_hours)
             challenges.append(
                 Challenge(
-                    id=f"challenge-{_suffix(challenge_index)}",
+                    id=uid("challenge"),
                     team_id=team_id,
                     title=challenge_blueprint.title,
                     category=challenge_blueprint.category,
@@ -283,7 +295,7 @@ def build_seed_data(
                 solved_at = now - timedelta(minutes=rng.randint(1, 90))
             solves.append(
                 Solve(
-                    id=f"solve-{_suffix(solved_counter)}",
+                    id=uid("solve"),
                     challenge_id=challenge.id,
                     member_id=solver.id,
                     flag=f"flag{{{challenge.title.lower().replace(' ', '_')}}}",

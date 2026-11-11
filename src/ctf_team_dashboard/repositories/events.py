@@ -102,6 +102,12 @@ class EventRepository(BaseRepository):
         )
         return [self.to_model(row) for row in rows]
 
+    def count_matching(self, where: str = "", params: Sequence[Any] = ()) -> int:
+        """Return the number of events matching the optional filter."""
+        clause = f" WHERE {where}" if where else ""
+        value = self.fetch_value(f"SELECT COUNT(*) FROM events{clause}", params, 0)
+        return int(value or 0)
+
     def prune(self, keep: int = 2000) -> int:
         """Trim the event log, keeping the most recent ``keep`` entries."""
         total = self.count()
