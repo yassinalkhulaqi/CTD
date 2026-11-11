@@ -36,6 +36,7 @@ export type { UseMutationOptions, UseMutationResult } from "./useMutation";
 export {
   useChallengeMutations,
   useChallenges,
+  useContributions,
   useCreateChallenge,
   useCreateMember,
   useDashboardSnapshot,

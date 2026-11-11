@@ -5,10 +5,12 @@ from __future__ import annotations
 import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
 
 from ctf_team_dashboard import __version__
 from ctf_team_dashboard.config import Settings, get_settings
@@ -58,6 +60,42 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     database.close()
 
 
+def _mount_spa(app: FastAPI, static_dir: Path) -> bool:
+    """Serve the built single page application when it is available.
+
+    The dashboard uses client side routing, so any unknown path that is not an
+    API call must fall back to ``index.html``.
+
+    Args:
+        app: The application to configure.
+        static_dir: The directory holding the built assets.
+
+    Returns:
+        ``True`` when the assets were mounted.
+    """
+    index = static_dir / "index.html"
+    if not index.is_file():
+        return False
+
+    assets = static_dir / "assets"
+    if assets.is_dir():
+        app.mount("/assets", StaticFiles(directory=assets), name="assets")
+
+    @app.get("/{full_path:path}", include_in_schema=False)
+    async def spa_fallback(full_path: str) -> FileResponse:
+        """Return the single page application for every unknown path."""
+        candidate = (static_dir / full_path).resolve()
+        try:
+            candidate.relative_to(static_dir.resolve())
+        except ValueError:
+            candidate = index
+        if not candidate.is_file():
+            candidate = index
+        return FileResponse(candidate)
+
+    return True
+
+
 def create_app(settings: Settings | None = None) -> FastAPI:
     """Create and configure the FastAPI application."""
     resolved = settings or get_settings()
@@ -103,6 +141,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             content=exc.to_payload(),
             headers=headers,
         )
+
+    static_dir = Path(resolved.static_dir) if resolved.static_dir else None
+    if static_dir is not None:
+        app.state.spa_mounted = _mount_spa(app, static_dir)
 
     return app
 

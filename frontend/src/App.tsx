@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { ComponentShowcase } from "./components/ComponentShowcase";
-import { StateShowcase } from "./components/StateShowcase";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { AppShell } from "./app/AppShell";
+import { buildRoutes } from "./app/routes";
 import { ThemeToggle } from "./components/ui";
 import { LoginPage } from "./features/auth/LoginPage";
 import { fetchAuthConfig } from "./features/auth/api";
@@ -8,11 +9,10 @@ import { useAuth } from "./features/auth/useAuth";
 import "./App.css";
 
 /**
- * Root application shell.
+ * Root application component.
  *
- * The full dashboard experience is assembled in the feature branches that
- * follow; this shell wires the authentication gate established by the auth
- * branch so the dashboard is only exposed to authenticated operators.
+ * The router, the theme provider and the authentication gate are assembled
+ * here so the rest of the application only deals with routing and data.
  */
 export function App() {
   const { isAuthenticated, status } = useAuth();
@@ -44,20 +44,33 @@ export function App() {
     return <LoginPage />;
   }
 
+  const routes = buildRoutes();
+
   return (
-    <div className="app-shell">
-      <header className="app-shell__header">
-        <span className="app-shell__brand">
-          <span className="app-shell__mark" aria-hidden="true">
-            CTF
+    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <div className="app-shell">
+        <header className="app-shell__header">
+          <span className="app-shell__brand">
+            <span className="app-shell__mark" aria-hidden="true">
+              CTF
+            </span>
+            CTF Team Dashboard
           </span>
-          CTF Team Dashboard
-        </span>
-        <ThemeToggle />
-      </header>
-      <main className="app-shell__main">
-        {status === "authenticated" ? <ComponentShowcase /> : <StateShowcase />}
-      </main>
-    </div>
+          <div className="app-shell__headerActions">
+            <span className="app-shell__status" data-status={status}>
+              {status === "authenticated" ? "live" : "open mode"}
+            </span>
+            <ThemeToggle />
+          </div>
+        </header>
+        <Routes>
+          <Route element={<AppShell />}>
+            {routes.map((route) => (
+              <Route key={route.path} path={route.path} element={route.element} />
+            ))}
+          </Route>
+        </Routes>
+      </div>
+    </BrowserRouter>
   );
 }
