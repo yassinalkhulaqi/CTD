@@ -25,6 +25,7 @@ export const NAVIGATION = [
   { id: "analytics", label: "Analytics", icon: Trophy },
   { id: "activity", label: "Activity", icon: Activity },
   { id: "settings", label: "Settings", icon: Settings },
+  { id: "gallery", label: "Design system", icon: LayoutDashboard },
 ] as const;
 
 /** The identifier of a navigation entry. */

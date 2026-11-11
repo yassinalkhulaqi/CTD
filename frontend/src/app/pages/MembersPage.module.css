@@ -1,0 +1,48 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.skeletons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.memberCell {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.memberName {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.memberLabel {
+  font-weight: 550;
+  color: var(--text-primary);
+}
+
+.memberHandle {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+.presence {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  text-transform: capitalize;
+}

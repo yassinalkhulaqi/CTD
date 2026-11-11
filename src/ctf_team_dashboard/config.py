@@ -81,6 +81,7 @@ class Settings:
     allowed_origins: tuple[str, ...] = field(default=("http://localhost:5173",))
     auth_enabled: bool = False
     refresh_token_ttl_seconds: int = 60 * 60 * 24 * 14
+    static_dir: str | None = None
 
     @classmethod
     def from_env(cls) -> Settings:
@@ -102,6 +103,7 @@ class Settings:
             refresh_token_ttl_seconds=_env_int(
                 "REFRESH_TOKEN_TTL_SECONDS", 60 * 60 * 24 * 14, minimum=300
             ),
+            static_dir=_env("STATIC_DIR"),
         )
 
     @property

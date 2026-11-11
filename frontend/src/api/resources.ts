@@ -86,6 +86,26 @@ export function useChallenges(
 }
 
 /**
+ * Return the per-member contribution statistics.
+ *
+ * @param query - Optional filters.
+ * @param options - The hook options.
+ * @returns The query state.
+ */
+export function useContributions(
+  query: TeamQuery = {},
+  options: ResourceOptions = {},
+): UseQueryResult<Awaited<ReturnType<typeof membersApi.contributions>>> {
+  const teamId = query.teamId;
+  const key = queryKey("members:contributions", { teamId });
+  const fetcher = useCallback(
+    (signal: AbortSignal) => membersApi.contributions({ teamId }, { signal }),
+    [teamId],
+  );
+  return useQuery({ key, fetcher, ...options });
+}
+
+/**
  * Return the solves of the competition.
  *
  * @param query - Optional filters.

@@ -20,7 +20,7 @@
   backdrop-filter: blur(12px);
   position: sticky;
   top: 0;
-  z-index: 20;
+  z-index: 30;
 }
 
 .app-shell__brand {
@@ -44,20 +44,39 @@
   font-weight: 700;
 }
 
-.app-shell__main {
-  flex: 1;
-  padding: var(--space-8) var(--space-6);
-  max-width: 1440px;
-  width: 100%;
-  margin: 0 auto;
+.app-shell__headerActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.app-shell__status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: var(--surface-sunken);
+  color: var(--text-tertiary);
+  font-size: var(--text-xs);
+  font-weight: 600;
+}
+
+.app-shell__status::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--warning-base);
+}
+
+.app-shell__status[data-status="authenticated"]::before {
+  background: var(--success-base);
+  box-shadow: 0 0 0 3px var(--success-soft);
 }
 
 @media (max-width: 720px) {
   .app-shell__header {
     padding: 0 var(--space-4);
-  }
-
-  .app-shell__main {
-    padding: var(--space-5) var(--space-4);
   }
 }

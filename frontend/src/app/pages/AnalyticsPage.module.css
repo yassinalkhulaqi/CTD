@@ -1,0 +1,33 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-4);
+}
+
+.chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 160px;
+  padding: var(--space-2) 0;
+}
+
+.bar {
+  flex: 1;
+  min-width: 2px;
+  border-radius: 3px 3px 0 0;
+  background: linear-gradient(180deg, var(--accent-base), rgb(99 102 241 / 35%));
+  transition:
+    height var(--duration-slow) var(--ease-out),
+    filter var(--duration-fast) var(--ease-out);
+}
+
+.bar:hover {
+  filter: brightness(1.2);
+}
