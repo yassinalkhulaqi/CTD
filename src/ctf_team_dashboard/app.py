@@ -22,6 +22,7 @@ from ctf_team_dashboard.routers import (
     dashboard,
     health,
     members,
+    realtime,
     solves,
     stats,
     teams,
@@ -126,6 +127,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(solves.router)
     app.include_router(stats.router)
     app.include_router(dashboard.router)
+    app.include_router(realtime.router)
 
     @app.exception_handler(DashboardError)
     async def _handle_dashboard_error(

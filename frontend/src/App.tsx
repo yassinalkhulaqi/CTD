@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { AppShell } from "./app/AppShell";
 import { buildRoutes } from "./app/routes";
+import { ConnectionBadge } from "./components/realtime/ConnectionBadge";
 import { ThemeToggle } from "./components/ui";
 import { LoginPage } from "./features/auth/LoginPage";
 import { fetchAuthConfig } from "./features/auth/api";
 import { useAuth } from "./features/auth/useAuth";
+import { RealtimeProvider } from "./realtime/RealtimeProvider";
 import "./App.css";
 
 /**
@@ -47,30 +49,33 @@ export function App() {
   const routes = buildRoutes();
 
   return (
-    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <div className="app-shell">
-        <header className="app-shell__header">
-          <span className="app-shell__brand">
-            <span className="app-shell__mark" aria-hidden="true">
-              CTF
+    <RealtimeProvider>
+      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <div className="app-shell">
+          <header className="app-shell__header">
+            <span className="app-shell__brand">
+              <span className="app-shell__mark" aria-hidden="true">
+                CTF
+              </span>
+              CTF Team Dashboard
             </span>
-            CTF Team Dashboard
-          </span>
-          <div className="app-shell__headerActions">
-            <span className="app-shell__status" data-status={status}>
-              {status === "authenticated" ? "live" : "open mode"}
-            </span>
-            <ThemeToggle />
-          </div>
-        </header>
-        <Routes>
-          <Route element={<AppShell />}>
-            {routes.map((route) => (
-              <Route key={route.path} path={route.path} element={route.element} />
-            ))}
-          </Route>
-        </Routes>
-      </div>
-    </BrowserRouter>
+            <div className="app-shell__headerActions">
+              <span className="app-shell__status" data-status={status}>
+                {status === "authenticated" ? "live" : "open mode"}
+              </span>
+              <ConnectionBadge />
+              <ThemeToggle />
+            </div>
+          </header>
+          <Routes>
+            <Route element={<AppShell />}>
+              {routes.map((route) => (
+                <Route key={route.path} path={route.path} element={route.element} />
+              ))}
+            </Route>
+          </Routes>
+        </div>
+      </BrowserRouter>
+    </RealtimeProvider>
   );
 }
