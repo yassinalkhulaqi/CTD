@@ -19,6 +19,7 @@ from ctf_team_dashboard.errors import DashboardError
 from ctf_team_dashboard.routers import (
     analytics,
     auth,
+    challenge_details,
     challenges,
     dashboard,
     health,
@@ -125,6 +126,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(teams.router)
     app.include_router(members.router)
     app.include_router(challenges.router)
+    app.include_router(challenge_details.router)
     app.include_router(solves.router)
     app.include_router(stats.router)
     app.include_router(dashboard.router)

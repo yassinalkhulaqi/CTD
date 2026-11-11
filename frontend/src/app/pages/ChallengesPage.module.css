@@ -4,6 +4,12 @@
   gap: var(--space-4);
 }
 
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
 .toolbar {
   display: flex;
   align-items: center;

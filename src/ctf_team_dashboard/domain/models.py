@@ -143,6 +143,26 @@ class Solve:
 
 
 @dataclass(frozen=True, slots=True)
+class Note:
+    """A note attached to a challenge by a team member."""
+
+    id: str
+    challenge_id: str
+    member_id: str
+    body: str
+    created_at: datetime = field(default_factory=utcnow)
+    updated_at: datetime = field(default_factory=utcnow)
+
+    @property
+    def preview(self) -> str:
+        """Return the first 140 characters of the note."""
+        collapsed = " ".join(self.body.split())
+        if len(collapsed) <= 140:
+            return collapsed
+        return f"{collapsed[:139]}…"
+
+
+@dataclass(frozen=True, slots=True)
 class ActivityEvent:
     """An append-only realtime activity record."""
 

@@ -9,6 +9,7 @@ from ctf_team_dashboard.domain.enums import ChallengeStatus, EventKind
 from ctf_team_dashboard.domain.models import Solve, utcnow
 from ctf_team_dashboard.errors import ConflictError, NotFoundError, ValidationError
 from ctf_team_dashboard.repositories import Repositories
+from ctf_team_dashboard.security.flags import FlagFormatError, normalise_flag
 
 
 class SolveService:
@@ -61,11 +62,17 @@ class SolveService:
         awarded = challenge.difficulty_points if points_awarded is None else points_awarded
         if awarded < 0:
             raise ValidationError("Awarded points must not be negative")
+        cleaned_flag = flag
+        if flag:
+            try:
+                cleaned_flag = normalise_flag(flag)
+            except FlagFormatError as exc:
+                raise ValidationError(str(exc)) from exc
         solve = Solve(
             id=solve_id or f"solve-{uuid.uuid4().hex[:12]}",
             challenge_id=challenge_id,
             member_id=member_id,
-            flag=flag.strip(),
+            flag=cleaned_flag,
             points_awarded=awarded,
             solved_at=solved_at or utcnow(),
         )
