@@ -1,0 +1,215 @@
+.chart {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.grid {
+  stroke: var(--border-subtle);
+  stroke-width: 0.4;
+  vector-effect: non-scaling-stroke;
+}
+
+.bar {
+  transition:
+    opacity var(--duration-fast) var(--ease-out),
+    filter var(--duration-fast) var(--ease-out);
+  cursor: pointer;
+}
+
+.barActive {
+  filter: brightness(1.25);
+  opacity: 1;
+}
+
+.area {
+  pointer-events: none;
+}
+
+.line {
+  pointer-events: none;
+}
+
+.dot {
+  fill: var(--surface-raised);
+  stroke: var(--accent-base);
+  stroke-width: 1.4;
+  vector-effect: non-scaling-stroke;
+  cursor: pointer;
+  transition: r var(--duration-fast) var(--ease-out);
+}
+
+.dotActive {
+  fill: var(--accent-base);
+}
+
+.axis {
+  display: flex;
+  justify-content: space-between;
+  gap: 2px;
+  font-size: 10px;
+  color: var(--text-tertiary);
+}
+
+.axisLabel {
+  flex: 1;
+  text-align: center;
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  cursor: default;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.axisLabelActive {
+  color: var(--text-primary);
+  font-weight: 650;
+}
+
+.caption {
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  background: var(--surface-sunken);
+  align-self: flex-start;
+}
+
+.empty {
+  display: grid;
+  place-items: center;
+  min-height: 96px;
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--border-default);
+  color: var(--text-tertiary);
+  font-size: var(--text-xs);
+}
+
+/* Donut ---------------------------------------------------------------- */
+.donut {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  margin: 0;
+}
+
+.donutSlice {
+  transition:
+    stroke-width var(--duration-fast) var(--ease-out),
+    opacity var(--duration-fast) var(--ease-out);
+}
+
+.donutSlice:hover {
+  stroke-width: 22;
+  opacity: 0.92;
+}
+
+.donutCentre {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: var(--text-lg);
+  font-weight: 650;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2) var(--space-4);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.legendSwatch {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+}
+
+.legendValue {
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Heatmap -------------------------------------------------------------- */
+.heatmap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.heatmapGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.heatmapRow {
+  display: grid;
+  grid-template-columns: repeat(24, 1fr);
+  gap: 3px;
+}
+
+.heatmapCell {
+  aspect-ratio: 1;
+  min-width: 6px;
+  border-radius: 3px;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition:
+    transform var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.heatmapCell:hover,
+.heatmapCellActive {
+  transform: scale(1.18);
+  box-shadow: var(--shadow-sm);
+}
+
+.heatmapLabels {
+  display: grid;
+  grid-template-template-columns: repeat(7, 1fr);
+  gap: 3px;
+  font-size: 10px;
+  color: var(--text-tertiary);
+  text-align: center;
+}
+
+.heatmapRowLabel {
+  grid-column: span 1;
+}
+
+/* Sparkline ------------------------------------------------------------ */
+.sparkline {
+  display: block;
+  overflow: visible;
+}

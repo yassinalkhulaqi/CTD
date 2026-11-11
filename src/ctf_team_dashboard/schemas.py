@@ -359,3 +359,32 @@ class SessionRead(ApiModel):
     expires_at: datetime
     revoked_at: datetime | None = None
     user_agent: str = ""
+
+
+# ----------------------------------------------------------------------
+# Analytics
+# ----------------------------------------------------------------------
+class VelocityPoint(ApiModel):
+    """A single hourly bucket of the solve velocity."""
+
+    at: datetime
+    count: int
+
+
+class SolveIntervalStats(ApiModel):
+    """Statistics of the intervals between two consecutive solves."""
+
+    count: int
+    median_seconds: float
+    fastest_seconds: float
+    slowest_seconds: float
+    average_seconds: float
+
+
+class DifficultyMatrix(ApiModel):
+    """The solve counts grouped by difficulty and by category."""
+
+    difficulties: list[str]
+    categories: list[str]
+    counts: dict[str, dict[str, int]]
+    totals: dict[str, int]

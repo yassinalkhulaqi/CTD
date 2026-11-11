@@ -1,25 +1,41 @@
 /**
  * The analytics page.
- *
- * The charts are expanded by the analytics feature branch; this page renders
- * the raw aggregates so the routing is complete.
  */
 
-import { BarChart3, TrendingUp } from "lucide-react";
+import { useMemo } from "react";
+import { Activity, BarChart3, Clock, Target, TrendingUp } from "lucide-react";
 import { useDashboardSnapshot, useTimeline } from "../../api/resources";
 import { useActiveTeamId, windowToHours } from "../../stores/dashboardStore";
 import { usePreferencesStore } from "../../stores/preferencesStore";
-import { formatNumber } from "../../lib/utils";
+import { formatDuration, formatNumber } from "../../lib/utils";
+import {
+  AreaChart,
+  BarChart,
+  DonutChart,
+  Heatmap,
+  Sparkline,
+  timelineLabels,
+  type DonutSlice,
+} from "../../components/charts";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
   EmptyState,
+  SegmentedControl,
   Skeleton,
   StatCard,
 } from "../../components/ui";
 import styles from "./AnalyticsPage.module.css";
+
+const WINDOW_OPTIONS = [
+  { value: "6h" as const, label: "6h" },
+  { value: "12h" as const, label: "12h" },
+  { value: "24h" as const, label: "24h" },
+  { value: "7d" as const, label: "7d" },
+];
 
 /**
  * Render the analytics page.
@@ -29,17 +45,51 @@ import styles from "./AnalyticsPage.module.css";
 export default function AnalyticsPage() {
   const teamId = useActiveTeamId();
   const timeWindow = usePreferencesStore((state) => state.timeWindow);
+  const setTimeWindow = usePreferencesStore((state) => state.setTimeWindow);
+
+  const hours = windowToHours(timeWindow);
   const snapshot = useDashboardSnapshot(teamId ?? undefined, { staleTime: 30_000 });
-  const timeline = useTimeline(windowToHours(timeWindow), teamId ?? undefined, {
-    staleTime: 30_000,
-  });
+  const timeline = useTimeline(hours, teamId ?? undefined, { staleTime: 30_000 });
 
   const buckets = timeline.data ?? [];
   const total = buckets.reduce((sum, value) => sum + value, 0);
-  const peak = Math.max(1, ...buckets);
+  const peak = Math.max(0, ...buckets);
+  const average = buckets.length > 0 ? total / buckets.length : 0;
+
+  const labels = useMemo(() => timelineLabels(buckets.length), [buckets.length]);
+
+  const categorySlices = useMemo<DonutSlice[]>(
+    () =>
+      (snapshot.data?.categories ?? []).map((entry) => ({
+        label: entry.label,
+        value: entry.challenges,
+        color: entry.accent,
+      })),
+    [snapshot.data],
+  );
+
+  const heatmapMatrix = useMemo(() => {
+    const matrix = Array.from({ length: 7 }, () => new Array<number>(24).fill(0));
+    const solves = snapshot.data?.contributions ?? [];
+    for (const contribution of solves) {
+      const first = contribution.first_solve_at ? new Date(contribution.first_solve_at) : null;
+      if (!first) continue;
+      matrix[first.getDay() === 0 ? 6 : first.getDay() - 1][first.getHours()] += contribution.solves;
+    }
+    return matrix;
+  }, [snapshot.data]);
 
   return (
     <div className={styles.page}>
+      <div className={styles.toolbar}>
+        <SegmentedControl
+          options={WINDOW_OPTIONS}
+          value={timeWindow}
+          onValueChange={setTimeWindow}
+          label="Analytics window"
+        />
+      </div>
+
       <section className={styles.stats} aria-label="Analytics summary">
         <StatCard
           label="Solves in window"
@@ -47,6 +97,7 @@ export default function AnalyticsPage() {
           icon={<TrendingUp size={16} />}
           accent="#22d3ee"
           loading={!timeline.data}
+          meta={`${average.toFixed(1)} per hour on average`}
         />
         <StatCard
           label="Peak hour"
@@ -54,6 +105,7 @@ export default function AnalyticsPage() {
           icon={<BarChart3 size={16} />}
           accent="#f59e0b"
           loading={!timeline.data}
+          meta="busiest hour of the window"
         />
         <StatCard
           label="Completion"
@@ -62,38 +114,134 @@ export default function AnalyticsPage() {
               ? `${Math.round(snapshot.data.overview.completion_rate * 100)}%`
               : <Skeleton width={48} height={30} />
           }
+          icon={<Target size={16} />}
           accent="#34d399"
           loading={!snapshot.data}
+          meta="of the published challenges"
+        />
+        <StatCard
+          label="Time remaining"
+          value={
+            snapshot.data
+              ? formatDuration(snapshot.data.competition_seconds_remaining)
+              : <Skeleton width={64} height={30} />
+          }
+          icon={<Clock size={16} />}
+          accent="#a855f7"
+          loading={!snapshot.data}
+          meta="until the competition closes"
         />
       </section>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Solve velocity</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {!timeline.data ? (
-            <Skeleton height={140} />
-          ) : buckets.length === 0 || total === 0 ? (
-            <EmptyState
-              icon={<BarChart3 size={22} />}
-              title="No activity in this window"
-              description="Widen the time window to see the solve velocity."
-            />
-          ) : (
-            <div className={styles.chart} role="img" aria-label="Solves per hour">
-              {buckets.map((value, index) => (
-                <span
-                  key={index}
-                  className={styles.bar}
-                  style={{ height: `${Math.max(4, (value / peak) * 100)}%` }}
-                  title={`${value} solves`}
-                />
+      <div className={styles.grid}>
+        <Card className={styles.spanTwo}>
+          <CardHeader>
+            <CardTitle>Solve velocity</CardTitle>
+            <CardDescription>Solves recorded per hour over the trailing window.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {!timeline.data ? (
+              <Skeleton height={180} />
+            ) : total === 0 ? (
+              <EmptyState
+                icon={<Activity size={22} />}
+                title="No activity in this window"
+                description="Widen the time window to see the solve velocity."
+              />
+            ) : (
+              <AreaChart
+                values={buckets}
+                labels={labels}
+                label="Solve velocity"
+                height={200}
+                color="var(--accent-base)"
+              />
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Challenge mix</CardTitle>
+            <CardDescription>Published challenges per category.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {categorySlices.length === 0 ? (
+              <EmptyState
+                icon={<Target size={22} />}
+                title="No categories yet"
+                description="Publish a challenge to populate the mix."
+              />
+            ) : (
+              <DonutChart
+                slices={categorySlices}
+                label="Challenge mix"
+                centreLabel={formatNumber(
+                  categorySlices.reduce((sum, slice) => sum + slice.value, 0),
+                )}
+              />
+            )}
+          </CardContent>
+        </Card>
+
+        <Card className={styles.spanTwo}>
+          <CardHeader>
+            <CardTitle>Hourly distribution</CardTitle>
+            <CardDescription>Number of solves recorded during each hour.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {!timeline.data ? (
+              <Skeleton height={180} />
+            ) : (
+              <BarChart
+                values={buckets}
+                labels={labels}
+                label="Hourly distribution"
+                unit="solves"
+                height={180}
+              />
+            )}
+          </CardContent>
+        </Card>
+
+        <Card className={styles.spanTwo}>
+          <CardHeader>
+            <CardTitle>Activity heatmap</CardTitle>
+            <CardDescription>First solves per weekday and hour.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {heatmapMatrix.every((row) => row.every((value) => value === 0)) ? (
+              <EmptyState
+                icon={<Activity size={22} />}
+                title="Not enough data yet"
+                description="The heatmap appears once the team starts solving challenges."
+              />
+            ) : (
+              <Heatmap matrix={heatmapMatrix} label="Activity heatmap" />
+            )}
+          </CardContent>
+        </Card>
+
+        <Card className={styles.spanTwo}>
+          <CardHeader>
+            <CardTitle>Contributors</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ul className={styles.contributors}>
+              {(snapshot.data?.contributions ?? []).slice(0, 8).map((row) => (
+                <li key={row.member_id} className={styles.contributor}>
+                  <span className={styles.contributorName}>{row.display_name}</span>
+                  <Sparkline
+                    values={[0, row.solves / 2, row.solves]}
+                    label={`Trend of ${row.display_name}`}
+                  />
+                  <span className={styles.contributorPoints}>{formatNumber(row.points)}</span>
+                </li>
               ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+            </ul>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
