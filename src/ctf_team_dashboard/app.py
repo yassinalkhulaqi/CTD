@@ -6,18 +6,21 @@ import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from pathlib import Path
+from typing import Any
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 
 from ctf_team_dashboard import __version__
 from ctf_team_dashboard.config import Settings, get_settings
 from ctf_team_dashboard.db.engine import init_database
+from ctf_team_dashboard.dependencies import enforce_rate_limit, get_rate_limiter
 from ctf_team_dashboard.errors import DashboardError
 from ctf_team_dashboard.routers import (
     analytics,
+    audit,
     auth,
     challenge_details,
     challenges,
@@ -29,6 +32,7 @@ from ctf_team_dashboard.routers import (
     stats,
     teams,
 )
+from ctf_team_dashboard.security.headers import apply_security_headers
 from ctf_team_dashboard.seed import persist_seed_data
 
 logger = logging.getLogger("ctf_team_dashboard")
@@ -121,6 +125,16 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         allow_headers=["*"],
     )
 
+    @app.middleware("http")
+    async def _apply_request_guards(request: Request, call_next: Any) -> Response:
+        """Apply the rate limiter and the security headers to every request."""
+        if resolved.rate_limit_per_minute > 0 and request.url.path.startswith("/api/"):
+            await enforce_rate_limit(request, get_rate_limiter(), resolved)
+        response: Response = await call_next(request)
+        apply_security_headers(response, enable_hsts=resolved.enable_hsts)
+        response.headers.setdefault("X-Dashboard-Version", __version__)
+        return response
+
     app.include_router(health.router)
     app.include_router(auth.router)
     app.include_router(teams.router)
@@ -132,6 +146,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(dashboard.router)
     app.include_router(realtime.router)
     app.include_router(analytics.router)
+    app.include_router(audit.router)
 
     @app.exception_handler(DashboardError)
     async def _handle_dashboard_error(
