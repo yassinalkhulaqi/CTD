@@ -7,4 +7,6 @@ def test_health_returns_ok(client: TestClient) -> None:
     """The health endpoint should report service health."""
     response = client.get("/api/health")
     assert response.status_code == 200
-    assert response.json() == {"status": "ok"}
+    payload = response.json()
+    assert payload["status"] == "ok"
+    assert payload["version"]
