@@ -1,0 +1,42 @@
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.heading {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.title {
+  font-size: var(--text-xl);
+  font-weight: 650;
+  letter-spacing: -0.025em;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.search {
+  width: 220px;
+}
+
+@media (max-width: 960px) {
+  .search {
+    width: 100%;
+  }
+
+  .controls {
+    width: 100%;
+  }
+}

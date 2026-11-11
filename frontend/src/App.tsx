@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { ComponentShowcase } from "./components/ComponentShowcase";
+import { StateShowcase } from "./components/StateShowcase";
 import { ThemeToggle } from "./components/ui";
 import { LoginPage } from "./features/auth/LoginPage";
 import { fetchAuthConfig } from "./features/auth/api";
@@ -55,14 +56,7 @@ export function App() {
         <ThemeToggle />
       </header>
       <main className="app-shell__main">
-        {status === "authenticated" ? (
-          <ComponentShowcase />
-        ) : (
-          <>
-            <h1>Competition overview</h1>
-            <p>The dashboard is running in open mode.</p>
-          </>
-        )}
+        {status === "authenticated" ? <ComponentShowcase /> : <StateShowcase />}
       </main>
     </div>
   );
