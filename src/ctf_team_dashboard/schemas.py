@@ -271,3 +271,91 @@ class DashboardSnapshot(ApiModel):
     recent_events: list[ActivityEventRead]
     competition_seconds_remaining: float
     generated_at: datetime
+
+
+# ----------------------------------------------------------------------
+# Authentication
+# ----------------------------------------------------------------------
+class UserRead(ApiModel):
+    """A dashboard account as returned by the API."""
+
+    id: str
+    username: str
+    email: str
+    role: MemberRole
+    team_id: str | None = None
+    is_active: bool
+    created_at: datetime
+    last_login_at: datetime | None = None
+
+
+class TokenPairRead(ApiModel):
+    """An issued access and refresh token pair."""
+
+    access_token: str
+    refresh_token: str
+    expires_in: int
+    token_type: str = "Bearer"
+
+
+class LoginRequest(ApiModel):
+    """Payload used to authenticate."""
+
+    username: str = Field(min_length=3, max_length=120)
+    password: str = Field(min_length=1, max_length=256)
+
+
+class RegisterRequest(ApiModel):
+    """Payload used to register a new account."""
+
+    username: str = Field(min_length=3, max_length=64, pattern=r"^[a-zA-Z0-9._-]+$")
+    email: str = Field(min_length=3, max_length=254)
+    password: str = Field(min_length=8, max_length=256)
+    team_id: str | None = None
+
+
+class RefreshRequest(ApiModel):
+    """Payload used to exchange a refresh token."""
+
+    refresh_token: str = Field(min_length=16)
+
+
+class LoginResponse(ApiModel):
+    """Payload returned after a successful authentication."""
+
+    user: UserRead
+    tokens: TokenPairRead
+    permissions: list[str] = Field(default_factory=list)
+
+
+class ApiKeyRead(ApiModel):
+    """An API key as returned by the API."""
+
+    id: str
+    user_id: str
+    name: str
+    prefix: str
+    masked: str
+    scopes: list[str] = Field(default_factory=list)
+    created_at: datetime
+    last_used_at: datetime | None = None
+    revoked_at: datetime | None = None
+
+
+class ApiKeyCreate(ApiModel):
+    """Payload used to create an API key."""
+
+    user_id: str
+    name: str = Field(min_length=1, max_length=64)
+    scopes: list[str] = Field(default_factory=list, max_length=32)
+
+
+class SessionRead(ApiModel):
+    """A refresh session as returned by the API."""
+
+    id: str
+    user_id: str
+    created_at: datetime
+    expires_at: datetime
+    revoked_at: datetime | None = None
+    user_agent: str = ""

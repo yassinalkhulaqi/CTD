@@ -14,7 +14,15 @@ from ctf_team_dashboard import __version__
 from ctf_team_dashboard.config import Settings, get_settings
 from ctf_team_dashboard.db.engine import init_database
 from ctf_team_dashboard.errors import DashboardError
-from ctf_team_dashboard.routers import challenges, health, members, solves, stats, teams
+from ctf_team_dashboard.routers import (
+    auth,
+    challenges,
+    health,
+    members,
+    solves,
+    stats,
+    teams,
+)
 from ctf_team_dashboard.seed import persist_seed_data
 
 logger = logging.getLogger("ctf_team_dashboard")
@@ -72,6 +80,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     )
 
     app.include_router(health.router)
+    app.include_router(auth.router)
     app.include_router(teams.router)
     app.include_router(members.router)
     app.include_router(challenges.router)

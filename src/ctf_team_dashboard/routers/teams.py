@@ -6,12 +6,14 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, status
 
+from ctf_team_dashboard.dependencies import require_permission
 from ctf_team_dashboard.schemas import (
     TeamCreate,
     TeamRead,
     TeamScoreRead,
     TeamUpdate,
 )
+from ctf_team_dashboard.security.permissions import Permission
 from ctf_team_dashboard.services.teams import TeamService
 
 router = APIRouter(tags=["teams"])
@@ -79,7 +81,11 @@ def get_team(team_id: str, service: TeamServiceDep) -> TeamRead:
     response_model=TeamRead,
     status_code=status.HTTP_201_CREATED,
 )
-def create_team(payload: TeamCreate, service: TeamServiceDep) -> TeamRead:
+def create_team(
+    payload: TeamCreate,
+    service: TeamServiceDep,
+    _principal: object = Depends(require_permission(Permission.TEAM_MANAGE)),
+) -> TeamRead:
     """Create a new team."""
     team = service.create_team(
         name=payload.name,
@@ -99,7 +105,12 @@ def create_team(payload: TeamCreate, service: TeamServiceDep) -> TeamRead:
 
 
 @router.patch("/api/teams/{team_id}", response_model=TeamRead)
-def update_team(team_id: str, payload: TeamUpdate, service: TeamServiceDep) -> TeamRead:
+def update_team(
+    team_id: str,
+    payload: TeamUpdate,
+    service: TeamServiceDep,
+    _principal: object = Depends(require_permission(Permission.TEAM_MANAGE)),
+) -> TeamRead:
     """Update an existing team."""
     team = service.update_team(
         team_id,
@@ -119,6 +130,10 @@ def update_team(team_id: str, payload: TeamUpdate, service: TeamServiceDep) -> T
 
 
 @router.delete("/api/teams/{team_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_team(team_id: str, service: TeamServiceDep) -> None:
+def delete_team(
+    team_id: str,
+    service: TeamServiceDep,
+    _principal: object = Depends(require_permission(Permission.TEAM_MANAGE)),
+) -> None:
     """Delete a team and every dependent record."""
     service.delete_team(team_id)

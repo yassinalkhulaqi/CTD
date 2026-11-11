@@ -4,8 +4,9 @@ from __future__ import annotations
 
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Query, status
 
+from ctf_team_dashboard.dependencies import require_permission
 from ctf_team_dashboard.domain.enums import ChallengeCategory, ChallengeStatus
 from ctf_team_dashboard.domain.models import Challenge
 from ctf_team_dashboard.schemas import (
@@ -14,6 +15,7 @@ from ctf_team_dashboard.schemas import (
     ChallengeStatusUpdate,
     ChallengeUpdate,
 )
+from ctf_team_dashboard.security.permissions import Permission
 from ctf_team_dashboard.services.challenges import ChallengeService
 
 router = APIRouter(tags=["challenges"])
@@ -51,7 +53,7 @@ def list_challenges(
     service: ChallengeServiceDep,
     team_id: str | None = None,
     category: ChallengeCategory | None = None,
-    status_filter: ChallengeStatus | None = None,
+    status_filter: Annotated[ChallengeStatus | None, Query(alias="status")] = None,
 ) -> list[ChallengeRead]:
     """Return challenges filtered by team, category and status."""
     found = service.list_challenges(team_id, category=category, status=status_filter)
@@ -81,7 +83,11 @@ def get_challenge(challenge_id: str, service: ChallengeServiceDep) -> ChallengeR
     response_model=ChallengeRead,
     status_code=status.HTTP_201_CREATED,
 )
-def create_challenge(payload: ChallengeCreate, service: ChallengeServiceDep) -> ChallengeRead:
+def create_challenge(
+    payload: ChallengeCreate,
+    service: ChallengeServiceDep,
+    _principal: object = Depends(require_permission(Permission.CHALLENGE_CREATE)),
+) -> ChallengeRead:
     """Create a challenge."""
     challenge = service.create_challenge(
         team_id=payload.team_id,
@@ -100,7 +106,10 @@ def create_challenge(payload: ChallengeCreate, service: ChallengeServiceDep) -> 
 
 @router.patch("/api/challenges/{challenge_id}", response_model=ChallengeRead)
 def update_challenge(
-    challenge_id: str, payload: ChallengeUpdate, service: ChallengeServiceDep
+    challenge_id: str,
+    payload: ChallengeUpdate,
+    service: ChallengeServiceDep,
+    _principal: object = Depends(require_permission(Permission.CHALLENGE_UPDATE)),
 ) -> ChallengeRead:
     """Update an existing challenge."""
     return _to_read(
@@ -121,13 +130,20 @@ def update_challenge(
 
 @router.put("/api/challenges/{challenge_id}/status", response_model=ChallengeRead)
 def set_challenge_status(
-    challenge_id: str, payload: ChallengeStatusUpdate, service: ChallengeServiceDep
+    challenge_id: str,
+    payload: ChallengeStatusUpdate,
+    service: ChallengeServiceDep,
+    _principal: object = Depends(require_permission(Permission.CHALLENGE_UPDATE)),
 ) -> ChallengeRead:
     """Move a challenge between lifecycle states."""
     return _to_read(service.set_status(challenge_id, payload.status))
 
 
 @router.delete("/api/challenges/{challenge_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_challenge(challenge_id: str, service: ChallengeServiceDep) -> None:
+def delete_challenge(
+    challenge_id: str,
+    service: ChallengeServiceDep,
+    _principal: object = Depends(require_permission(Permission.CHALLENGE_DELETE)),
+) -> None:
     """Delete a challenge."""
     service.delete_challenge(challenge_id)

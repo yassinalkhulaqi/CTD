@@ -6,6 +6,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, status
 
+from ctf_team_dashboard.dependencies import require_permission
 from ctf_team_dashboard.domain.models import Member
 from ctf_team_dashboard.schemas import (
     MemberContributionRead,
@@ -14,6 +15,7 @@ from ctf_team_dashboard.schemas import (
     MemberUpdate,
     PresenceUpdate,
 )
+from ctf_team_dashboard.security.permissions import Permission
 from ctf_team_dashboard.services.members import MemberService
 
 router = APIRouter(tags=["members"])
@@ -79,7 +81,11 @@ def get_member(member_id: str, service: MemberServiceDep) -> MemberRead:
     response_model=MemberRead,
     status_code=status.HTTP_201_CREATED,
 )
-def create_member(payload: MemberCreate, service: MemberServiceDep) -> MemberRead:
+def create_member(
+    payload: MemberCreate,
+    service: MemberServiceDep,
+    _principal: object = Depends(require_permission(Permission.MEMBER_MANAGE)),
+) -> MemberRead:
     """Add a member to a team."""
     member = service.create_member(
         team_id=payload.team_id,
@@ -92,7 +98,10 @@ def create_member(payload: MemberCreate, service: MemberServiceDep) -> MemberRea
 
 @router.patch("/api/members/{member_id}", response_model=MemberRead)
 def update_member(
-    member_id: str, payload: MemberUpdate, service: MemberServiceDep
+    member_id: str,
+    payload: MemberUpdate,
+    service: MemberServiceDep,
+    _principal: object = Depends(require_permission(Permission.MEMBER_MANAGE)),
 ) -> MemberRead:
     """Update an existing member."""
     return _to_read(
@@ -107,13 +116,20 @@ def update_member(
 
 @router.put("/api/members/{member_id}/presence", response_model=MemberRead)
 def set_presence(
-    member_id: str, payload: PresenceUpdate, service: MemberServiceDep
+    member_id: str,
+    payload: PresenceUpdate,
+    service: MemberServiceDep,
+    _principal: object = Depends(require_permission(Permission.MEMBER_MANAGE)),
 ) -> MemberRead:
     """Update the presence indicator of a member."""
     return _to_read(service.set_presence(member_id, payload.presence))
 
 
 @router.delete("/api/members/{member_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_member(member_id: str, service: MemberServiceDep) -> None:
+def delete_member(
+    member_id: str,
+    service: MemberServiceDep,
+    _principal: object = Depends(require_permission(Permission.MEMBER_MANAGE)),
+) -> None:
     """Remove a member from their team."""
     service.delete_member(member_id)
