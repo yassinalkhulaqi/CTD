@@ -5,6 +5,7 @@ from ctf_team_dashboard.repositories.challenges import ChallengeRepository
 from ctf_team_dashboard.repositories.credentials import ApiKeyRepository, SessionRepository
 from ctf_team_dashboard.repositories.events import EventRepository
 from ctf_team_dashboard.repositories.members import MemberRepository
+from ctf_team_dashboard.repositories.notes import NoteRepository
 from ctf_team_dashboard.repositories.solves import SolveRepository
 from ctf_team_dashboard.repositories.teams import TeamRepository
 from ctf_team_dashboard.repositories.users import UserRepository
@@ -23,6 +24,7 @@ class Repositories:
         users: UserRepository | None = None,
         api_keys: ApiKeyRepository | None = None,
         sessions: SessionRepository | None = None,
+        notes: NoteRepository | None = None,
     ) -> None:
         self.teams = teams or TeamRepository()
         self.members = members or MemberRepository()
@@ -32,6 +34,7 @@ class Repositories:
         self.users = users or UserRepository()
         self.api_keys = api_keys or ApiKeyRepository()
         self.sessions = sessions or SessionRepository()
+        self.notes = notes or NoteRepository()
 
     def execute(self, sql: str, params: tuple[object, ...] = ()) -> int:
         """Execute a raw mutating statement against the shared database."""
@@ -44,6 +47,7 @@ __all__ = [
     "ChallengeRepository",
     "EventRepository",
     "MemberRepository",
+    "NoteRepository",
     "Repositories",
     "SessionRepository",
     "SolveRepository",

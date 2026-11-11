@@ -75,6 +75,19 @@ CREATE TABLE IF NOT EXISTS users (
     last_login_at TEXT
 );
 
+CREATE TABLE IF NOT EXISTS notes (
+    id           TEXT PRIMARY KEY,
+    challenge_id TEXT    NOT NULL REFERENCES challenges(id) ON DELETE CASCADE,
+    member_id    TEXT    NOT NULL REFERENCES members(id) ON DELETE CASCADE,
+    body         TEXT    NOT NULL,
+    created_at   TEXT    NOT NULL,
+    updated_at   TEXT    NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_notes_challenge ON notes(challenge_id);
+CREATE INDEX IF NOT EXISTS idx_notes_member ON notes(member_id);
+CREATE INDEX IF NOT EXISTS idx_notes_created_at ON notes(created_at);
+
 CREATE TABLE IF NOT EXISTS api_keys (
     id           TEXT PRIMARY KEY,
     user_id      TEXT    NOT NULL REFERENCES users(id) ON DELETE CASCADE,

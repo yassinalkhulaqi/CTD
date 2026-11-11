@@ -4,7 +4,7 @@
 
 import { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Flag, Filter } from "lucide-react";
+import { Flag, Filter, LayoutGrid, Rows3 } from "lucide-react";
 import { useChallenges } from "../../api/resources";
 import { useActiveTeamId, useDashboardStore } from "../../stores/dashboardStore";
 import { formatNumber } from "../../lib/utils";
@@ -18,6 +18,7 @@ import {
   EmptyState,
   ErrorState,
   Input,
+  SegmentedControl,
   Skeleton,
   Table,
   TableBody,
@@ -25,15 +26,15 @@ import {
   TableHead,
   TableHeaderCell,
   TableRow,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
 } from "../../components/ui";
+import { ChallengeBoard, ChallengeDrawer } from "../../features/challenges";
 import type { Challenge, ChallengeStatus } from "../../types";
 import styles from "./ChallengesPage.module.css";
 
-const STATUS_TONES: Record<ChallengeStatus, "accent" | "success" | "warning" | "danger" | "neutral"> = {
+const STATUS_TONES: Record<
+  ChallengeStatus,
+  "accent" | "success" | "warning" | "danger" | "neutral"
+> = {
   pending: "neutral",
   active: "accent",
   solved: "success",
@@ -47,6 +48,13 @@ const DIFFICULTY_TONES: Record<string, "neutral" | "info" | "warning" | "danger"
   hard: "warning",
   insane: "danger",
 };
+
+type ViewMode = "board" | "table";
+
+const VIEW_OPTIONS = [
+  { value: "board" as const, label: "Board", icon: <LayoutGrid size={13} /> },
+  { value: "table" as const, label: "Table", icon: <Rows3 size={13} /> },
+];
 
 /**
  * Render the challenge board.
@@ -63,6 +71,7 @@ export default function ChallengesPage() {
   const searchQuery = useDashboardStore((state) => state.searchQuery);
   const setSearchQuery = useDashboardStore((state) => state.setSearchQuery);
 
+  const [view, setView] = useState<ViewMode>("board");
   const [selectedId, setSelectedId] = useState<string | null>(params.challengeId ?? null);
 
   const challenges = useChallenges(
@@ -71,7 +80,7 @@ export default function ChallengesPage() {
       category: categoryFilter === "all" ? undefined : categoryFilter,
       status: statusFilter === "all" ? undefined : statusFilter,
     },
-    { staleTime: 10_000 },
+    { staleTime: 8_000 },
   );
 
   const filtered = useMemo(() => {
@@ -85,20 +94,10 @@ export default function ChallengesPage() {
     );
   }, [challenges.data, searchQuery]);
 
-  const selected = filtered.find((challenge) => challenge.id === selectedId) ?? null;
-
-  const byStatus = useMemo(() => {
-    const groups: Record<string, Challenge[]> = {
-      pending: [],
-      active: [],
-      solved: [],
-      locked: [],
-    };
-    for (const challenge of filtered) {
-      groups[challenge.status]?.push(challenge);
-    }
-    return groups;
-  }, [filtered]);
+  const selected = useMemo(
+    () => filtered.find((challenge) => challenge.id === selectedId) ?? null,
+    [filtered, selectedId],
+  );
 
   function select(challenge: Challenge) {
     setSelectedId(challenge.id);
@@ -118,7 +117,19 @@ export default function ChallengesPage() {
   return (
     <div className={styles.page}>
       <Card>
-        <CardHeader actions={<Badge tone="neutral">{filtered.length} challenges</Badge>}>
+        <CardHeader
+          actions={
+            <div className={styles.headerActions}>
+              <Badge tone="neutral">{filtered.length} challenges</Badge>
+              <SegmentedControl
+                options={VIEW_OPTIONS}
+                value={view}
+                onValueChange={setView}
+                label="View mode"
+              />
+            </div>
+          }
+        >
           <CardTitle>Challenge board</CardTitle>
         </CardHeader>
         <CardContent>
@@ -145,127 +156,71 @@ export default function ChallengesPage() {
               <Skeleton height={36} />
               <Skeleton height={36} />
             </div>
+          ) : view === "board" ? (
+            filtered.length === 0 ? (
+              <EmptyState
+                icon={<Flag size={22} />}
+                title="No challenges match"
+                description="Adjust the filters or search terms to see more challenges."
+                action={
+                  <Button size="sm" onClick={() => setSearchQuery("")}>
+                    Clear the search
+                  </Button>
+                }
+              />
+            ) : (
+              <ChallengeBoard onSelect={select} selectedId={selectedId} />
+            )
           ) : filtered.length === 0 ? (
             <EmptyState
               icon={<Flag size={22} />}
               title="No challenges match"
               description="Adjust the filters or search terms to see more challenges."
-              action={
-                <Button size="sm" onClick={() => setSearchQuery("")}>
-                  Clear the search
-                </Button>
-              }
             />
           ) : (
-            <Tabs value={statusFilter} onValueChange={(value) => useDashboardStore.getState().setStatusFilter(value as ChallengeStatus | "all")}>
-              <TabsList scrollable>
-                <TabsTrigger value="all">All</TabsTrigger>
-                <TabsTrigger value="pending">Pending</TabsTrigger>
-                <TabsTrigger value="active">Active</TabsTrigger>
-                <TabsTrigger value="solved">Solved</TabsTrigger>
-                <TabsTrigger value="locked">Locked</TabsTrigger>
-              </TabsList>
-
-              {(["all", "pending", "active", "solved", "locked"] as const).map((status) => {
-                const rows =
-                  status === "all"
-                    ? filtered
-                    : (byStatus[status] ?? []);
-                return (
-                  <TabsContent key={status} value={status}>
-                    {rows.length === 0 ? (
-                      <EmptyState
-                        icon={<Flag size={20} />}
-                        title="Nothing here yet"
-                        description="No challenge currently sits in this state."
-                      />
-                    ) : (
-                      <Table>
-                        <TableHead>
-                          <TableRow>
-                            <TableHeaderCell>Challenge</TableHeaderCell>
-                            <TableHeaderCell>Category</TableHeaderCell>
-                            <TableHeaderCell>Difficulty</TableHeaderCell>
-                            <TableHeaderCell>Status</TableHeaderCell>
-                            <TableHeaderCell align="right">Points</TableHeaderCell>
-                          </TableRow>
-                        </TableHead>
-                        <TableBody>
-                          {rows.map((challenge) => (
-                            <TableRow
-                              key={challenge.id}
-                              selected={challenge.id === selectedId}
-                              onActivate={() => select(challenge)}
-                            >
-                              <TableCell>
-                                <span className={styles.challengeName}>{challenge.title}</span>
-                              </TableCell>
-                              <TableCell>
-                                <Badge tone="neutral">{challenge.category}</Badge>
-                              </TableCell>
-                              <TableCell>
-                                <Badge tone={DIFFICULTY_TONES[challenge.difficulty] ?? "neutral"}>
-                                  {challenge.difficulty}
-                                </Badge>
-                              </TableCell>
-                              <TableCell>
-                                <Badge tone={STATUS_TONES[challenge.status]} dot>
-                                  {challenge.status}
-                                </Badge>
-                              </TableCell>
-                              <TableCell align="right">
-                                {formatNumber(challenge.points)}
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    )}
-                  </TabsContent>
-                );
-              })}
-            </Tabs>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableHeaderCell>Challenge</TableHeaderCell>
+                  <TableHeaderCell>Category</TableHeaderCell>
+                  <TableHeaderCell>Difficulty</TableHeaderCell>
+                  <TableHeaderCell>Status</TableHeaderCell>
+                  <TableHeaderCell align="right">Points</TableHeaderCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {filtered.map((challenge) => (
+                  <TableRow
+                    key={challenge.id}
+                    selected={challenge.id === selectedId}
+                    onActivate={() => select(challenge)}
+                  >
+                    <TableCell>
+                      <span className={styles.challengeName}>{challenge.title}</span>
+                    </TableCell>
+                    <TableCell>
+                      <Badge tone="neutral">{challenge.category}</Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge tone={DIFFICULTY_TONES[challenge.difficulty] ?? "neutral"}>
+                        {challenge.difficulty}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge tone={STATUS_TONES[challenge.status]} dot>
+                        {challenge.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell align="right">{formatNumber(challenge.points)}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           )}
         </CardContent>
       </Card>
 
-      {selected ? (
-        <Card>
-          <CardHeader>
-            <CardTitle>{selected.title}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className={styles.description}>{selected.description || "No description provided."}</p>
-            <dl className={styles.details}>
-              <div>
-                <dt>Category</dt>
-                <dd>{selected.category}</dd>
-              </div>
-              <div>
-                <dt>Difficulty</dt>
-                <dd>{selected.difficulty}</dd>
-              </div>
-              <div>
-                <dt>Base points</dt>
-                <dd>{formatNumber(selected.points)}</dd>
-              </div>
-              <div>
-                <dt>Time remaining</dt>
-                <dd>{Math.round(selected.seconds_remaining)}s</dd>
-              </div>
-            </dl>
-            {selected.tags.length > 0 ? (
-              <div className={styles.tags}>
-                {selected.tags.map((tag) => (
-                  <Badge key={tag} tone="info">
-                    {tag}
-                  </Badge>
-                ))}
-              </div>
-            ) : null}
-          </CardContent>
-        </Card>
-      ) : null}
+      <ChallengeDrawer challenge={selected} onClose={() => setSelectedId(null)} />
     </div>
   );
 }

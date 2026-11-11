@@ -388,3 +388,60 @@ class DifficultyMatrix(ApiModel):
     categories: list[str]
     counts: dict[str, dict[str, int]]
     totals: dict[str, int]
+
+
+# ----------------------------------------------------------------------
+# Notes
+# ----------------------------------------------------------------------
+class NoteRead(ApiModel):
+    """A note attached to a challenge."""
+
+    id: str
+    challenge_id: str
+    member_id: str
+    body: str
+    preview: str
+    created_at: datetime
+    updated_at: datetime
+
+
+class NoteCreate(ApiModel):
+    """Payload used to attach a note to a challenge."""
+
+    member_id: str
+    body: str = Field(min_length=1, max_length=4_000)
+
+
+class NoteUpdate(ApiModel):
+    """Payload used to edit a note."""
+
+    member_id: str
+    body: str = Field(min_length=1, max_length=4_000)
+
+
+class TimelineEntry(ApiModel):
+    """A single entry of the solve timeline of a challenge."""
+
+    solve_id: str
+    member_id: str
+    member_handle: str
+    points_awarded: int
+    solved_at: datetime
+    masked_flag: str
+
+
+class FlagSubmission(ApiModel):
+    """Payload used to submit a flag for a challenge."""
+
+    challenge_id: str
+    member_id: str
+    flag: str = Field(min_length=3, max_length=256)
+
+
+class FlagResult(ApiModel):
+    """The outcome of a flag submission."""
+
+    accepted: bool
+    message: str
+    points_awarded: int = 0
+    solve_id: str | None = None
