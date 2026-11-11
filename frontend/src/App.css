@@ -1,0 +1,35 @@
+/* App shell layout primitives used before the full design system lands. */
+
+.app-shell {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-base);
+  color: var(--text-primary);
+}
+
+.app-shell__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  height: 56px;
+  padding: 0 var(--space-6);
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--surface-raised);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.app-shell__brand {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.app-shell__main {
+  flex: 1;
+  padding: var(--space-8) var(--space-6);
+  max-width: 1440px;
+  width: 100%;
+  margin: 0 auto;
+}
