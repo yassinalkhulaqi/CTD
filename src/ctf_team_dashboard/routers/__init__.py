@@ -3,6 +3,7 @@
 from ctf_team_dashboard.routers import (
     auth,
     challenges,
+    dashboard,
     health,
     members,
     solves,
@@ -10,4 +11,13 @@ from ctf_team_dashboard.routers import (
     teams,
 )
 
-__all__ = ["auth", "challenges", "health", "members", "solves", "stats", "teams"]
+__all__ = [
+    "auth",
+    "challenges",
+    "dashboard",
+    "health",
+    "members",
+    "solves",
+    "stats",
+    "teams",
+]
