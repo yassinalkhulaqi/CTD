@@ -2,6 +2,7 @@
 
 from ctf_team_dashboard.routers import (
     analytics,
+    audit,
     auth,
     challenge_details,
     challenges,
@@ -16,6 +17,7 @@ from ctf_team_dashboard.routers import (
 
 __all__ = [
     "analytics",
+    "audit",
     "auth",
     "challenge_details",
     "challenges",

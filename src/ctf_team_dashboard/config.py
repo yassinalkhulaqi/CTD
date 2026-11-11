@@ -82,6 +82,7 @@ class Settings:
     auth_enabled: bool = False
     refresh_token_ttl_seconds: int = 60 * 60 * 24 * 14
     static_dir: str | None = None
+    enable_hsts: bool = False
 
     @classmethod
     def from_env(cls) -> Settings:
@@ -104,6 +105,7 @@ class Settings:
                 "REFRESH_TOKEN_TTL_SECONDS", 60 * 60 * 24 * 14, minimum=300
             ),
             static_dir=_env("STATIC_DIR"),
+            enable_hsts=_env_bool("ENABLE_HSTS", False),
         )
 
     @property

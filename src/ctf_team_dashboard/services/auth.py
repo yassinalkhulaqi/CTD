@@ -20,6 +20,8 @@ from ctf_team_dashboard.errors import (
 )
 from ctf_team_dashboard.repositories import Repositories
 from ctf_team_dashboard.security.api_keys import generate_api_key, split_key, verify_api_key
+from ctf_team_dashboard.security.audit import AuditAction
+from ctf_team_dashboard.security.audit import record as audit_record
 from ctf_team_dashboard.security.passwords import hash_password, needs_rehash, verify_password
 from ctf_team_dashboard.security.permissions import Permission, permissions_for
 from ctf_team_dashboard.security.tokens import TokenClaims, decode_token, encode_token
@@ -181,10 +183,28 @@ class AuthService:
         if candidate is None:
             candidate = self.repositories.users.get_by_email(username.strip().lower())
         if candidate is None:
+            audit_record(
+                AuditAction.LOGIN_FAILURE,
+                actor=username.strip().lower()[:64],
+                outcome="denied",
+                details={"reason": "unknown_user"},
+            )
             raise AuthenticationError("Invalid username or password")
         if not candidate.is_active:
+            audit_record(
+                AuditAction.LOGIN_FAILURE,
+                actor=candidate.username,
+                outcome="denied",
+                details={"reason": "disabled_account"},
+            )
             raise AuthenticationError("This account has been disabled")
         if not verify_password(password, candidate.password_hash):
+            audit_record(
+                AuditAction.LOGIN_FAILURE,
+                actor=candidate.username,
+                outcome="denied",
+                details={"reason": "invalid_password"},
+            )
             raise AuthenticationError("Invalid username or password")
 
         if needs_rehash(candidate.password_hash):
@@ -203,6 +223,12 @@ class AuthService:
 
         self.repositories.users.record_login(candidate.id)
         pair = self._issue_tokens(candidate, user_agent=user_agent)
+        audit_record(
+            AuditAction.LOGIN_SUCCESS,
+            actor=candidate.username,
+            team_id=candidate.team_id,
+            details={"role": candidate.role.value},
+        )
         return candidate, pair
 
     def refresh(self, refresh_token: str) -> TokenPair:
@@ -235,6 +261,12 @@ class AuthService:
             raise AuthenticationError("Account is no longer active")
 
         self.repositories.sessions.revoke(session_id)
+        audit_record(
+            AuditAction.TOKEN_REFRESH,
+            actor=user.username,
+            team_id=user.team_id,
+            details={"session_id": session_id},
+        )
         return self._issue_tokens(user, user_agent=str(session["user_agent"]))
 
     def logout(self, refresh_token: str) -> None:
@@ -246,6 +278,7 @@ class AuthService:
         except AuthenticationError:
             return
         self.repositories.sessions.revoke(claims.token_id)
+        audit_record(AuditAction.LOGOUT, actor=claims.subject, details={"session": claims.token_id})
 
     def revoke_all_sessions(self, user_id: str) -> int:
         """Revoke every active session of a user."""
@@ -402,6 +435,13 @@ class AuthService:
             scopes=tuple(scopes),
         )
         self.repositories.api_keys.create(api_key)
+        audit_record(
+            AuditAction.API_KEY_CREATED,
+            actor=user.username,
+            team_id=user.team_id,
+            target=api_key.id,
+            details={"prefix": api_key.prefix, "scopes": list(api_key.scopes)},
+        )
         return IssuedApiKey(key=api_key, plaintext=plaintext)
 
     def list_api_keys(self, user_id: str) -> list[ApiKey]:
@@ -416,6 +456,12 @@ class AuthService:
         if api_key.user_id != user_id:
             raise PermissionDeniedError("API key belongs to a different account")
         self.repositories.api_keys.revoke(key_id)
+        audit_record(
+            AuditAction.API_KEY_REVOKED,
+            actor=api_key.user_id,
+            team_id=api_key.user_id,
+            target=key_id,
+        )
 
     # ------------------------------------------------------------------
     # Bootstrap

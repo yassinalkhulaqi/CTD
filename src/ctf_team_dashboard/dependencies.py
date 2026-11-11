@@ -9,7 +9,9 @@ from fastapi import Depends, HTTPException, Request, status
 
 from ctf_team_dashboard.config import Settings, get_settings
 from ctf_team_dashboard.errors import AuthenticationError, PermissionDeniedError
+from ctf_team_dashboard.security.audit import AuditAction, record
 from ctf_team_dashboard.security.permissions import Permission
+from ctf_team_dashboard.security.rate_limit import RateLimiter
 from ctf_team_dashboard.services.auth import AuthService, Principal
 
 
@@ -20,6 +22,13 @@ def get_auth_service() -> AuthService:
 
 AuthServiceDep = Annotated[AuthService, Depends(get_auth_service)]
 SettingsDep = Annotated[Settings, Depends(get_settings)]
+
+_rate_limiter = RateLimiter()
+
+
+def get_rate_limiter() -> RateLimiter:
+    """Dependency returning the process wide rate limiter."""
+    return _rate_limiter
 
 
 def _extract_credentials(request: Request) -> tuple[str | None, str | None]:
@@ -92,6 +101,12 @@ def require_permission(
         if any(principal.can(permission) for permission in required):
             return principal
         names = ", ".join(sorted(permission.value for permission in required))
+        record(
+            AuditAction.PERMISSION_DENIED,
+            actor=principal.username,
+            outcome="denied",
+            details={"required": names, "granted": sorted(principal.permissions)},
+        )
         raise PermissionDeniedError(f"The operation requires one of: {names}")
 
     return dependency
@@ -130,6 +145,45 @@ def require_authenticated(principal: PrincipalDep) -> Principal:
             detail="Authentication is required for this operation",
         )
     return principal
+
+
+async def enforce_rate_limit(
+    request: Request,
+    limiter: Annotated[RateLimiter, Depends(get_rate_limiter)],
+    settings: SettingsDep,
+) -> None:
+    """Consume a token from the rate limiter of the caller.
+
+    The rate limiter is keyed by the authenticated principal when the
+    authentication is enabled and by the client address otherwise.
+
+    Args:
+        request: The incoming request.
+        limiter: The rate limiter.
+        settings: The resolved application settings.
+
+    Raises:
+        RateLimitError: When the caller exceeded the request budget.
+    """
+    if settings.rate_limit_per_minute <= 0:
+        return
+
+    key = client_ip(request)
+    if settings.auth_enabled:
+        header = request.headers.get("authorization")
+        if header:
+            key = f"token:{hash(header)}"
+
+    try:
+        await limiter.check(key)
+    except Exception:
+        record(
+            AuditAction.RATE_LIMITED,
+            actor=key,
+            outcome="denied",
+            details={"path": request.url.path},
+        )
+        raise
 
 
 def client_ip(request: Request) -> str:
