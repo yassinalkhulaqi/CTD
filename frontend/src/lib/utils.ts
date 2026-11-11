@@ -5,10 +5,13 @@
 /**
  * Join conditional class names into a single string.
  *
+ * Strings are appended verbatim, objects contribute the keys whose value is
+ * truthy and every other falsy value is skipped.
+ *
  * @param values - Class names, arrays or objects with truthy keys.
  * @returns The merged class string.
  */
-export function cn(...values: Array<string | false | null | undefined | Record<string, boolean>>): string {
+export function cn(...values: unknown[]): string {
   const classes: string[] = [];
 
   for (const value of values) {
@@ -19,8 +22,10 @@ export function cn(...values: Array<string | false | null | undefined | Record<s
       continue;
     }
 
-    for (const [key, enabled] of Object.entries(value)) {
-      if (enabled) classes.push(key);
+    if (typeof value === "object") {
+      for (const [key, enabled] of Object.entries(value as Record<string, unknown>)) {
+        if (enabled) classes.push(key);
+      }
     }
   }
 

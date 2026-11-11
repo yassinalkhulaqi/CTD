@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
+import { ComponentShowcase } from "./components/ComponentShowcase";
+import { ThemeToggle } from "./components/ui";
 import { LoginPage } from "./features/auth/LoginPage";
 import { fetchAuthConfig } from "./features/auth/api";
 import { useAuth } from "./features/auth/useAuth";
+import "./App.css";
 
 /**
  * Root application shell.
@@ -43,15 +46,23 @@ export function App() {
   return (
     <div className="app-shell">
       <header className="app-shell__header">
-        <span className="app-shell__brand">CTF Team Dashboard</span>
+        <span className="app-shell__brand">
+          <span className="app-shell__mark" aria-hidden="true">
+            CTF
+          </span>
+          CTF Team Dashboard
+        </span>
+        <ThemeToggle />
       </header>
       <main className="app-shell__main">
-        <h1>Competition overview</h1>
-        <p>
-          {status === "authenticated"
-            ? "The dashboard modules are being assembled branch by branch."
-            : "The dashboard is running in open mode."}
-        </p>
+        {status === "authenticated" ? (
+          <ComponentShowcase />
+        ) : (
+          <>
+            <h1>Competition overview</h1>
+            <p>The dashboard is running in open mode.</p>
+          </>
+        )}
       </main>
     </div>
   );

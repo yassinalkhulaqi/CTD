@@ -1,0 +1,327 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6);
+  background: rgb(8 9 13 / 55%);
+  backdrop-filter: blur(3px);
+  animation: overlay-fade var(--duration-base) var(--ease-out);
+}
+
+/* Modal ---------------------------------------------------------------- */
+.modal {
+  width: 100%;
+  max-height: min(88vh, 900px);
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-overlay);
+  box-shadow: var(--shadow-lg);
+  animation: modal-rise var(--duration-base) var(--ease-out);
+  overflow: hidden;
+}
+
+.modal-sm {
+  max-width: 380px;
+}
+
+.modal-md {
+  max-width: 520px;
+}
+
+.modal-lg {
+  max-width: 720px;
+}
+
+.modal-xl {
+  max-width: 960px;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-5) var(--space-5) var(--space-4);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.modalTitle {
+  font-size: var(--text-lg);
+  font-weight: 620;
+  letter-spacing: -0.02em;
+}
+
+.modalDescription {
+  margin-top: var(--space-1);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.modalBody {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--space-5);
+}
+
+.modalFooter {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-5);
+  border-top: 1px solid var(--border-subtle);
+  background: var(--surface-sunken);
+}
+
+/* Drawer --------------------------------------------------------------- */
+.drawer {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-overlay);
+  box-shadow: var(--shadow-lg);
+  animation: drawer-slide var(--duration-base) var(--ease-out);
+}
+
+.drawer-right {
+  top: 0;
+  right: 0;
+  height: 100%;
+  max-width: 92vw;
+}
+
+.drawer-left {
+  top: 0;
+  left: 0;
+  height: 100%;
+  max-width: 92vw;
+}
+
+.drawer-bottom {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-height: 82vh;
+  border-start-start-radius: var(--radius-xl);
+  border-start-end-radius: var(--radius-xl);
+}
+
+.drawerHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.drawerBody {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--space-5);
+}
+
+.drawerFooter {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-5);
+  border-top: 1px solid var(--border-subtle);
+  background: var(--surface-sunken);
+}
+
+/* Tooltip -------------------------------------------------------------- */
+.tooltipAnchor {
+  position: relative;
+  display: inline-flex;
+}
+
+.tooltip {
+  position: absolute;
+  z-index: 70;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  background: var(--text-primary);
+  color: var(--surface-base);
+  font-size: var(--text-xs);
+  line-height: 1.4;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: var(--shadow-md);
+  animation: overlay-fade var(--duration-fast) var(--ease-out);
+}
+
+.tooltip-top {
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.tooltip-bottom {
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.tooltip-left {
+  right: calc(100% + 6px);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.tooltip-right {
+  left: calc(100% + 6px);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Popover -------------------------------------------------------------- */
+.popoverAnchor {
+  position: relative;
+  display: inline-flex;
+}
+
+.popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  z-index: 55;
+  padding: var(--space-3);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-overlay);
+  box-shadow: var(--shadow-lg);
+  animation: overlay-fade var(--duration-fast) var(--ease-out);
+}
+
+.popover-start {
+  left: 0;
+}
+
+.popover-center {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.popover-end {
+  right: 0;
+}
+
+/* Menu ----------------------------------------------------------------- */
+.menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 55;
+  padding: var(--space-1);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-overlay);
+  box-shadow: var(--shadow-lg);
+  animation: overlay-fade var(--duration-fast) var(--ease-out);
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: 6px var(--space-2);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.menuItem:hover {
+  background: var(--surface-hover);
+}
+
+.menuItemActive {
+  color: var(--accent-text);
+  background: var(--accent-soft);
+}
+
+.menuItemDanger {
+  color: var(--danger-base);
+}
+
+.menuItemDanger:hover {
+  background: var(--danger-soft);
+}
+
+.menuIcon {
+  display: inline-flex;
+  color: var(--text-tertiary);
+}
+
+.menuItemDanger .menuIcon {
+  color: var(--danger-base);
+}
+
+.menuLabel {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.menuDivider {
+  height: 1px;
+  margin: var(--space-1) 0;
+  background: var(--border-subtle);
+}
+
+@keyframes overlay-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modal-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes drawer-slide {
+  from {
+    opacity: 0;
+    transform: translateX(var(--drawer-offset, 16px));
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.drawer-right {
+  --drawer-offset: 24px;
+}
+
+.drawer-left {
+  --drawer-offset: -24px;
+}
+
+.drawer-bottom {
+  --drawer-offset: 0;
+}
