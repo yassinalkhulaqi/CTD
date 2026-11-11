@@ -154,6 +154,60 @@ class ActivityEvent:
 
 
 @dataclass(frozen=True, slots=True)
+class User:
+    """A dashboard account able to authenticate against the API."""
+
+    id: str
+    username: str
+    email: str
+    password_hash: str
+    role: MemberRole = MemberRole.VIEWER
+    team_id: str | None = None
+    is_active: bool = True
+    created_at: datetime = field(default_factory=utcnow)
+    last_login_at: datetime | None = None
+
+    @property
+    def is_admin(self) -> bool:
+        """Return whether the user holds administrative clearance."""
+        return self.role.satisfies(MemberRole.ADMIN)
+
+    @property
+    def can_write(self) -> bool:
+        """Return whether the user may record solves."""
+        return self.role.satisfies(MemberRole.ANALYST)
+
+
+@dataclass(frozen=True, slots=True)
+class ApiKey:
+    """A long lived credential used for machine to machine access."""
+
+    id: str
+    user_id: str
+    name: str
+    prefix: str
+    secret_hash: str
+    scopes: tuple[str, ...] = ()
+    created_at: datetime = field(default_factory=utcnow)
+    last_used_at: datetime | None = None
+    revoked_at: datetime | None = None
+
+    @property
+    def is_revoked(self) -> bool:
+        """Return whether the key has been revoked."""
+        return self.revoked_at is not None
+
+    @property
+    def masked(self) -> str:
+        """Return the display form of the key."""
+        return f"ctfd_{self.prefix}_{'*' * 8}"
+
+    def allows(self, permission: str) -> bool:
+        """Return whether the key scope covers the requested permission."""
+        return not self.scopes or permission in self.scopes
+
+
+@dataclass(frozen=True, slots=True)
 class TeamScore:
     """Aggregated scoreboard row for a single team."""
 

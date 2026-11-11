@@ -6,8 +6,10 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, status
 
+from ctf_team_dashboard.dependencies import require_permission
 from ctf_team_dashboard.domain.models import Solve
 from ctf_team_dashboard.schemas import SolveCreate, SolveRead
+from ctf_team_dashboard.security.permissions import Permission
 from ctf_team_dashboard.services.solves import SolveService
 
 router = APIRouter(tags=["solves"])
@@ -64,7 +66,11 @@ def get_solve(solve_id: str, service: SolveServiceDep) -> SolveRead:
     response_model=SolveRead,
     status_code=status.HTTP_201_CREATED,
 )
-def record_solve(payload: SolveCreate, service: SolveServiceDep) -> SolveRead:
+def record_solve(
+    payload: SolveCreate,
+    service: SolveServiceDep,
+    _principal: object = Depends(require_permission(Permission.SOLVE_CREATE)),
+) -> SolveRead:
     """Record a solve and award the challenge points."""
     solve = service.record_solve(
         challenge_id=payload.challenge_id,
@@ -76,6 +82,10 @@ def record_solve(payload: SolveCreate, service: SolveServiceDep) -> SolveRead:
 
 
 @router.delete("/api/solves/{solve_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_solve(solve_id: str, service: SolveServiceDep) -> None:
+def delete_solve(
+    solve_id: str,
+    service: SolveServiceDep,
+    _principal: object = Depends(require_permission(Permission.SOLVE_DELETE)),
+) -> None:
     """Withdraw a solve."""
     service.delete_solve(solve_id)

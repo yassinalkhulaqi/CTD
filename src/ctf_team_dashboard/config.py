@@ -79,6 +79,8 @@ class Settings:
     access_token_ttl_seconds: int = 3600
     rate_limit_per_minute: int = 240
     allowed_origins: tuple[str, ...] = field(default=("http://localhost:5173",))
+    auth_enabled: bool = False
+    refresh_token_ttl_seconds: int = 60 * 60 * 24 * 14
 
     @classmethod
     def from_env(cls) -> Settings:
@@ -96,6 +98,10 @@ class Settings:
             auth_secret=_env("AUTH_SECRET", "change-me-in-production") or "",
             access_token_ttl_seconds=_env_int("ACCESS_TOKEN_TTL_SECONDS", 3600, minimum=60),
             rate_limit_per_minute=_env_int("RATE_LIMIT_PER_MINUTE", 240, minimum=1),
+            auth_enabled=_env_bool("AUTH_ENABLED", False),
+            refresh_token_ttl_seconds=_env_int(
+                "REFRESH_TOKEN_TTL_SECONDS", 60 * 60 * 24 * 14, minimum=300
+            ),
         )
 
     @property
