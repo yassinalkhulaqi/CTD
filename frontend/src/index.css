@@ -1,124 +1,11 @@
 /**
- * Design tokens for the CTF Team Dashboard.
+ * Global entry point of the stylesheet.
  *
- * The tokens are declared as CSS custom properties so the light and dark
- * themes can be swapped at runtime without re-rendering the component tree.
+ * The design tokens live in `styles/tokens.css`; this file only wires the
+ * tokens together with the global reset and the base element styles.
  */
 
-:root {
-  color-scheme: light;
-
-  /* Typography -------------------------------------------------- */
-  --font-sans: "Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-mono: "JetBrains Mono", "SFMono-Regular", "Menlo", monospace;
-
-  --text-xs: 0.6875rem;
-  --text-sm: 0.8125rem;
-  --text-base: 0.875rem;
-  --text-lg: 1rem;
-  --text-xl: 1.25rem;
-  --text-2xl: 1.5rem;
-  --text-3xl: 1.875rem;
-  --text-4xl: 2.25rem;
-
-  /* Radii -------------------------------------------------------- */
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
-  --radius-xl: 20px;
-  --radius-full: 9999px;
-
-  /* Spacing scale ------------------------------------------------ */
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 20px;
-  --space-6: 24px;
-  --space-8: 32px;
-  --space-10: 40px;
-  --space-12: 48px;
-
-  /* Motion ------------------------------------------------------- */
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-  --duration-fast: 120ms;
-  --duration-base: 200ms;
-  --duration-slow: 400ms;
-
-  /* Semantic colours (light) ------------------------------------ */
-  --surface-base: #f7f8fa;
-  --surface-raised: #ffffff;
-  --surface-overlay: #ffffff;
-  --surface-sunken: #eef0f4;
-  --surface-hover: rgb(15 23 42 / 6%);
-
-  --border-subtle: rgb(15 23 42 / 8%);
-  --border-default: rgb(15 23 42 / 12%);
-  --border-strong: rgb(15 23 42 / 20%);
-
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-tertiary: #94a3b8;
-  --text-inverted: #ffffff;
-
-  --accent-base: #4f46e5;
-  --accent-hover: #4338ca;
-  --accent-soft: rgb(79 70 229 / 12%);
-  --accent-text: #4338ca;
-
-  --success-base: #059669;
-  --success-soft: rgb(5 150 105 / 12%);
-  --warning-base: #d97706;
-  --warning-soft: rgb(217 119 6 / 14%);
-  --danger-base: #dc2626;
-  --danger-soft: rgb(220 38 38 / 12%);
-  --info-base: #0284c7;
-  --info-soft: rgb(2 132 199 / 12%);
-
-  --shadow-sm: 0 1px 2px rgb(15 23 42 / 6%);
-  --shadow-md: 0 4px 16px -4px rgb(15 23 42 / 12%);
-  --shadow-lg: 0 18px 40px -12px rgb(15 23 42 / 24%);
-  --shadow-focus: 0 0 0 3px rgb(79 70 229 / 35%);
-}
-
-[data-theme="dark"] {
-  color-scheme: dark;
-
-  --surface-base: #08090d;
-  --surface-raised: #101218;
-  --surface-overlay: #15171f;
-  --surface-sunken: #0c0e13;
-  --surface-hover: rgb(255 255 255 / 6%);
-
-  --border-subtle: rgb(255 255 255 / 6%);
-  --border-default: rgb(255 255 255 / 10%);
-  --border-strong: rgb(255 255 255 / 18%);
-
-  --text-primary: #f1f5f9;
-  --text-secondary: #a3adbd;
-  --text-tertiary: #64748b;
-  --text-inverted: #0f172a;
-
-  --accent-base: #6366f1;
-  --accent-hover: #818cf8;
-  --accent-soft: rgb(99 102 241 / 18%);
-  --accent-text: #a5b4fc;
-
-  --success-base: #10b981;
-  --success-soft: rgb(16 185 129 / 16%);
-  --warning-base: #f59e0b;
-  --warning-soft: rgb(245 158 11 / 16%);
-  --danger-base: #f43f5e;
-  --danger-soft: rgb(244 63 94 / 16%);
-  --info-base: #38bdf8;
-  --info-soft: rgb(56 189 248 / 16%);
-
-  --shadow-sm: 0 1px 2px rgb(0 0 0 / 40%);
-  --shadow-md: 0 4px 16px -4px rgb(0 0 0 / 56%);
-  --shadow-lg: 0 18px 40px -12px rgb(0 0 0 / 72%);
-  --shadow-focus: 0 0 0 3px rgb(99 102 241 / 45%);
-}
+@import "./styles/tokens.css";
 
 *,
 *::before,
@@ -132,15 +19,22 @@ body,
   height: 100%;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 body {
   margin: 0;
   font-family: var(--font-sans);
   font-size: var(--text-base);
-  line-height: 1.55;
+  line-height: var(--leading-normal);
   color: var(--text-primary);
   background: var(--surface-base);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  font-feature-settings: var(--font-feature-numeric);
 }
 
 h1,
@@ -148,8 +42,31 @@ h2,
 h3,
 h4,
 p,
-figure {
+figure,
+blockquote,
+dl,
+dd {
   margin: 0;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  line-height: var(--leading-tight);
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+ul[class],
+ol[class] {
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 button,
@@ -160,19 +77,58 @@ textarea {
   color: inherit;
 }
 
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
 a {
   color: inherit;
   text-decoration: none;
 }
 
+img,
+svg,
+video,
+canvas {
+  display: block;
+  max-width: 100%;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid var(--border-subtle);
+}
+
+fieldset {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+code,
+kbd,
+samp,
+pre {
+  font-family: var(--font-mono);
+}
+
 :focus-visible {
-  outline: 2px solid var(--accent-base);
-  outline-offset: 2px;
+  outline: var(--ring-width) solid var(--ring-color);
+  outline-offset: var(--ring-offset);
 }
 
 ::selection {
-  background: var(--accent-soft);
+  background: var(--accent-soft-strong);
   color: var(--text-primary);
+}
+
+::placeholder {
+  color: var(--text-tertiary);
+  opacity: 1;
 }
 
 @media (prefers-reduced-motion: reduce) {
