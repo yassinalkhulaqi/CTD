@@ -111,6 +111,7 @@ export {
   TableHead,
   TableHeaderCell,
   TableRow,
+  TableToolbar,
 } from "./Table";
 export type {
   SortableTableProps,
@@ -120,6 +121,7 @@ export type {
   TableHeaderCellProps,
   TableProps,
   TableRowProps,
+  TableToolbarProps,
 } from "./Table";
 
 export { ThemeToggle } from "./ThemeToggle";
