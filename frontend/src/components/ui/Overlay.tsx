@@ -177,6 +177,8 @@ export interface DrawerProps {
   onClose: () => void;
   /** The drawer title. */
   title?: ReactNode;
+  /** Supporting copy rendered under the title. */
+  description?: ReactNode;
   /** The drawer body. */
   children?: ReactNode;
   /** The footer region of the drawer. */
@@ -185,6 +187,10 @@ export interface DrawerProps {
   side?: "left" | "right" | "bottom";
   /** The width of the drawer. */
   width?: number;
+  /** Hide the close button. */
+  hideClose?: boolean;
+  /** Prevent closing by clicking the backdrop or pressing Escape. */
+  persistent?: boolean;
 }
 
 /**
@@ -197,22 +203,32 @@ export function Drawer({
   open,
   onClose,
   title,
+  description,
   children,
   footer,
   side = "right",
   width = 420,
+  hideClose = false,
+  persistent = false,
 }: DrawerProps) {
+  const titleId = useId();
+  const descriptionId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
   useFocusTrap(panelRef, open);
 
   useEffect(() => {
     if (!open) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     function onKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") onClose();
+      if (event.key === "Escape" && !persistent) onClose();
     }
     document.addEventListener("keydown", onKeyDown);
-    return () => document.removeEventListener("keydown", onKeyDown);
-  }, [open, onClose]);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open, onClose, persistent]);
 
   if (!open || typeof document === "undefined") return null;
 
@@ -220,7 +236,7 @@ export function Drawer({
     <div
       className={styles.backdrop}
       onMouseDown={(event) => {
-        if (event.target === event.currentTarget) onClose();
+        if (event.target === event.currentTarget && !persistent) onClose();
       }}
     >
       <div
@@ -229,10 +245,27 @@ export function Drawer({
         style={side === "bottom" ? undefined : { width }}
         role="dialog"
         aria-modal="true"
+        aria-labelledby={title ? titleId : undefined}
+        aria-describedby={description ? descriptionId : undefined}
+        tabIndex={-1}
       >
+        {side === "bottom" ? <div className={styles.drawerGrip} aria-hidden="true" /> : null}
         <header className={styles.drawerHeader}>
-          <h2 className={styles.modalTitle}>{title}</h2>
-          <IconButton icon={<X size={16} />} label="Close panel" onClick={onClose} />
+          <div>
+            {title ? (
+              <h2 className={styles.modalTitle} id={titleId}>
+                {title}
+              </h2>
+            ) : null}
+            {description ? (
+              <p className={styles.modalDescription} id={descriptionId}>
+                {description}
+              </p>
+            ) : null}
+          </div>
+          {hideClose ? null : (
+            <IconButton icon={<X size={16} />} label="Close panel" onClick={onClose} />
+          )}
         </header>
         <div className={styles.drawerBody}>{children}</div>
         {footer ? <footer className={styles.drawerFooter}>{footer}</footer> : null}
