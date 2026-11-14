@@ -2,7 +2,7 @@
  * Small display primitives: badges, avatars, status dots and keyboard keys.
  */
 
-import { forwardRef, type HTMLAttributes, type ReactNode } from "react";
+import { forwardRef, type CSSProperties, type HTMLAttributes, type ReactNode } from "react";
 import { cn } from "../../lib/utils";
 import styles from "./Display.module.css";
 
@@ -19,6 +19,8 @@ export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
   outline?: boolean;
   /** Render the badge with a pulsing animation. */
   pulse?: boolean;
+  /** The compact size variant. */
+  size?: "sm" | "md";
 }
 
 /**
@@ -29,7 +31,16 @@ export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
  * @returns The badge element.
  */
 export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
-  { tone = "neutral", dot = false, outline = false, pulse = false, className, children, ...rest },
+  {
+    tone = "neutral",
+    dot = false,
+    outline = false,
+    pulse = false,
+    size = "md",
+    className,
+    children,
+    ...rest
+  },
   ref,
 ) {
   return (
@@ -38,6 +49,7 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
       className={cn(
         styles.badge,
         styles[`badge-${tone}`],
+        size === "sm" && styles["badge-sm"],
         outline && styles.outline,
         pulse && styles.pulse,
         className,
@@ -109,7 +121,7 @@ export function colorOf(value: string): string {
  * @returns The avatar element.
  */
 export const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(function Avatar(
-  { name, src, size = "md", presence, color, className, ...rest },
+  { name, src, size = "md", presence, color, className, style, ...rest },
   ref,
 ) {
   const accent = color ?? colorOf(name);
@@ -117,19 +129,21 @@ export const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(function Avatar(
     <span
       ref={ref}
       className={cn(styles.avatar, styles[`avatar-${size}`], className)}
-      style={src ? undefined : { background: `${accent}22`, color: accent }}
+      style={{ ...style, "--avatar-accent": accent } as CSSProperties}
       title={name}
       {...rest}
     >
       {src ? (
         <img className={styles.avatarImage} src={src} alt="" loading="lazy" />
       ) : (
-        <span className={styles.avatarInitials}>{initialsOf(name)}</span>
+        <span className={styles.avatarInitials} aria-hidden="true">
+          {initialsOf(name)}
+        </span>
       )}
       {presence ? (
         <span
           className={cn(styles.presence, styles[`presence-${presence}`])}
-          aria-label={presence}
+          aria-label={`${name} is ${presence}`}
           role="img"
         />
       ) : null}
@@ -193,18 +207,24 @@ export function Kbd({ className, children, ...rest }: HTMLAttributes<HTMLElement
 /**
  * Render a small coloured dot used for status indicators.
  *
+ * Without a `label` the dot is decorative; with one it is announced.
+ *
  * @param props - The component props.
  * @returns The dot element.
  */
 export function StatusDot({
   tone = "neutral",
   pulse = false,
+  label,
   className,
   ...rest
-}: HTMLAttributes<HTMLSpanElement> & { tone?: BadgeTone; pulse?: boolean }) {
+}: HTMLAttributes<HTMLSpanElement> & { tone?: BadgeTone; pulse?: boolean; label?: string }) {
   return (
     <span
       className={cn(styles.statusDot, styles[`badge-${tone}`], pulse && styles.pulse, className)}
+      role={label ? "img" : undefined}
+      aria-label={label}
+      aria-hidden={label ? undefined : true}
       {...rest}
     />
   );
