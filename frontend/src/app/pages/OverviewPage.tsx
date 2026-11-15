@@ -3,8 +3,9 @@
  */
 
 import { useMemo } from "react";
-import { Flag, ShieldCheck, Target, Trophy, Users } from "lucide-react";
+import { ArrowUpRight, Flag, RefreshCw, ShieldCheck, Target, Trophy, Users } from "lucide-react";
 import { useChallenges, useDashboardSnapshot, useMembers } from "../../api/resources";
+import { Link } from "react-router-dom";
 import { useActiveTeamId } from "../../stores/dashboardStore";
 import { formatNumber, formatPercent } from "../../lib/utils";
 import {
@@ -16,6 +17,7 @@ import {
   CardTitle,
   EmptyState,
   ErrorState,
+  Button,
   Progress,
   ScoreRing,
   Skeleton,
@@ -61,6 +63,65 @@ export default function OverviewPage() {
 
   return (
     <div className={styles.page}>
+      <section className={styles.hero} aria-label="Competition summary">
+        <div className={styles.heroBody}>
+          <span className={styles.heroEyebrow}>
+            <span className={styles.heroPulse} aria-hidden="true" />
+            Live competition
+          </span>
+          <h2 className={styles.heroTitle}>
+            {overview
+              ? `${formatPercent(overview.completion_rate, 0)} of the board cleared`
+              : "Reading the scoreboard?"}
+          </h2>
+          <p className={styles.heroText}>
+            {overview
+              ? `${formatNumber(overview.solved_challenges)} of ${formatNumber(overview.challenges)} challenges solved for ${formatNumber(overview.total_points)} points across ${formatNumber(overview.teams)} teams.`
+              : "The headline numbers appear as soon as the event feed responds."}
+          </p>
+          <div className={styles.heroActions}>
+            <Link to="/challenges" className={styles.heroCta}>
+              Open challenge board
+              <ArrowUpRight size={14} aria-hidden="true" />
+            </Link>
+            <Button
+              variant="ghost"
+              size="sm"
+              icon={<RefreshCw size={14} />}
+              onClick={() => void snapshot.refetch()}
+              loading={snapshot.isFetching}
+              loadingLabel="Refreshing"
+            >
+              Refresh
+            </Button>
+          </div>
+        </div>
+        <div className={styles.heroSide}>
+          <div className={styles.heroMeter}>
+            <span className={styles.heroMeterLabel}>Completion</span>
+            <span className={styles.heroMeterValue}>
+              {formatPercent(overview?.completion_rate ?? 0, 0)}
+            </span>
+            <Progress
+              value={overview?.completion_rate ?? 0}
+              max={1}
+              tone="accent"
+              label="Overall completion"
+            />
+          </div>
+          <dl className={styles.heroStats}>
+            <div>
+              <dt>Solved</dt>
+              <dd>{formatNumber(overview?.solved_challenges ?? 0)}</dd>
+            </div>
+            <div>
+              <dt>Online</dt>
+              <dd>{formatNumber(overview?.active_members ?? 0)}</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
       <section className={styles.stats} aria-label="Headline statistics">
         <StatCard
           label="Teams"
@@ -189,27 +250,30 @@ export default function OverviewPage() {
                   .filter((challenge) => challenge.status !== "solved")
                   .slice(0, 6)
                   .map((challenge) => (
-                    <li key={challenge.id} className={styles.challenge}>
-                      <div className={styles.challengeMain}>
-                        <span className={styles.challengeTitle}>{challenge.title}</span>
-                        <span className={styles.challengeMeta}>
-                          {challenge.category} · {challenge.difficulty}
+                    <li key={challenge.id} className={styles.challengeItem}>
+                      <Link to={`/challenges/${challenge.id}`} className={styles.challenge}>
+                        <div className={styles.challengeMain}>
+                          <span className={styles.challengeTitle}>{challenge.title}</span>
+                          <span className={styles.challengeMeta}>
+                            {challenge.category} · {challenge.difficulty}
+                          </span>
+                        </div>
+                        <Badge
+                          tone={
+                            challenge.status === "active"
+                              ? "accent"
+                              : challenge.status === "locked"
+                                ? "danger"
+                                : "neutral"
+                          }
+                        >
+                          {challenge.status}
+                        </Badge>
+                        <span className={styles.challengePoints}>
+                          {formatNumber(challenge.points)} pts
                         </span>
-                      </div>
-                      <Badge
-                        tone={
-                          challenge.status === "active"
-                            ? "accent"
-                            : challenge.status === "locked"
-                              ? "danger"
-                              : "neutral"
-                        }
-                      >
-                        {challenge.status}
-                      </Badge>
-                      <span className={styles.challengePoints}>
-                        {formatNumber(challenge.points)} pts
-                      </span>
+                        <ArrowUpRight size={14} className={styles.challengeArrow} aria-hidden="true" />
+                      </Link>
                     </li>
                   ))}
               </ul>
