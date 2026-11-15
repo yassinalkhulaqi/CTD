@@ -30,5 +30,5 @@ primitives, charts, overlays, toasts, virtual tables and every page of the shell
 ## Known state
 
 - Branch sits **25 commits** ahead of `origin/main`; target is **≥100 meaningful commits**.
-- Remaining: final responsive / a11y polish pass, delivery report completion, commit cadence to
-  reach the commit target, optional push to `origin`.
+- Delivery report finalized; frontend suite green (ESLint, TypeScript, 157 tests, production build).
+- Remaining: commit cadence to reach the ?100-commit target and an optional push to `origin`.
