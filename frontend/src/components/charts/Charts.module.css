@@ -18,6 +18,18 @@
   vector-effect: non-scaling-stroke;
 }
 
+.baseline {
+  stroke: var(--border-default);
+  stroke-width: 0.6;
+}
+
+.guide {
+  stroke: var(--border-strong);
+  stroke-width: 0.8;
+  stroke-dasharray: 3 4;
+  opacity: 0.7;
+}
+
 .bar {
   transition:
     opacity var(--duration-fast) var(--ease-out),
@@ -25,8 +37,12 @@
   cursor: pointer;
 }
 
+.barMuted {
+  opacity: 0.45;
+}
+
 .barActive {
-  filter: brightness(1.25);
+  filter: brightness(1.22) saturate(1.1);
   opacity: 1;
 }
 
@@ -38,29 +54,34 @@
   pointer-events: none;
 }
 
-.dot {
-  fill: var(--surface-raised);
-  stroke: var(--accent-base);
-  stroke-width: 1.4;
-  vector-effect: non-scaling-stroke;
+.hitArea {
   cursor: pointer;
+}
+
+.dot {
+  stroke: var(--surface-raised);
+  stroke-width: 1.2;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
   transition: r var(--duration-fast) var(--ease-out);
 }
 
 .dotActive {
-  fill: var(--accent-base);
+  stroke-width: 1.6;
 }
 
 .axis {
   display: flex;
   justify-content: space-between;
   gap: 2px;
-  font-size: 10px;
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-wide);
   color: var(--text-tertiary);
 }
 
 .axisLabel {
   flex: 1;
+  min-width: 0;
   text-align: center;
   background: none;
   border: none;
@@ -74,9 +95,15 @@
   transition: color var(--duration-fast) var(--ease-out);
 }
 
+.axisLabel:focus-visible {
+  outline: var(--ring-width) solid var(--ring-color);
+  outline-offset: 2px;
+  border-radius: var(--radius-2xs);
+}
+
 .axisLabelActive {
   color: var(--text-primary);
-  font-weight: 650;
+  font-weight: var(--weight-semibold);
 }
 
 .caption {
@@ -84,8 +111,15 @@
   color: var(--text-secondary);
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
   background: var(--surface-sunken);
   align-self: flex-start;
+  font-variant-numeric: tabular-nums;
+}
+
+.caption strong {
+  color: var(--text-primary);
+  font-weight: var(--weight-semibold);
 }
 
 .empty {
@@ -104,38 +138,69 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-4);
   margin: 0;
 }
 
+.donutGraphic {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+
 .donutSlice {
+  cursor: pointer;
   transition:
     stroke-width var(--duration-fast) var(--ease-out),
     opacity var(--duration-fast) var(--ease-out);
 }
 
-.donutSlice:hover {
-  stroke-width: 22;
-  opacity: 0.92;
+.donutSliceActive {
+  filter: drop-shadow(0 0 6px color-mix(in srgb, currentColor 30%, transparent));
 }
 
 .donutCentre {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: calc(var(--space-6) + 4px);
+  text-align: center;
   font-size: var(--text-lg);
-  font-weight: 650;
+  font-weight: var(--weight-semibold);
+  line-height: 1.1;
   color: var(--text-primary);
   font-variant-numeric: tabular-nums;
   pointer-events: none;
+}
+
+.donutCentreValue {
+  font-size: var(--text-xl);
+  letter-spacing: var(--tracking-tight);
+}
+
+.donutCentreLabel {
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .legend {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: var(--space-2) var(--space-4);
+  gap: var(--space-1) var(--space-2);
+  margin: 0;
   font-size: var(--text-xs);
   color: var(--text-secondary);
 }
@@ -144,12 +209,34 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
+  padding: 3px var(--space-2);
+  border: 1px solid transparent;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out);
+}
+
+.legendItem:hover,
+.legendItemActive {
+  background: var(--surface-hover);
+  border-color: var(--border-subtle);
+}
+
+.legendItem:focus-visible {
+  outline: var(--ring-width) solid var(--ring-color);
+  outline-offset: 1px;
 }
 
 .legendSwatch {
   width: 8px;
   height: 8px;
   border-radius: 2px;
+  flex: none;
 }
 
 .legendValue {
@@ -173,39 +260,91 @@
 
 .heatmapRow {
   display: grid;
-  grid-template-columns: repeat(24, 1fr);
+  grid-template-columns: 32px minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.heatmapRowLabel {
+  font-size: var(--text-2xs);
+  color: var(--text-tertiary);
+  text-align: right;
+  line-height: 1;
+}
+
+.heatmapCells {
+  display: grid;
+  grid-template-columns: repeat(24, minmax(0, 1fr));
   gap: 3px;
+  align-items: center;
+}
+
+.heatmapHour {
+  font-size: 9px;
+  line-height: 1;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  overflow: visible;
 }
 
 .heatmapCell {
   aspect-ratio: 1;
-  min-width: 6px;
+  min-width: 4px;
   border-radius: 3px;
   border: none;
   padding: 0;
   cursor: pointer;
   transition:
     transform var(--duration-fast) var(--ease-out),
-    box-shadow var(--duration-fast) var(--ease-out);
+    box-shadow var(--duration-fast) var(--ease-out),
+    outline-color var(--duration-fast) var(--ease-out);
+  outline: 2px solid transparent;
+  outline-offset: 1px;
 }
 
 .heatmapCell:hover,
 .heatmapCellActive {
-  transform: scale(1.18);
+  transform: scale(1.22);
   box-shadow: var(--shadow-sm);
 }
 
-.heatmapLabels {
-  display: grid;
-  grid-template-template-columns: repeat(7, 1fr);
-  gap: 3px;
-  font-size: 10px;
-  color: var(--text-tertiary);
-  text-align: center;
+.heatmapCell:focus-visible {
+  outline-color: var(--ring-color);
+  z-index: 1;
 }
 
-.heatmapRowLabel {
-  grid-column: span 1;
+.heatmapFooter {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  font-size: var(--text-2xs);
+  color: var(--text-tertiary);
+}
+
+.heatmapScale {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.heatmapScale span {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+.heatmapScaleLabel {
+  letter-spacing: var(--tracking-wide);
+}
+
+.heatmapHover {
+  margin-left: auto;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.heatmapHover strong {
+  color: var(--text-primary);
 }
 
 /* Sparkline ------------------------------------------------------------ */
