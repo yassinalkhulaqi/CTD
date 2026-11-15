@@ -9,6 +9,7 @@ import {
   useId,
   useMemo,
   type HTMLAttributes,
+  type KeyboardEvent,
   type ReactNode,
 } from "react";
 import { cn } from "../../lib/utils";
@@ -91,16 +92,69 @@ export interface TabsListProps extends HTMLAttributes<HTMLDivElement> {
 /**
  * Render the list of tab triggers.
  *
+ * Arrow keys, Home and End move the selection, following the WAI-ARIA tabs
+ * pattern.
+ *
  * @param props - The component props.
  * @returns The tab list element.
  */
-export function TabsList({ scrollable = false, className, children, ...rest }: TabsListProps) {
+export function TabsList({
+  scrollable = false,
+  className,
+  children,
+  onKeyDown,
+  ...rest
+}: TabsListProps) {
   const context = useTabs();
+
+  const move = (event: KeyboardEvent<HTMLDivElement>, offset: number | "first" | "last") => {
+    const triggers = Array.from(
+      event.currentTarget.querySelectorAll<HTMLButtonElement>('[role="tab"]:not(:disabled)'),
+    );
+    if (triggers.length === 0) return;
+
+    const current = triggers.indexOf(document.activeElement as HTMLButtonElement);
+    const nextIndex =
+      offset === "first"
+        ? 0
+        : offset === "last"
+          ? triggers.length - 1
+          : (Math.max(0, current) + offset + triggers.length) % triggers.length;
+
+    const next = triggers[nextIndex];
+    const value = next.dataset.value;
+    if (value) {
+      context.setValue(value);
+      next.focus();
+    }
+  };
+
   return (
     <div
-      className={cn(styles.list, scrollable && styles.listScrollable, className)}
+      className={cn(
+        styles.list,
+        context.variant === "pill" ? styles.listPill : styles.listUnderline,
+        scrollable && styles.listScrollable,
+        className,
+      )}
       role="tablist"
       aria-label={rest["aria-label"] ?? context.label}
+      onKeyDown={(event) => {
+        if (event.key === "ArrowRight") {
+          event.preventDefault();
+          move(event, 1);
+        } else if (event.key === "ArrowLeft") {
+          event.preventDefault();
+          move(event, -1);
+        } else if (event.key === "Home") {
+          event.preventDefault();
+          move(event, "first");
+        } else if (event.key === "End") {
+          event.preventDefault();
+          move(event, "last");
+        }
+        onKeyDown?.(event);
+      }}
       {...rest}
     >
       {children}
@@ -143,6 +197,7 @@ export function TabsTrigger({
       type="button"
       role="tab"
       id={`${context.baseId}-tab-${value}`}
+      data-value={value}
       aria-selected={active}
       aria-controls={`${context.baseId}-panel-${value}`}
       tabIndex={active ? 0 : -1}

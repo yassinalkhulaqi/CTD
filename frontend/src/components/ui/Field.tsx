@@ -25,6 +25,9 @@ function joinIds(...ids: Array<string | undefined>): string | undefined {
   return filtered.length > 0 ? filtered.join(" ") : undefined;
 }
 
+/** The height rhythm shared by the single-line controls. */
+export type ControlSize = "sm" | "md" | "lg";
+
 /** Props shared by every form control. */
 export interface FieldBaseProps {
   /** The visible label of the control. */
@@ -41,10 +44,26 @@ export interface FieldBaseProps {
   className?: string;
 }
 
+/**
+ * Pick the size modifier for a control.
+ *
+ * @param size - The requested size.
+ * @returns The CSS module class, or `undefined` for the default.
+ */
+function sizeClass(size: ControlSize | undefined): string | undefined {
+  if (size === "sm") return styles.controlSm;
+  if (size === "lg") return styles.controlLg;
+  return undefined;
+}
+
 /** Props accepted by {@link Input}. */
 export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "className">, FieldBaseProps {
   /** Icon rendered inside the leading edge of the control. */
   icon?: ReactNode;
+  /** Content rendered inside the trailing edge of the control. */
+  trailing?: ReactNode;
+  /** The control height. */
+  controlSize?: ControlSize;
 }
 
 /**
@@ -55,7 +74,19 @@ export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
  * @returns The form control.
  */
 export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
-  { label, hint, error, hideLabel, disabled, className, icon, id, ...rest },
+  {
+    label,
+    hint,
+    error,
+    hideLabel,
+    disabled,
+    className,
+    icon,
+    trailing,
+    controlSize,
+    id,
+    ...rest
+  },
   ref,
 ) {
   const generatedId = useId();
@@ -79,12 +110,19 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         <input
           ref={ref}
           id={inputId}
-          className={cn(styles.input, icon && styles.inputWithIcon, error && styles.inputInvalid)}
+          className={cn(
+            styles.input,
+            icon && styles.inputWithIcon,
+            trailing && styles.inputWithTrailing,
+            sizeClass(controlSize),
+            error && styles.inputInvalid,
+          )}
           disabled={disabled}
           aria-invalid={error ? true : undefined}
           aria-describedby={joinIds(hintId, errorId)}
           {...rest}
         />
+        {trailing ? <span className={styles.trailing}>{trailing}</span> : null}
       </div>
       {error ? (
         <p className={styles.error} id={errorId} role="alert">
@@ -146,7 +184,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
         value={value}
         maxLength={maxLength}
         aria-invalid={error ? true : undefined}
-        aria-describedby={cn(hintId, errorId) || undefined}
+        aria-describedby={joinIds(hintId, errorId)}
         {...rest}
       />
       {error ? (
@@ -180,6 +218,8 @@ export interface SelectProps
   options: SelectOption[];
   /** Render a placeholder option as the first entry. */
   placeholder?: string;
+  /** The control height. */
+  controlSize?: ControlSize;
 }
 
 /**
@@ -190,7 +230,19 @@ export interface SelectProps
  * @returns The form control.
  */
 export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select(
-  { label, hint, error, hideLabel, disabled, className, options, placeholder, id, ...rest },
+  {
+    label,
+    hint,
+    error,
+    hideLabel,
+    disabled,
+    className,
+    options,
+    placeholder,
+    controlSize,
+    id,
+    ...rest
+  },
   ref,
 ) {
   const generatedId = useId();
@@ -209,7 +261,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
         <select
           ref={ref}
           id={selectId}
-          className={cn(styles.select, error && styles.inputInvalid)}
+          className={cn(styles.select, sizeClass(controlSize), error && styles.inputInvalid)}
           disabled={disabled}
           aria-invalid={error ? true : undefined}
           aria-describedby={joinIds(hintId, errorId)}
@@ -339,3 +391,47 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(function Switch(
     </div>
   );
 });
+
+/** Props accepted by {@link FormRow}. */
+export interface FormRowProps {
+  /** The row heading. */
+  title: string;
+  /** Supporting copy explaining the setting. */
+  description?: string;
+  /** The control rendered on the trailing edge. */
+  children: ReactNode;
+  /** Associate the heading with a control id. */
+  htmlFor?: string;
+  /** Additional class applied to the row. */
+  className?: string;
+}
+
+/**
+ * Render a settings row with a title, description and trailing control.
+ *
+ * @param props - The component props.
+ * @returns The row element.
+ */
+export function FormRow({
+  title,
+  description,
+  children,
+  htmlFor,
+  className,
+}: FormRowProps) {
+  return (
+    <div className={cn(styles.formRow, className)}>
+      <div className={styles.formRowText}>
+        {htmlFor ? (
+          <label className={styles.formRowTitle} htmlFor={htmlFor}>
+            {title}
+          </label>
+        ) : (
+          <span className={styles.formRowTitle}>{title}</span>
+        )}
+        {description ? <span className={styles.formRowDescription}>{description}</span> : null}
+      </div>
+      <div className={styles.formRowControl}>{children}</div>
+    </div>
+  );
+}

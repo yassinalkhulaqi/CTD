@@ -33,6 +33,7 @@ export type { AvatarGroupProps, AvatarProps, BadgeProps, BadgeTone } from "./Dis
 
 export {
   Checkbox,
+  FormRow,
   Input,
   Select,
   Switch,
@@ -40,7 +41,9 @@ export {
 } from "./Field";
 export type {
   CheckboxProps,
+  ControlSize,
   FieldBaseProps,
+  FormRowProps,
   InputProps,
   SelectOption,
   SelectProps,
@@ -108,6 +111,7 @@ export {
   TableHead,
   TableHeaderCell,
   TableRow,
+  TableToolbar,
 } from "./Table";
 export type {
   SortableTableProps,
@@ -117,6 +121,7 @@ export type {
   TableHeaderCellProps,
   TableProps,
   TableRowProps,
+  TableToolbarProps,
 } from "./Table";
 
 export { ThemeToggle } from "./ThemeToggle";

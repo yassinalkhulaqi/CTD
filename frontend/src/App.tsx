@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { AppShell } from "./app/AppShell";
 import { buildRoutes } from "./app/routes";
-import { ConnectionBadge } from "./components/realtime/ConnectionBadge";
-import { ThemeToggle } from "./components/ui";
+import { ShieldCheck } from "lucide-react";
+import { Spinner } from "./components/ui";
 import { LoginPage } from "./features/auth/LoginPage";
 import { fetchAuthConfig } from "./features/auth/api";
 import { useAuth } from "./features/auth/useAuth";
 import { RealtimeProvider } from "./realtime/RealtimeProvider";
-import "./App.css";
+import styles from "./App.module.css";
 
 /**
  * Root application component.
@@ -17,7 +17,7 @@ import "./App.css";
  * here so the rest of the application only deals with routing and data.
  */
 export function App() {
-  const { isAuthenticated, status } = useAuth();
+  const { isAuthenticated } = useAuth();
   const [authEnabled, setAuthEnabled] = useState(false);
   const [checked, setChecked] = useState(false);
 
@@ -39,7 +39,20 @@ export function App() {
   }, []);
 
   if (!checked) {
-    return <main className="app-shell__main">Loading the dashboard…</main>;
+    return (
+      <main className={styles.boot} aria-busy="true" aria-live="polite">
+        <div className={styles.bootCard}>
+          <span className={styles.bootMark} aria-hidden="true">
+            <ShieldCheck size={20} />
+          </span>
+          <div className={styles.bootText}>
+            <span className={styles.bootName}>CTF Team Dashboard</span>
+            <span className={styles.bootMeta}>Preparing your workspace…</span>
+          </div>
+          <Spinner size={16} label="Loading the dashboard" />
+        </div>
+      </main>
+    );
   }
 
   if (authEnabled && !isAuthenticated) {
@@ -51,30 +64,13 @@ export function App() {
   return (
     <RealtimeProvider>
       <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-        <div className="app-shell">
-          <header className="app-shell__header">
-            <span className="app-shell__brand">
-              <span className="app-shell__mark" aria-hidden="true">
-                CTF
-              </span>
-              CTF Team Dashboard
-            </span>
-            <div className="app-shell__headerActions">
-              <span className="app-shell__status" data-status={status}>
-                {status === "authenticated" ? "live" : "open mode"}
-              </span>
-              <ConnectionBadge />
-              <ThemeToggle />
-            </div>
-          </header>
-          <Routes>
-            <Route element={<AppShell />}>
-              {routes.map((route) => (
-                <Route key={route.path} path={route.path} element={route.element} />
-              ))}
-            </Route>
-          </Routes>
-        </div>
+        <Routes>
+          <Route element={<AppShell />}>
+            {routes.map((route) => (
+              <Route key={route.path} path={route.path} element={route.element} />
+            ))}
+          </Route>
+        </Routes>
       </BrowserRouter>
     </RealtimeProvider>
   );

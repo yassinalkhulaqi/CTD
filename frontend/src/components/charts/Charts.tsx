@@ -77,7 +77,7 @@ export function BarChart({
         <defs>
           <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor={color} stopOpacity="0.95" />
-            <stop offset="100%" stopColor={color} stopOpacity="0.35" />
+            <stop offset="100%" stopColor={color} stopOpacity="0.32" />
           </linearGradient>
         </defs>
 
@@ -88,7 +88,7 @@ export function BarChart({
             x2="100"
             y1={scaleY(tick, max, height)}
             y2={scaleY(tick, max, height)}
-            className={styles.grid}
+            className={cn(styles.grid, tick === 0 && styles.baseline)}
           />
         ))}
 
@@ -96,19 +96,22 @@ export function BarChart({
           const band = bands[index];
           const barHeight = Math.max(value > 0 ? 1.5 : 0, height - scaleY(value, max, height));
           return (
-            <g key={index}>
-              <rect
-                x={band.start}
-                y={height - barHeight}
-                width={band.width}
-                height={barHeight}
-                rx={1.2}
-                fill={`url(#${gradientId})`}
-                className={cn(styles.bar, hovered === index && styles.barActive)}
-                onMouseEnter={() => setHovered(index)}
-                onMouseLeave={() => setHovered(null)}
-              />
-            </g>
+            <rect
+              key={index}
+              x={band.start}
+              y={height - barHeight}
+              width={band.width}
+              height={barHeight}
+              rx={Math.min(1.6, band.width / 2)}
+              fill={`url(#${gradientId})`}
+              className={cn(
+                styles.bar,
+                hovered !== null && hovered !== index && styles.barMuted,
+                hovered === index && styles.barActive,
+              )}
+              onMouseEnter={() => setHovered(index)}
+              onMouseLeave={() => setHovered(null)}
+            />
           );
         })}
       </svg>
@@ -172,6 +175,7 @@ export function AreaChart({
 }: AreaChartProps) {
   const [hovered, setHovered] = useState<number | null>(null);
   const gradientId = useId();
+  const strokeId = useId();
 
   const max = useMemo(() => niceCeiling(maxOf(values, 1)), [values]);
   const points = useMemo<Point[]>(
@@ -182,6 +186,7 @@ export function AreaChart({
       })),
     [height, max, values],
   );
+  const active = hovered !== null ? points[hovered] : null;
 
   if (values.length === 0) {
     return <div className={cn(styles.empty, className)}>No data to display</div>;
@@ -198,8 +203,14 @@ export function AreaChart({
       >
         <defs>
           <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor={color} stopOpacity="0.35" />
+            <stop offset="0%" stopColor={color} stopOpacity="0.42" />
+            <stop offset="70%" stopColor={color} stopOpacity="0.08" />
             <stop offset="100%" stopColor={color} stopOpacity="0" />
+          </linearGradient>
+          <linearGradient id={strokeId} x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor={color} stopOpacity="0.55" />
+            <stop offset="60%" stopColor={color} stopOpacity="1" />
+            <stop offset="100%" stopColor="var(--chart-2)" />
           </linearGradient>
         </defs>
 
@@ -210,30 +221,51 @@ export function AreaChart({
             x2="100"
             y1={scaleY(tick, max, height)}
             y2={scaleY(tick, max, height)}
-            className={styles.grid}
+            className={cn(styles.grid, tick === 0 && styles.baseline)}
           />
         ))}
+
+        {active ? (
+          <line
+            x1={active.x}
+            x2={active.x}
+            y1={0}
+            y2={height}
+            className={styles.guide}
+            vectorEffect="non-scaling-stroke"
+          />
+        ) : null}
 
         <path d={buildAreaPath(points, height)} fill={`url(#${gradientId})`} className={styles.area} />
         <path
           d={buildSmoothPath(points)}
           fill="none"
-          stroke={color}
-          strokeWidth="1.6"
+          stroke={`url(#${strokeId})`}
+          strokeWidth="1.7"
+          strokeLinecap="round"
           vectorEffect="non-scaling-stroke"
           className={styles.line}
         />
 
         {points.map((point, index) => (
-          <circle
-            key={index}
-            cx={point.x}
-            cy={point.y}
-            r={hovered === index ? 2.4 : 1.4}
-            className={cn(styles.dot, hovered === index && styles.dotActive)}
-            onMouseEnter={() => setHovered(index)}
-            onMouseLeave={() => setHovered(null)}
-          />
+          <g key={index}>
+            <circle
+              cx={point.x}
+              cy={point.y}
+              r={7}
+              fill="transparent"
+              className={styles.hitArea}
+              onMouseEnter={() => setHovered(index)}
+              onMouseLeave={() => setHovered(null)}
+            />
+            <circle
+              cx={point.x}
+              cy={point.y}
+              r={hovered === index ? 2.6 : 1.3}
+              fill={color}
+              className={cn(styles.dot, hovered === index && styles.dotActive)}
+            />
+          </g>
         ))}
       </svg>
 
@@ -300,6 +332,7 @@ export function DonutChart({
   label,
   className,
 }: DonutChartProps) {
+  const [hovered, setHovered] = useState<string | null>(null);
   const total = slices.reduce((sum, slice) => sum + slice.value, 0);
   const radius = (size - thickness) / 2;
   const circumference = 2 * Math.PI * radius;
@@ -310,46 +343,79 @@ export function DonutChart({
     return <div className={cn(styles.empty, className)}>No data to display</div>;
   }
 
+  const activeSlice = slices.find((slice) => slice.label === hovered) ?? null;
+
   return (
     <figure className={cn(styles.donut, className)}>
-      <svg
-        width={size}
-        height={size}
-        viewBox={`0 0 ${size} ${size}`}
-        role="img"
-        aria-label={`${label}. ${formatNumber(total)} in total.`}
-      >
-        <g transform={`rotate(-90 ${size / 2} ${size / 2})`}>
-          {slices.map((slice) => {
-            const fraction = slice.value / total;
-            const dash = fraction * circumference;
-            const element = (
-              <circle
-                key={slice.label}
-                cx={size / 2}
-                cy={size / 2}
-                r={radius}
-                fill="none"
-                stroke={slice.color}
-                strokeWidth={thickness}
-                strokeDasharray={`${dash} ${circumference - dash}`}
-                strokeDashoffset={-offset}
-                className={styles.donutSlice}
-              />
-            );
-            offset += dash;
-            return element;
-          })}
-        </g>
-      </svg>
-      {centreLabel ? <span className={styles.donutCentre}>{centreLabel}</span> : null}
+      <div className={styles.donutGraphic} style={{ width: size, height: size }}>
+        <svg
+          width={size}
+          height={size}
+          viewBox={`0 0 ${size} ${size}`}
+          role="img"
+          aria-label={`${label}. ${formatNumber(total)} in total.`}
+        >
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            fill="none"
+            stroke="var(--surface-sunken)"
+            strokeWidth={thickness}
+          />
+          <g transform={`rotate(-90 ${size / 2} ${size / 2})`}>
+            {slices.map((slice) => {
+              const fraction = slice.value / total;
+              const dash = fraction * circumference;
+              const element = (
+                <circle
+                  key={slice.label}
+                  cx={size / 2}
+                  cy={size / 2}
+                  r={radius}
+                  fill="none"
+                  stroke={slice.color}
+                  strokeWidth={hovered === slice.label ? thickness + 4 : thickness}
+                  strokeLinecap="round"
+                  strokeDasharray={`${Math.max(0, dash - 3)} ${circumference - Math.max(0, dash - 3)}`}
+                  strokeDashoffset={-offset}
+                  className={cn(styles.donutSlice, hovered === slice.label && styles.donutSliceActive)}
+                  onMouseEnter={() => setHovered(slice.label)}
+                  onMouseLeave={() => setHovered(null)}
+                />
+              );
+              offset += dash;
+              return element;
+            })}
+          </g>
+        </svg>
+        <span className={styles.donutCentre}>
+          {activeSlice ? (
+            <>
+              <span className={styles.donutCentreValue}>{percent(activeSlice.value / total)}</span>
+              <span className={styles.donutCentreLabel}>{activeSlice.label}</span>
+            </>
+          ) : (
+            centreLabel
+          )}
+        </span>
+      </div>
+
       <figcaption className={styles.legend}>
         {slices.map((slice) => (
-          <span key={slice.label} className={styles.legendItem}>
-            <span className={styles.legendSwatch} style={{ background: slice.color }} />
+          <button
+            key={slice.label}
+            type="button"
+            className={cn(styles.legendItem, hovered === slice.label && styles.legendItemActive)}
+            onMouseEnter={() => setHovered(slice.label)}
+            onMouseLeave={() => setHovered(null)}
+            onFocus={() => setHovered(slice.label)}
+            onBlur={() => setHovered(null)}
+          >
+            <span className={styles.legendSwatch} style={{ background: slice.color }} aria-hidden="true" />
             {slice.label}
             <span className={styles.legendValue}>{percent(slice.value / total)}</span>
-          </span>
+          </button>
         ))}
       </figcaption>
     </figure>
@@ -388,53 +454,87 @@ export function Heatmap({
 }: HeatmapProps) {
   const [hovered, setHovered] = useState<{ row: number; column: number } | null>(null);
 
-  const max = useMemo(
-    () => maxOf(matrix.flat(), 1),
-    [matrix],
-  );
+  const max = useMemo(() => maxOf(matrix.flat(), 1), [matrix]);
+  const columns = matrix[0]?.length ?? 0;
 
   if (matrix.length === 0) {
     return <div className={cn(styles.empty, className)}>No data to display</div>;
   }
 
+  const hourTicks =
+    columns === 24
+      ? [0, 6, 12, 18]
+      : Array.from({ length: Math.min(columns, 6) }, (_, index) =>
+          Math.round((index * (columns - 1)) / Math.max(1, Math.min(columns, 6) - 1)),
+        );
+
   return (
     <figure className={cn(styles.heatmap, className)}>
       <div className={styles.heatmapGrid} role="img" aria-label={label}>
+        <div className={styles.heatmapRow} aria-hidden="true">
+          <span className={styles.heatmapRowLabel} />
+          <div
+            className={styles.heatmapCells}
+            style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
+          >
+            {Array.from({ length: columns }, (_, columnIndex) => (
+              <span key={columnIndex} className={styles.heatmapHour}>
+                {hourTicks.includes(columnIndex)
+                  ? (columnLabels?.[columnIndex] ?? hourLabel(columnIndex, columns, 23))
+                  : ""}
+              </span>
+            ))}
+          </div>
+        </div>
+
         {matrix.map((row, rowIndex) => (
           <div key={rowIndex} className={styles.heatmapRow}>
-            {row.map((value, columnIndex) => (
-              <button
-                key={columnIndex}
-                type="button"
-                className={cn(
-                  styles.heatmapCell,
-                  hovered?.row === rowIndex && hovered?.column === columnIndex && styles.heatmapCellActive,
-                )}
-                style={{ background: heatColour(value / max, accent) }}
-                onMouseEnter={() => setHovered({ row: rowIndex, column: columnIndex })}
-                onMouseLeave={() => setHovered(null)}
-                aria-label={`${formatNumber(value)} solves`}
-              />
-            ))}
+            <span className={styles.heatmapRowLabel}>
+              {rowLabels?.[rowIndex] ?? weekdayLabel(rowIndex)}
+            </span>
+            <div
+              className={styles.heatmapCells}
+              style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
+            >
+              {row.map((value, columnIndex) => (
+                <button
+                  key={columnIndex}
+                  type="button"
+                  className={cn(
+                    styles.heatmapCell,
+                    hovered?.row === rowIndex && hovered?.column === columnIndex && styles.heatmapCellActive,
+                  )}
+                  style={{ background: heatColour(value / max, accent) }}
+                  onMouseEnter={() => setHovered({ row: rowIndex, column: columnIndex })}
+                  onMouseLeave={() => setHovered(null)}
+                  onFocus={() => setHovered({ row: rowIndex, column: columnIndex })}
+                  onBlur={() => setHovered(null)}
+                  aria-label={`${formatNumber(value)} solves on ${
+                    rowLabels?.[rowIndex] ?? weekdayLabel(rowIndex)
+                  } at ${columnLabels?.[columnIndex] ?? `${columnIndex}:00`}`}
+                />
+              ))}
+            </div>
           </div>
         ))}
       </div>
 
-      <div className={styles.heatmapLabels}>
-        {matrix.map((_, rowIndex) => (
-          <span key={rowIndex} className={styles.heatmapRowLabel}>
-            {rowLabels?.[rowIndex] ?? weekdayLabel(rowIndex)}
+      <div className={styles.heatmapFooter}>
+        <span className={styles.heatmapScaleLabel}>Less</span>
+        <div className={styles.heatmapScale} aria-hidden="true">
+          {[0.1, 0.3, 0.55, 0.8, 1].map((step) => (
+            <span key={step} style={{ background: heatColour(step, accent) }} />
+          ))}
+        </div>
+        <span className={styles.heatmapScaleLabel}>More</span>
+        {hovered ? (
+          <span className={styles.heatmapHover}>
+            <strong>{formatNumber(matrix[hovered.row][hovered.column])}</strong> solves ·{" "}
+            {rowLabels?.[hovered.row] ?? weekdayLabel(hovered.row)}{" "}
+            {columnLabels?.[hovered.column] ?? `${hovered.column}:00`}
           </span>
-        ))}
+        ) : null}
       </div>
-
-      {hovered ? (
-        <figcaption className={styles.caption}>
-          <strong>{formatNumber(matrix[hovered.row][hovered.column])}</strong> solves ·{" "}
-          {rowLabels?.[hovered.row] ?? weekdayLabel(hovered.row)}{" "}
-          {columnLabels?.[hovered.column] ?? `${hovered.column}:00`}
-        </figcaption>
-      ) : null}
     </figure>
   );
 }
@@ -469,6 +569,7 @@ export function Sparkline({
   label,
   className,
 }: SparklineProps) {
+  const gradientId = useId();
   const max = useMemo(() => Math.max(1, maxOf(values, 1)), [values]);
   const points = useMemo<Point[]>(
     () =>
@@ -483,6 +584,8 @@ export function Sparkline({
     return <span className={cn(styles.empty, className)}>—</span>;
   }
 
+  const last = points[points.length - 1];
+
   return (
     <svg
       width={width}
@@ -492,6 +595,13 @@ export function Sparkline({
       role="img"
       aria-label={label}
     >
+      <defs>
+        <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={color} stopOpacity="0.3" />
+          <stop offset="100%" stopColor={color} stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <path d={buildAreaPath(points, height)} fill={`url(#${gradientId})`} />
       <path
         d={buildSmoothPath(points)}
         fill="none"
@@ -500,7 +610,8 @@ export function Sparkline({
         strokeLinecap="round"
         vectorEffect="non-scaling-stroke"
       />
-      <circle cx={points[points.length - 1].x} cy={points[points.length - 1].y} r="1.8" fill={color} />
+      <circle cx={last.x} cy={last.y} r="3" fill="var(--surface-raised)" />
+      <circle cx={last.x} cy={last.y} r="1.7" fill={color} />
     </svg>
   );
 }

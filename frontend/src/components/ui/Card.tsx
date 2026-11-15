@@ -2,9 +2,17 @@
  * Surface primitives: cards, panels and the statistic tiles.
  */
 
-import { forwardRef, type HTMLAttributes, type ReactNode } from "react";
+import {
+  forwardRef,
+  type CSSProperties,
+  type HTMLAttributes,
+  type ReactNode,
+} from "react";
 import { cn } from "../../lib/utils";
 import styles from "./Card.module.css";
+
+/** The surface treatment of a card. */
+export type CardVariant = "default" | "elevated" | "outlined" | "glass" | "featured";
 
 /** Props accepted by {@link Card}. */
 export interface CardProps extends HTMLAttributes<HTMLDivElement> {
@@ -12,6 +20,8 @@ export interface CardProps extends HTMLAttributes<HTMLDivElement> {
   bare?: boolean;
   /** Add a hover elevation effect. */
   interactive?: boolean;
+  /** The surface treatment. */
+  variant?: CardVariant;
   /** Render the card as a section with an accessible name. */
   as?: "div" | "section" | "article";
 }
@@ -24,14 +34,28 @@ export interface CardProps extends HTMLAttributes<HTMLDivElement> {
  * @returns The card element.
  */
 export const Card = forwardRef<HTMLDivElement, CardProps>(function Card(
-  { bare = false, interactive = false, as = "div", className, children, ...rest },
+  {
+    bare = false,
+    interactive = false,
+    variant = "default",
+    as = "div",
+    className,
+    children,
+    ...rest
+  },
   ref,
 ) {
   const Tag = as;
   return (
     <Tag
       ref={ref as never}
-      className={cn(styles.card, bare && styles.bare, interactive && styles.interactive, className)}
+      className={cn(
+        styles.card,
+        variant !== "default" && styles[variant],
+        bare && styles.bare,
+        interactive && styles.interactive,
+        className,
+      )}
       {...rest}
     >
       {children}
@@ -156,18 +180,21 @@ export function StatCard({
   loading = false,
   trend,
   className,
+  style,
   ...rest
 }: StatCardProps) {
   return (
-    <div className={cn(styles.stat, className)} {...rest}>
+    <div
+      className={cn(styles.stat, className)}
+      style={
+        accent ? ({ ...style, "--stat-accent": accent } as CSSProperties) : style
+      }
+      {...rest}
+    >
       <div className={styles.statTop}>
         <span className={styles.statLabel}>{label}</span>
         {icon ? (
-          <span
-            className={styles.statIcon}
-            style={accent ? { color: accent, background: `${accent}1f` } : undefined}
-            aria-hidden="true"
-          >
+          <span className={styles.statIcon} aria-hidden="true">
             {icon}
           </span>
         ) : null}
@@ -189,12 +216,26 @@ export function StatCard({
   );
 }
 
+/** Props accepted by {@link Divider}. */
+export interface DividerProps extends HTMLAttributes<HTMLDivElement> {
+  /** The axis of the separator. */
+  orientation?: "horizontal" | "vertical";
+}
+
 /**
- * Render a horizontal section separator.
+ * Render a separator between sections or inline items.
  *
  * @param props - The component props.
  * @returns The separator element.
  */
-export function Divider({ className, ...rest }: HTMLAttributes<HTMLDivElement>) {
-  return <div role="separator" className={cn(styles.divider, className)} {...rest} />;
+export function Divider({ orientation = "horizontal", className, ...rest }: DividerProps) {
+  return (
+    <div
+      role="separator"
+      aria-orientation={orientation}
+      data-orientation={orientation}
+      className={cn(styles.divider, className)}
+      {...rest}
+    />
+  );
 }
