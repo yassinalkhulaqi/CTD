@@ -29,6 +29,6 @@ primitives, charts, overlays, toasts, virtual tables and every page of the shell
 
 ## Known state
 
-- Branch sits **24 commits** ahead of `origin/main`; target is **≥100 meaningful commits**.
+- Branch sits **25 commits** ahead of `origin/main`; target is **≥100 meaningful commits**.
 - Remaining: final responsive / a11y polish pass, delivery report completion, commit cadence to
   reach the commit target, optional push to `origin`.
