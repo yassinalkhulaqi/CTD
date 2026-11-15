@@ -3,7 +3,18 @@
  */
 
 import { useMemo } from "react";
-import { Flag, Pause, Play, RefreshCw, TriangleAlert } from "lucide-react";
+import {
+  Flag,
+  Pause,
+  Play,
+  Radio,
+  RefreshCw,
+  Sparkles,
+  Trash2,
+  TriangleAlert,
+  Trophy,
+  Users,
+} from "lucide-react";
 import { cn, formatRelativeTime } from "../../lib/utils";
 import { useActivityStore, useFilteredActivity } from "../../stores/activityStore";
 import type { ActivityEvent, EventKind } from "../../types";
@@ -32,6 +43,18 @@ const KIND_LABELS: Record<EventKind, string> = {
   "team.updated": "Team updated",
   "presence.changed": "Presence changed",
   heartbeat: "Heartbeat",
+};
+
+const KIND_ICONS: Record<EventKind, typeof Flag> = {
+  "solve.created": Trophy,
+  "solve.removed": Trash2,
+  "challenge.created": Sparkles,
+  "challenge.updated": Sparkles,
+  "challenge.deleted": Trash2,
+  "member.updated": Users,
+  "team.updated": Users,
+  "presence.changed": Radio,
+  heartbeat: Radio,
 };
 
 /**
@@ -106,7 +129,10 @@ export function ActivityFeed({ limit = 12, loading = false, className }: Activit
   return (
     <div className={cn(styles.feed, className)}>
       <div className={styles.toolbar}>
-        <span className={styles.count}>{visible.length} events</span>
+        <span className={styles.count}>
+          <span className={cn(styles.liveDot, paused && styles.liveDotPaused)} aria-hidden="true" />
+          {paused ? "Paused" : "Live"} ? {visible.length} events
+        </span>
         <div className={styles.actions}>
           <Button
             variant="ghost"
@@ -120,11 +146,13 @@ export function ActivityFeed({ limit = 12, loading = false, className }: Activit
         </div>
       </div>
 
-      <ol className={styles.list}>
-        {visible.map((event) => (
+      <ol className={styles.list} aria-live={paused ? "off" : "polite"} aria-relevant="additions">
+        {visible.map((event) => {
+          const KindIcon = KIND_ICONS[event.kind] ?? Flag;
+          return (
           <li key={event.id} className={styles.item}>
             <span className={cn(styles.icon, styles[`icon-${event.kind.replace(".", "-")}`])} aria-hidden="true">
-              <Flag size={13} />
+              <KindIcon size={13} />
             </span>
             <div className={styles.body}>
               <p className={styles.title}>{describeEvent(event)}</p>
@@ -134,7 +162,8 @@ export function ActivityFeed({ limit = 12, loading = false, className }: Activit
               </p>
             </div>
           </li>
-        ))}
+          );
+        })}
       </ol>
     </div>
   );
