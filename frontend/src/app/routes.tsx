@@ -4,6 +4,7 @@
 
 import { lazy } from "react";
 import type { RouteObject } from "react-router-dom";
+import { discoverPlugins } from "../features/plugins";
 
 /**
  * Build the route tree of the dashboard.
@@ -56,6 +57,13 @@ export function buildRoutes(): RouteObject[] {
       path: "/gallery",
       element: <GalleryPage />,
     },
+    ...discoverPlugins().map((plugin) => {
+      const Component = plugin.component;
+      return {
+        path: plugin.path,
+        element: <Component />,
+      } satisfies RouteObject;
+    }),
     {
       path: "*",
       element: <NotFoundPage />,

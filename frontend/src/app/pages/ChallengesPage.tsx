@@ -6,7 +6,10 @@ import { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Flag, Filter, LayoutGrid, Rows3 } from "lucide-react";
 import { useChallenges } from "../../api/resources";
-import { useActiveTeamId, useDashboardStore } from "../../stores/dashboardStore";
+import {
+  useActiveTeamId,
+  useDashboardStore,
+} from "../../stores/dashboardStore";
 import { formatNumber } from "../../lib/utils";
 import {
   Badge,
@@ -41,7 +44,10 @@ const STATUS_TONES: Record<
   locked: "danger",
 };
 
-const DIFFICULTY_TONES: Record<string, "neutral" | "info" | "warning" | "danger"> = {
+const DIFFICULTY_TONES: Record<
+  string,
+  "neutral" | "info" | "warning" | "danger"
+> = {
   trivial: "neutral",
   easy: "neutral",
   medium: "info",
@@ -72,7 +78,9 @@ export default function ChallengesPage() {
   const setSearchQuery = useDashboardStore((state) => state.setSearchQuery);
 
   const [view, setView] = useState<ViewMode>("board");
-  const [selectedId, setSelectedId] = useState<string | null>(params.challengeId ?? null);
+  const [selectedId, setSelectedId] = useState<string | null>(
+    params.challengeId ?? null,
+  );
 
   const challenges = useChallenges(
     {
@@ -108,7 +116,11 @@ export default function ChallengesPage() {
     return (
       <ErrorState
         title="The challenge board could not be loaded"
-        message={challenges.error instanceof Error ? challenges.error.message : "Unknown error"}
+        message={
+          challenges.error instanceof Error
+            ? challenges.error.message
+            : "Unknown error"
+        }
         onRetry={() => void challenges.refetch()}
       />
     );
@@ -144,7 +156,11 @@ export default function ChallengesPage() {
               className={styles.search}
             />
             {searchQuery ? (
-              <Button variant="ghost" size="sm" onClick={() => setSearchQuery("")}>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setSearchQuery("")}
+              >
                 Reset
               </Button>
             ) : null}
@@ -196,13 +212,19 @@ export default function ChallengesPage() {
                     onActivate={() => select(challenge)}
                   >
                     <TableCell>
-                      <span className={styles.challengeName}>{challenge.title}</span>
+                      <span className={styles.challengeName}>
+                        {challenge.title}
+                      </span>
                     </TableCell>
                     <TableCell>
                       <Badge tone="neutral">{challenge.category}</Badge>
                     </TableCell>
                     <TableCell>
-                      <Badge tone={DIFFICULTY_TONES[challenge.difficulty] ?? "neutral"}>
+                      <Badge
+                        tone={
+                          DIFFICULTY_TONES[challenge.difficulty] ?? "neutral"
+                        }
+                      >
                         {challenge.difficulty}
                       </Badge>
                     </TableCell>
@@ -211,7 +233,9 @@ export default function ChallengesPage() {
                         {challenge.status}
                       </Badge>
                     </TableCell>
-                    <TableCell align="right">{formatNumber(challenge.points)}</TableCell>
+                    <TableCell align="right">
+                      {formatNumber(challenge.points)}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -220,7 +244,10 @@ export default function ChallengesPage() {
         </CardContent>
       </Card>
 
-      <ChallengeDrawer challenge={selected} onClose={() => setSelectedId(null)} />
+      <ChallengeDrawer
+        challenge={selected}
+        onClose={() => setSelectedId(null)}
+      />
     </div>
   );
 }

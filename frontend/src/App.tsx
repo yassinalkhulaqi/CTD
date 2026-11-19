@@ -50,7 +50,9 @@ export function App() {
 
   return (
     <RealtimeProvider>
-      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <BrowserRouter
+        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+      >
         <div className="app-shell">
           <header className="app-shell__header">
             <span className="app-shell__brand">
@@ -70,7 +72,11 @@ export function App() {
           <Routes>
             <Route element={<AppShell />}>
               {routes.map((route) => (
-                <Route key={route.path} path={route.path} element={route.element} />
+                <Route
+                  key={route.path}
+                  path={route.path}
+                  element={route.element}
+                />
               ))}
             </Route>
           </Routes>

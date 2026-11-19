@@ -99,7 +99,10 @@ export function useElementSize(
     const observer = new ResizeObserver((entries) => {
       const entry = entries[0];
       if (!entry) return;
-      stable({ width: entry.contentRect.width, height: entry.contentRect.height });
+      stable({
+        width: entry.contentRect.width,
+        height: entry.contentRect.height,
+      });
     });
     observer.observe(node);
     return () => observer.disconnect();

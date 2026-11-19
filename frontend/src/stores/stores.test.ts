@@ -5,7 +5,10 @@ import { useNotificationStore } from "./notificationStore";
 import { usePreferencesStore } from "./preferencesStore";
 import type { ActivityEvent } from "../types";
 
-function makeEvent(id: number, kind: ActivityEvent["kind"] = "solve.created"): ActivityEvent {
+function makeEvent(
+  id: number,
+  kind: ActivityEvent["kind"] = "solve.created",
+): ActivityEvent {
   return {
     id,
     team_id: "team-1",
@@ -51,9 +54,17 @@ describe("dashboardStore", () => {
   });
 
   it("keeps the loaded teams", () => {
-    useDashboardStore
-      .getState()
-      .setTeams([{ id: "team-1", name: "RedScribe", slug: "redscribe", color: "#fff", description: "", created_at: "", initials: "RS" }]);
+    useDashboardStore.getState().setTeams([
+      {
+        id: "team-1",
+        name: "RedScribe",
+        slug: "redscribe",
+        color: "#fff",
+        description: "",
+        created_at: "",
+        initials: "RS",
+      },
+    ]);
     expect(useDashboardStore.getState().teams).toHaveLength(1);
   });
 });
@@ -84,7 +95,12 @@ describe("preferencesStore", () => {
 
 describe("activityStore", () => {
   beforeEach(() => {
-    useActivityStore.setState({ events: [], missedCount: 0, paused: false, kindFilter: "all" });
+    useActivityStore.setState({
+      events: [],
+      missedCount: 0,
+      paused: false,
+      kindFilter: "all",
+    });
   });
 
   it("prepends events", () => {
@@ -104,7 +120,11 @@ describe("activityStore", () => {
     useActivityStore.getState().push(makeEvent(1, "solve.created"));
     useActivityStore.getState().push(makeEvent(2, "challenge.created"));
     useActivityStore.getState().setKindFilter("solve.created");
-    expect(useActivityStore.getState().events.filter((event) => matchesFilter(event, "solve.created"))).toHaveLength(1);
+    expect(
+      useActivityStore
+        .getState()
+        .events.filter((event) => matchesFilter(event, "solve.created")),
+    ).toHaveLength(1);
   });
 
   it("caps the feed size", () => {
@@ -121,7 +141,9 @@ describe("notificationStore", () => {
   });
 
   it("pushes and dismisses notifications", () => {
-    const id = useNotificationStore.getState().push({ tone: "info", title: "Hello" });
+    const id = useNotificationStore
+      .getState()
+      .push({ tone: "info", title: "Hello" });
     expect(useNotificationStore.getState().notifications).toHaveLength(1);
     useNotificationStore.getState().dismiss(id);
     expect(useNotificationStore.getState().notifications).toHaveLength(0);

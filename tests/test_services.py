@@ -138,9 +138,7 @@ def test_record_solve_rejects_cross_team_member(repositories: Repositories) -> N
         difficulty=Difficulty.EASY,
     )
     try:
-        SolveService(repositories).record_solve(
-            challenge_id=challenge.id, member_id=member.id
-        )
+        SolveService(repositories).record_solve(challenge_id=challenge.id, member_id=member.id)
     except ValidationError:
         pass
     else:

@@ -62,7 +62,9 @@ export function BarChart({
   const total = values.reduce((sum, value) => sum + value, 0);
 
   if (values.length === 0) {
-    return <div className={cn(styles.empty, className)}>No data to display</div>;
+    return (
+      <div className={cn(styles.empty, className)}>No data to display</div>
+    );
   }
 
   return (
@@ -94,7 +96,10 @@ export function BarChart({
 
         {values.map((value, index) => {
           const band = bands[index];
-          const barHeight = Math.max(value > 0 ? 1.5 : 0, height - scaleY(value, max, height));
+          const barHeight = Math.max(
+            value > 0 ? 1.5 : 0,
+            height - scaleY(value, max, height),
+          );
           return (
             <g key={index}>
               <rect
@@ -104,7 +109,10 @@ export function BarChart({
                 height={barHeight}
                 rx={1.2}
                 fill={`url(#${gradientId})`}
-                className={cn(styles.bar, hovered === index && styles.barActive)}
+                className={cn(
+                  styles.bar,
+                  hovered === index && styles.barActive,
+                )}
                 onMouseEnter={() => setHovered(index)}
                 onMouseLeave={() => setHovered(null)}
               />
@@ -118,7 +126,10 @@ export function BarChart({
           <button
             key={index}
             type="button"
-            className={cn(styles.axisLabel, hovered === index && styles.axisLabelActive)}
+            className={cn(
+              styles.axisLabel,
+              hovered === index && styles.axisLabelActive,
+            )}
             onMouseEnter={() => setHovered(index)}
             onMouseLeave={() => setHovered(null)}
             onFocus={() => setHovered(index)}
@@ -184,7 +195,9 @@ export function AreaChart({
   );
 
   if (values.length === 0) {
-    return <div className={cn(styles.empty, className)}>No data to display</div>;
+    return (
+      <div className={cn(styles.empty, className)}>No data to display</div>
+    );
   }
 
   return (
@@ -214,7 +227,11 @@ export function AreaChart({
           />
         ))}
 
-        <path d={buildAreaPath(points, height)} fill={`url(#${gradientId})`} className={styles.area} />
+        <path
+          d={buildAreaPath(points, height)}
+          fill={`url(#${gradientId})`}
+          className={styles.area}
+        />
         <path
           d={buildSmoothPath(points)}
           fill="none"
@@ -241,7 +258,10 @@ export function AreaChart({
         {values.map((_value, index) => (
           <span
             key={index}
-            className={cn(styles.axisLabel, hovered === index && styles.axisLabelActive)}
+            className={cn(
+              styles.axisLabel,
+              hovered === index && styles.axisLabelActive,
+            )}
             onMouseEnter={() => setHovered(index)}
             onMouseLeave={() => setHovered(null)}
           >
@@ -307,7 +327,9 @@ export function DonutChart({
   let offset = 0;
 
   if (total === 0) {
-    return <div className={cn(styles.empty, className)}>No data to display</div>;
+    return (
+      <div className={cn(styles.empty, className)}>No data to display</div>
+    );
   }
 
   return (
@@ -342,13 +364,20 @@ export function DonutChart({
           })}
         </g>
       </svg>
-      {centreLabel ? <span className={styles.donutCentre}>{centreLabel}</span> : null}
+      {centreLabel ? (
+        <span className={styles.donutCentre}>{centreLabel}</span>
+      ) : null}
       <figcaption className={styles.legend}>
         {slices.map((slice) => (
           <span key={slice.label} className={styles.legendItem}>
-            <span className={styles.legendSwatch} style={{ background: slice.color }} />
+            <span
+              className={styles.legendSwatch}
+              style={{ background: slice.color }}
+            />
             {slice.label}
-            <span className={styles.legendValue}>{percent(slice.value / total)}</span>
+            <span className={styles.legendValue}>
+              {percent(slice.value / total)}
+            </span>
           </span>
         ))}
       </figcaption>
@@ -386,15 +415,17 @@ export function Heatmap({
   label,
   className,
 }: HeatmapProps) {
-  const [hovered, setHovered] = useState<{ row: number; column: number } | null>(null);
+  const [hovered, setHovered] = useState<{
+    row: number;
+    column: number;
+  } | null>(null);
 
-  const max = useMemo(
-    () => maxOf(matrix.flat(), 1),
-    [matrix],
-  );
+  const max = useMemo(() => maxOf(matrix.flat(), 1), [matrix]);
 
   if (matrix.length === 0) {
-    return <div className={cn(styles.empty, className)}>No data to display</div>;
+    return (
+      <div className={cn(styles.empty, className)}>No data to display</div>
+    );
   }
 
   return (
@@ -408,10 +439,14 @@ export function Heatmap({
                 type="button"
                 className={cn(
                   styles.heatmapCell,
-                  hovered?.row === rowIndex && hovered?.column === columnIndex && styles.heatmapCellActive,
+                  hovered?.row === rowIndex &&
+                    hovered?.column === columnIndex &&
+                    styles.heatmapCellActive,
                 )}
                 style={{ background: heatColour(value / max, accent) }}
-                onMouseEnter={() => setHovered({ row: rowIndex, column: columnIndex })}
+                onMouseEnter={() =>
+                  setHovered({ row: rowIndex, column: columnIndex })
+                }
                 onMouseLeave={() => setHovered(null)}
                 aria-label={`${formatNumber(value)} solves`}
               />
@@ -430,8 +465,8 @@ export function Heatmap({
 
       {hovered ? (
         <figcaption className={styles.caption}>
-          <strong>{formatNumber(matrix[hovered.row][hovered.column])}</strong> solves ·{" "}
-          {rowLabels?.[hovered.row] ?? weekdayLabel(hovered.row)}{" "}
+          <strong>{formatNumber(matrix[hovered.row][hovered.column])}</strong>{" "}
+          solves · {rowLabels?.[hovered.row] ?? weekdayLabel(hovered.row)}{" "}
           {columnLabels?.[hovered.column] ?? `${hovered.column}:00`}
         </figcaption>
       ) : null}
@@ -473,7 +508,10 @@ export function Sparkline({
   const points = useMemo<Point[]>(
     () =>
       values.map((value, index) => ({
-        x: values.length === 1 ? width / 2 : (index / (values.length - 1)) * width,
+        x:
+          values.length === 1
+            ? width / 2
+            : (index / (values.length - 1)) * width,
         y: height - (value / max) * height,
       })),
     [height, max, values, width],
@@ -500,7 +538,12 @@ export function Sparkline({
         strokeLinecap="round"
         vectorEffect="non-scaling-stroke"
       />
-      <circle cx={points[points.length - 1].x} cy={points[points.length - 1].y} r="1.8" fill={color} />
+      <circle
+        cx={points[points.length - 1].x}
+        cy={points[points.length - 1].y}
+        r="1.8"
+        fill={color}
+      />
     </svg>
   );
 }
@@ -512,6 +555,11 @@ export function Sparkline({
  * @param reference - The most recent hour.
  * @returns The labels of the buckets.
  */
-export function timelineLabels(total: number, reference = new Date().getHours()): string[] {
-  return Array.from({ length: total }, (_, index) => hourLabel(index, total, reference));
+export function timelineLabels(
+  total: number,
+  reference = new Date().getHours(),
+): string[] {
+  return Array.from({ length: total }, (_, index) =>
+    hourLabel(index, total, reference),
+  );
 }

@@ -36,7 +36,9 @@ export interface ResourceOptions {
  * @param options - The hook options.
  * @returns The query state.
  */
-export function useTeams(options: ResourceOptions = {}): UseQueryResult<Awaited<ReturnType<typeof teamsApi.list>>> {
+export function useTeams(
+  options: ResourceOptions = {},
+): UseQueryResult<Awaited<ReturnType<typeof teamsApi.list>>> {
   const key = queryKey("teams");
   const fetcher = useCallback(
     (signal: AbortSignal) => teamsApi.list({ signal }),
@@ -79,7 +81,8 @@ export function useChallenges(
   const { teamId, category, status } = query;
   const key = queryKey("challenges", { teamId, category, status });
   const fetcher = useCallback(
-    (signal: AbortSignal) => challengesApi.list({ teamId, category, status }, { signal }),
+    (signal: AbortSignal) =>
+      challengesApi.list({ teamId, category, status }, { signal }),
     [teamId, category, status],
   );
   return useQuery({ key, fetcher, ...options });
@@ -119,7 +122,8 @@ export function useSolves(
   const { memberId, challengeId, teamId } = query;
   const key = queryKey("solves", { memberId, challengeId, teamId });
   const fetcher = useCallback(
-    (signal: AbortSignal) => solvesApi.list({ memberId, challengeId, teamId }, { signal }),
+    (signal: AbortSignal) =>
+      solvesApi.list({ memberId, challengeId, teamId }, { signal }),
     [memberId, challengeId, teamId],
   );
   return useQuery({ key, fetcher, ...options });
@@ -133,7 +137,10 @@ export function useSolves(
  */
 export function useOverview(options: ResourceOptions = {}) {
   const key = queryKey("stats:overview");
-  const fetcher = useCallback((signal: AbortSignal) => statsApi.overview({ signal }), []);
+  const fetcher = useCallback(
+    (signal: AbortSignal) => statsApi.overview({ signal }),
+    [],
+  );
   return useQuery({ key, fetcher, ...options });
 }
 
@@ -144,7 +151,10 @@ export function useOverview(options: ResourceOptions = {}) {
  * @param options - The hook options.
  * @returns The query state.
  */
-export function useDashboardSnapshot(teamId?: string, options: ResourceOptions = {}) {
+export function useDashboardSnapshot(
+  teamId?: string,
+  options: ResourceOptions = {},
+) {
   const key = queryKey("dashboard", { teamId });
   const fetcher = useCallback(
     (signal: AbortSignal) => dashboardApi.snapshot(teamId, { signal }),
@@ -161,7 +171,11 @@ export function useDashboardSnapshot(teamId?: string, options: ResourceOptions =
  * @param options - The hook options.
  * @returns The query state.
  */
-export function useTimeline(hours = 24, teamId?: string, options: ResourceOptions = {}) {
+export function useTimeline(
+  hours = 24,
+  teamId?: string,
+  options: ResourceOptions = {},
+) {
   const key = queryKey("stats:timeline", { hours, teamId });
   const fetcher = useCallback(
     (signal: AbortSignal) => statsApi.timeline(hours, teamId, { signal }),
@@ -177,8 +191,13 @@ export function useTimeline(hours = 24, teamId?: string, options: ResourceOption
  */
 export function useRecordSolve() {
   return useMutation({
-    mutationFn: (input: Parameters<typeof solvesApi.create>[0]) => solvesApi.create(input),
-    invalidates: [queryKey("solves"), queryKey("challenges"), queryKey("stats:overview")],
+    mutationFn: (input: Parameters<typeof solvesApi.create>[0]) =>
+      solvesApi.create(input),
+    invalidates: [
+      queryKey("solves"),
+      queryKey("challenges"),
+      queryKey("stats:overview"),
+    ],
     invalidatesPrefixes: [queryKey("dashboard")],
   });
 }
@@ -204,7 +223,8 @@ export function useCreateChallenge() {
  */
 export function useCreateMember() {
   return useMutation({
-    mutationFn: (input: Parameters<typeof membersApi.create>[0]) => membersApi.create(input),
+    mutationFn: (input: Parameters<typeof membersApi.create>[0]) =>
+      membersApi.create(input),
     invalidates: [queryKey("members"), queryKey("stats:overview")],
     invalidatesPrefixes: [queryKey("dashboard")],
   });

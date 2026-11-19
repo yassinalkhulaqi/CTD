@@ -4,7 +4,12 @@
 
 import { create } from "zustand";
 import { useShallow } from "zustand/react/shallow";
-import type { ChallengeCategory, ChallengeStatus, Member, Team } from "../types";
+import type {
+  ChallengeCategory,
+  ChallengeStatus,
+  Member,
+  Team,
+} from "../types";
 
 /** The granularity of the information shown on the dashboard. */
 export type Density = "comfortable" | "compact";
@@ -100,7 +105,8 @@ export const useDashboardStore = create<DashboardState>()((set) => ({
   setSearchQuery: (query) => set({ searchQuery: query }),
   setTimeWindow: (timeWindow) => set({ timeWindow }),
   setDensity: (density) => set({ density }),
-  toggleSidebar: () => set((state) => ({ sidebarCollapsed: !state.sidebarCollapsed })),
+  toggleSidebar: () =>
+    set((state) => ({ sidebarCollapsed: !state.sidebarCollapsed })),
   resetFilters: () =>
     set({
       categoryFilter: "all",
@@ -117,7 +123,10 @@ export const useDashboardStore = create<DashboardState>()((set) => ({
  */
 export function useSelectedTeam(): Team | null {
   return useDashboardStore(
-    useShallow((state) => state.teams.find((team) => team.id === state.selectedTeamId) ?? null),
+    useShallow(
+      (state) =>
+        state.teams.find((team) => team.id === state.selectedTeamId) ?? null,
+    ),
   );
 }
 
@@ -130,7 +139,9 @@ export function useSelectedTeamMembers(): Member[] {
   return useDashboardStore(
     useShallow((state) =>
       state.selectedTeamId
-        ? state.members.filter((member) => member.team_id === state.selectedTeamId)
+        ? state.members.filter(
+            (member) => member.team_id === state.selectedTeamId,
+          )
         : state.members,
     ),
   );
@@ -143,7 +154,9 @@ export function useSelectedTeamMembers(): Member[] {
  */
 export function useOnlineMemberCount(): number {
   return useDashboardStore(
-    useShallow((state) => state.members.filter((member) => member.is_online).length),
+    useShallow(
+      (state) => state.members.filter((member) => member.is_online).length,
+    ),
   );
 }
 

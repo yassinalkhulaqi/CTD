@@ -10,7 +10,15 @@ import { useEffect, useState } from "react";
 import { ActivityFeed } from "./layout/ActivityFeed";
 import { Sidebar, type NavigationId } from "./layout/Sidebar";
 import { TopBar } from "./layout/TopBar";
-import { Card, CardContent, CardHeader, CardTitle, EmptyState, Skeleton, StatCard } from "./ui";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  EmptyState,
+  Skeleton,
+  StatCard,
+} from "./ui";
 import { useDashboardSnapshot, useTeams } from "../api/resources";
 import { useHydrateDashboard } from "../hooks/useDashboardData";
 import { formatNumber } from "../lib/utils";
@@ -52,22 +60,46 @@ export function StateShowcase() {
         <section className={styles.stats} aria-label="Headline statistics">
           <StatCard
             label="Teams"
-            value={overview ? formatNumber(overview.teams) : <Skeleton width={40} height={28} />}
+            value={
+              overview ? (
+                formatNumber(overview.teams)
+              ) : (
+                <Skeleton width={40} height={28} />
+              )
+            }
             loading={!overview}
           />
           <StatCard
             label="Solves"
-            value={overview ? formatNumber(overview.solves) : <Skeleton width={40} height={28} />}
+            value={
+              overview ? (
+                formatNumber(overview.solves)
+              ) : (
+                <Skeleton width={40} height={28} />
+              )
+            }
             loading={!overview}
           />
           <StatCard
             label="Challenges"
-            value={overview ? formatNumber(overview.challenges) : <Skeleton width={40} height={28} />}
+            value={
+              overview ? (
+                formatNumber(overview.challenges)
+              ) : (
+                <Skeleton width={40} height={28} />
+              )
+            }
             loading={!overview}
           />
           <StatCard
             label="Members"
-            value={overview ? formatNumber(overview.members) : <Skeleton width={40} height={28} />}
+            value={
+              overview ? (
+                formatNumber(overview.members)
+              ) : (
+                <Skeleton width={40} height={28} />
+              )
+            }
             loading={!overview}
           />
         </section>
@@ -82,13 +114,20 @@ export function StateShowcase() {
                 <ul className={styles.leaderboard}>
                   {snapshot.data?.scoreboard.map((row) => (
                     <li key={row.team_id} className={styles.leaderboardRow}>
-                      <span className={styles.leaderboardName}>{row.team_name}</span>
-                      <span className={styles.leaderboardPoints}>{formatNumber(row.points)}</span>
+                      <span className={styles.leaderboardName}>
+                        {row.team_name}
+                      </span>
+                      <span className={styles.leaderboardPoints}>
+                        {formatNumber(row.points)}
+                      </span>
                     </li>
                   ))}
                 </ul>
               ) : (
-                <EmptyState title="No teams yet" description="Create a team to get started." />
+                <EmptyState
+                  title="No teams yet"
+                  description="Create a team to get started."
+                />
               )}
             </CardContent>
           </Card>
@@ -104,7 +143,9 @@ export function StateShowcase() {
         </div>
 
         <p className={styles.status}>
-          {members.data ? `${members.data.length} members loaded` : "Loading members…"}
+          {members.data
+            ? `${members.data.length} members loaded`
+            : "Loading members…"}
         </p>
       </div>
     </div>

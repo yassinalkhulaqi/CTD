@@ -60,7 +60,9 @@ describe("QueryCache", () => {
 
 describe("queryKey", () => {
   it("builds a stable key from the parameters", () => {
-    expect(queryKey("teams", { b: 2, a: 1 })).toBe(queryKey("teams", { a: 1, b: 2 }));
+    expect(queryKey("teams", { b: 2, a: 1 })).toBe(
+      queryKey("teams", { a: 1, b: 2 }),
+    );
   });
 
   it("returns the plain name without parameters", () => {

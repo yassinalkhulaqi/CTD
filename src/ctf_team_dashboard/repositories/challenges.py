@@ -63,9 +63,7 @@ class ChallengeRepository(BaseRepository):
             clauses.append("status = ?")
             params.append(status.value)
         where = f" WHERE {' AND '.join(clauses)}" if clauses else ""
-        rows = self.fetch_all(
-            f"SELECT * FROM challenges{where} ORDER BY created_at ASC", params
-        )
+        rows = self.fetch_all(f"SELECT * FROM challenges{where} ORDER BY created_at ASC", params)
         return [self.to_model(row) for row in rows]
 
     def get(self, challenge_id: str) -> Challenge | None:

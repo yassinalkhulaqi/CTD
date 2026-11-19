@@ -35,7 +35,9 @@ describe("useQuery", () => {
     const cache = new QueryCache();
     const fetcher = vi.fn().mockRejectedValue(new Error("boom"));
 
-    const { result } = renderHook(() => useQuery({ key: "teams", fetcher, cache }));
+    const { result } = renderHook(() =>
+      useQuery({ key: "teams", fetcher, cache }),
+    );
 
     await waitFor(() => expect(result.current.error).toBeTruthy());
     expect(result.current.data).toBeUndefined();
@@ -45,7 +47,9 @@ describe("useQuery", () => {
     const cache = new QueryCache();
     const fetcher = vi.fn().mockResolvedValue("value");
 
-    renderHook(() => useQuery({ key: "teams", fetcher, cache, enabled: false }));
+    renderHook(() =>
+      useQuery({ key: "teams", fetcher, cache, enabled: false }),
+    );
 
     await new Promise((resolve) => setTimeout(resolve, 20));
     expect(fetcher).not.toHaveBeenCalled();
@@ -55,7 +59,9 @@ describe("useQuery", () => {
     const cache = new QueryCache();
     const fetcher = vi.fn().mockResolvedValue("value");
 
-    const { result } = renderHook(() => useQuery({ key: "teams", fetcher, cache }));
+    const { result } = renderHook(() =>
+      useQuery({ key: "teams", fetcher, cache }),
+    );
 
     await waitFor(() => expect(result.current.data).toBe("value"));
     act(() => result.current.invalidate());

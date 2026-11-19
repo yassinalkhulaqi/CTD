@@ -124,9 +124,7 @@ class AuditLog:
             The entries, newest first.
         """
         entries = [
-            entry
-            for entry in reversed(self._entries)
-            if action is None or entry.action is action
+            entry for entry in reversed(self._entries) if action is None or entry.action is action
         ]
         return entries[: max(1, min(limit, self.max_entries))]
 

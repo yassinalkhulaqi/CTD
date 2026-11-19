@@ -7,7 +7,8 @@ import { cn } from "../../lib/utils";
 import styles from "./Display.module.css";
 
 /** The semantic variants available to a badge. */
-export type BadgeTone = "neutral" | "accent" | "success" | "warning" | "danger" | "info";
+export type BadgeTone =
+  "neutral" | "accent" | "success" | "warning" | "danger" | "info";
 
 /** Props accepted by {@link Badge}. */
 export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
@@ -29,7 +30,15 @@ export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
  * @returns The badge element.
  */
 export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
-  { tone = "neutral", dot = false, outline = false, pulse = false, className, children, ...rest },
+  {
+    tone = "neutral",
+    dot = false,
+    outline = false,
+    pulse = false,
+    className,
+    children,
+    ...rest
+  },
   ref,
 ) {
   return (
@@ -171,7 +180,17 @@ export function AvatarGroup({
           {child}
         </span>
       ))}
-      {hidden > 0 ? <span className={cn(styles.avatar, styles["avatar-sm"], styles.avatarOverflow)}>+{hidden}</span> : null}
+      {hidden > 0 ? (
+        <span
+          className={cn(
+            styles.avatar,
+            styles["avatar-sm"],
+            styles.avatarOverflow,
+          )}
+        >
+          +{hidden}
+        </span>
+      ) : null}
     </div>
   );
 }
@@ -182,7 +201,11 @@ export function AvatarGroup({
  * @param props - The component props.
  * @returns The key element.
  */
-export function Kbd({ className, children, ...rest }: HTMLAttributes<HTMLElement>) {
+export function Kbd({
+  className,
+  children,
+  ...rest
+}: HTMLAttributes<HTMLElement>) {
   return (
     <kbd className={cn(styles.kbd, className)} {...rest}>
       {children}
@@ -204,7 +227,12 @@ export function StatusDot({
 }: HTMLAttributes<HTMLSpanElement> & { tone?: BadgeTone; pulse?: boolean }) {
   return (
     <span
-      className={cn(styles.statusDot, styles[`badge-${tone}`], pulse && styles.pulse, className)}
+      className={cn(
+        styles.statusDot,
+        styles[`badge-${tone}`],
+        pulse && styles.pulse,
+        className,
+      )}
       {...rest}
     />
   );

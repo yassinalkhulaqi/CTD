@@ -43,7 +43,9 @@ export default function ActivityPage() {
               <SegmentedControl
                 options={KIND_OPTIONS}
                 value={kindFilter}
-                onValueChange={(value) => setKindFilter(value as EventKind | "all")}
+                onValueChange={(value) =>
+                  setKindFilter(value as EventKind | "all")
+                }
                 label="Event kind"
               />
               <SegmentedControl
@@ -68,8 +70,8 @@ export default function ActivityPage() {
 
       <p className={styles.hint}>
         <Activity size={13} aria-hidden="true" />
-        Events arrive in real time through the websocket gateway and are replayed
-        from the persisted log after a reconnect.
+        Events arrive in real time through the websocket gateway and are
+        replayed from the persisted log after a reconnect.
       </p>
     </div>
   );

@@ -48,7 +48,9 @@ export default function MembersPage() {
   const [sort, setSort] = useState<SortMode>("points");
 
   const members = useMembers(teamId ? { teamId } : {}, { staleTime: 20_000 });
-  const contributions = useContributions(teamId ? { teamId } : {}, { staleTime: 20_000 });
+  const contributions = useContributions(teamId ? { teamId } : {}, {
+    staleTime: 20_000,
+  });
 
   const contributionById = useMemo(() => {
     const map = new Map<string, { solves: number; points: number }>();
@@ -64,7 +66,8 @@ export default function MembersPage() {
   const rows = useMemo(() => {
     const list = [...(members.data ?? [])];
     list.sort((left, right) => {
-      if (sort === "name") return left.display_name.localeCompare(right.display_name);
+      if (sort === "name")
+        return left.display_name.localeCompare(right.display_name);
       const leftStats = contributionById.get(left.id);
       const rightStats = contributionById.get(right.id);
       if (sort === "solves") {
@@ -81,7 +84,11 @@ export default function MembersPage() {
     return (
       <ErrorState
         title="The member list could not be loaded"
-        message={members.error instanceof Error ? members.error.message : "Unknown error"}
+        message={
+          members.error instanceof Error
+            ? members.error.message
+            : "Unknown error"
+        }
         onRetry={() => void members.refetch()}
       />
     );
@@ -138,8 +145,12 @@ export default function MembersPage() {
                         presence={member.presence as Presence}
                       />
                       <span className={styles.memberName}>
-                        <span className={styles.memberLabel}>{member.display_name}</span>
-                        <span className={styles.memberHandle}>@{member.handle}</span>
+                        <span className={styles.memberLabel}>
+                          {member.display_name}
+                        </span>
+                        <span className={styles.memberHandle}>
+                          @{member.handle}
+                        </span>
                       </span>
                     </span>
                   ),
@@ -148,7 +159,9 @@ export default function MembersPage() {
                   key: "role",
                   header: "Role",
                   render: (member) => (
-                    <Badge tone={ROLE_TONES[member.role] ?? "neutral"}>{member.role}</Badge>
+                    <Badge tone={ROLE_TONES[member.role] ?? "neutral"}>
+                      {member.role}
+                    </Badge>
                   ),
                 },
                 {

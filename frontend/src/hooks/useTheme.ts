@@ -14,7 +14,9 @@ const STORAGE_KEY = "ctfd.theme";
 export function resolveTheme(theme: Theme): "light" | "dark" {
   if (theme !== "system") return theme;
   if (typeof window === "undefined" || !window.matchMedia) return "light";
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
 }
 
 /**
@@ -25,7 +27,8 @@ export function resolveTheme(theme: Theme): "light" | "dark" {
 export function readStoredTheme(): Theme {
   if (typeof window === "undefined") return "system";
   const stored = window.localStorage.getItem(STORAGE_KEY);
-  if (stored === "light" || stored === "dark" || stored === "system") return stored;
+  if (stored === "light" || stored === "dark" || stored === "system")
+    return stored;
   return "system";
 }
 
@@ -57,7 +60,12 @@ export function useTheme(): [Theme, (theme: Theme) => void] {
   }, [theme]);
 
   useEffect(() => {
-    if (theme !== "system" || typeof window === "undefined" || !window.matchMedia) return;
+    if (
+      theme !== "system" ||
+      typeof window === "undefined" ||
+      !window.matchMedia
+    )
+      return;
     const query = window.matchMedia("(prefers-color-scheme: dark)");
     const listener = () => applyTheme("system");
     query.addEventListener("change", listener);

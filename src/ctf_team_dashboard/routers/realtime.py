@@ -56,9 +56,7 @@ def _parse_subscription(payload: dict[str, Any]) -> Subscription:
     team_id = payload.get("team_id")
     raw_kinds = payload.get("kinds")
     kinds = (
-        frozenset(str(kind) for kind in raw_kinds)
-        if isinstance(raw_kinds, list)
-        else frozenset()
+        frozenset(str(kind) for kind in raw_kinds) if isinstance(raw_kinds, list) else frozenset()
     )
     return Subscription(team_id=str(team_id) if team_id else None, kinds=kinds)
 

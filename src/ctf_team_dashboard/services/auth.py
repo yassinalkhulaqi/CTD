@@ -243,9 +243,7 @@ class AuthService:
         Raises:
             AuthenticationError: When the token is invalid or expired.
         """
-        claims = decode_token(
-            refresh_token, secret=self.settings.auth_secret, verify_exp=True
-        )
+        claims = decode_token(refresh_token, secret=self.settings.auth_secret, verify_exp=True)
         if claims.token_type != "refresh":
             raise AuthenticationError("A refresh token is required")
 
@@ -272,9 +270,7 @@ class AuthService:
     def logout(self, refresh_token: str) -> None:
         """Revoke the session bound to a refresh token."""
         try:
-            claims = decode_token(
-                refresh_token, secret=self.settings.auth_secret, verify_exp=False
-            )
+            claims = decode_token(refresh_token, secret=self.settings.auth_secret, verify_exp=False)
         except AuthenticationError:
             return
         self.repositories.sessions.revoke(claims.token_id)
@@ -385,11 +381,7 @@ class AuthService:
 
         self.repositories.api_keys.touch(api_key.id)
         granted = permissions_for(user.role)
-        scoped = frozenset(
-            permission
-            for permission in granted
-            if api_key.allows(permission.value)
-        )
+        scoped = frozenset(permission for permission in granted if api_key.allows(permission.value))
         return Principal(
             user_id=user.id,
             username=user.username,

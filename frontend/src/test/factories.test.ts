@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { makeChallenge, makeChallengeSet, makeEvent, makeMember, makeTeam } from "./factories";
+import {
+  makeChallenge,
+  makeChallengeSet,
+  makeEvent,
+  makeMember,
+  makeTeam,
+} from "./factories";
 
 describe("factories", () => {
   it("builds unique team identifiers", () => {
@@ -19,7 +25,9 @@ describe("factories", () => {
   });
 
   it("spreads a challenge set across the statuses", () => {
-    const statuses = new Set(makeChallengeSet(4).map((challenge) => challenge.status));
+    const statuses = new Set(
+      makeChallengeSet(4).map((challenge) => challenge.status),
+    );
     expect(statuses.size).toBe(4);
   });
 

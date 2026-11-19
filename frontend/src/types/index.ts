@@ -5,13 +5,7 @@
 export type Difficulty = "trivial" | "easy" | "medium" | "hard" | "insane";
 
 export type ChallengeCategory =
-  | "web"
-  | "crypto"
-  | "pwn"
-  | "reverse"
-  | "forensics"
-  | "osint"
-  | "misc";
+  "web" | "crypto" | "pwn" | "reverse" | "forensics" | "osint" | "misc";
 
 export type ChallengeStatus = "pending" | "active" | "solved" | "locked";
 

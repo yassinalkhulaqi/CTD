@@ -97,7 +97,9 @@ export function makeChallenge(overrides: Partial<Challenge> = {}): Challenge {
  * @param overrides - The fields to override.
  * @returns The event.
  */
-export function makeEvent(overrides: Partial<ActivityEvent> = {}): ActivityEvent {
+export function makeEvent(
+  overrides: Partial<ActivityEvent> = {},
+): ActivityEvent {
   counter += 1;
   return {
     id: counter,

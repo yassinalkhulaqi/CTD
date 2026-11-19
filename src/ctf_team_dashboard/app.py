@@ -18,6 +18,7 @@ from ctf_team_dashboard.config import Settings, get_settings
 from ctf_team_dashboard.db.engine import init_database
 from ctf_team_dashboard.dependencies import enforce_rate_limit, get_rate_limiter
 from ctf_team_dashboard.errors import DashboardError
+from ctf_team_dashboard.features import install_features
 from ctf_team_dashboard.routers import (
     analytics,
     audit,
@@ -150,11 +151,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(realtime.router)
     app.include_router(analytics.router)
     app.include_router(audit.router)
+    install_features(app)
 
     @app.exception_handler(DashboardError)
-    async def _handle_dashboard_error(
-        _request: Request, exc: DashboardError
-    ) -> JSONResponse:
+    async def _handle_dashboard_error(_request: Request, exc: DashboardError) -> JSONResponse:
         """Render domain errors using the shared error envelope."""
         headers: dict[str, str] = {}
         retry_after = exc.details.get("retry_after")

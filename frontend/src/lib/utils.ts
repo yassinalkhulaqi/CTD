@@ -23,7 +23,9 @@ export function cn(...values: unknown[]): string {
     }
 
     if (typeof value === "object") {
-      for (const [key, enabled] of Object.entries(value as Record<string, unknown>)) {
+      for (const [key, enabled] of Object.entries(
+        value as Record<string, unknown>,
+      )) {
         if (enabled) classes.push(key);
       }
     }
@@ -65,7 +67,9 @@ export function formatDuration(seconds: number): string {
   const hours = Math.floor(safe / 3600);
   const minutes = Math.floor((safe % 3600) / 60);
   const secs = safe % 60;
-  return [hours, minutes, secs].map((part) => String(part).padStart(2, "0")).join(":");
+  return [hours, minutes, secs]
+    .map((part) => String(part).padStart(2, "0"))
+    .join(":");
 }
 
 /**
@@ -96,7 +100,10 @@ export function formatCompactDuration(seconds: number): string {
  * @param now - Reference time, defaults to the current time.
  * @returns The relative time string.
  */
-export function formatRelativeTime(iso: string, now: Date = new Date()): string {
+export function formatRelativeTime(
+  iso: string,
+  now: Date = new Date(),
+): string {
   const timestamp = Date.parse(iso);
   if (Number.isNaN(timestamp)) return "—";
 

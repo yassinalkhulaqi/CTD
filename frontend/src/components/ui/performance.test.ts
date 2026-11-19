@@ -7,7 +7,12 @@ describe("useVirtualList", () => {
   it("renders only the visible slice", () => {
     const items = Array.from({ length: 1000 }, (_, index) => index);
     const { result } = renderHook(() =>
-      useVirtualList({ items, itemHeight: 40, viewportHeight: 400, overscan: 2 }),
+      useVirtualList({
+        items,
+        itemHeight: 40,
+        viewportHeight: 400,
+        overscan: 2,
+      }),
     );
 
     expect(result.current.visible.length).toBeLessThan(items.length);
@@ -18,7 +23,12 @@ describe("useVirtualList", () => {
   it("moves the window when the viewport scrolls", () => {
     const items = Array.from({ length: 1000 }, (_, index) => index);
     const { result } = renderHook(() =>
-      useVirtualList({ items, itemHeight: 40, viewportHeight: 400, overscan: 2 }),
+      useVirtualList({
+        items,
+        itemHeight: 40,
+        viewportHeight: 400,
+        overscan: 2,
+      }),
     );
 
     act(() => {
@@ -45,27 +55,36 @@ describe("useVirtualList", () => {
 describe("memoization helpers", () => {
   it("keeps the identity of a stable value", () => {
     const stable = { a: 1 };
-    const { result, rerender } = renderHook(({ value }) => useStableValue(value), {
-      initialProps: { value: stable },
-    });
+    const { result, rerender } = renderHook(
+      ({ value }) => useStableValue(value),
+      {
+        initialProps: { value: stable },
+      },
+    );
     const first = result.current;
     rerender({ value: stable });
     expect(result.current).toBe(first);
   });
 
   it("replaces the value when the reference changes", () => {
-    const { result, rerender } = renderHook(({ value }) => useStableValue(value), {
-      initialProps: { value: { a: 1 } },
-    });
+    const { result, rerender } = renderHook(
+      ({ value }) => useStableValue(value),
+      {
+        initialProps: { value: { a: 1 } },
+      },
+    );
     const first = result.current;
     rerender({ value: { a: 2 } });
     expect(result.current).not.toBe(first);
   });
 
   it("debounces a value", async () => {
-    const { result, rerender } = renderHook(({ value }) => useDebounced(value, 10), {
-      initialProps: { value: "a" },
-    });
+    const { result, rerender } = renderHook(
+      ({ value }) => useDebounced(value, 10),
+      {
+        initialProps: { value: "a" },
+      },
+    );
     rerender({ value: "b" });
     expect(result.current).toBe("a");
     await new Promise((resolve) => setTimeout(resolve, 30));

@@ -21,9 +21,7 @@ def test_cache_key_includes_the_parameters() -> None:
 def test_cache_key_is_order_independent() -> None:
     """The parameter order should not change the key."""
     cache = ResponseCache()
-    assert cache.key("/api/teams", {"a": 1, "b": 2}) == cache.key(
-        "/api/teams", {"b": 2, "a": 1}
-    )
+    assert cache.key("/api/teams", {"a": 1, "b": 2}) == cache.key("/api/teams", {"b": 2, "a": 1})
 
 
 def test_cache_stores_and_returns_a_payload() -> None:

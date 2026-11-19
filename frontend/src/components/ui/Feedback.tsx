@@ -37,12 +37,19 @@ export function Skeleton({
 }: SkeletonProps) {
   if (lines && lines > 1) {
     return (
-      <div className={cn(styles.skeletonGroup, className)} aria-hidden="true" {...rest}>
+      <div
+        className={cn(styles.skeletonGroup, className)}
+        aria-hidden="true"
+        {...rest}
+      >
         {Array.from({ length: lines }, (_, index) => (
           <div
             key={index}
             className={styles.skeleton}
-            style={{ width: index === lines - 1 ? "65%" : "100%", height: height ?? 12 }}
+            style={{
+              width: index === lines - 1 ? "65%" : "100%",
+              height: height ?? 12,
+            }}
           />
         ))}
       </div>
@@ -51,8 +58,17 @@ export function Skeleton({
 
   return (
     <div
-      className={cn(styles.skeleton, circle && styles.skeletonCircle, className)}
-      style={{ width, height, borderRadius: circle ? "50%" : undefined, ...style }}
+      className={cn(
+        styles.skeleton,
+        circle && styles.skeletonCircle,
+        className,
+      )}
+      style={{
+        width,
+        height,
+        borderRadius: circle ? "50%" : undefined,
+        ...style,
+      }}
       aria-hidden="true"
       {...rest}
     />
@@ -73,7 +89,12 @@ export interface SpinnerProps extends HTMLAttributes<HTMLSpanElement> {
  * @param props - The component props.
  * @returns The spinner element.
  */
-export function Spinner({ size = 18, label = "Loading", className, ...rest }: SpinnerProps) {
+export function Spinner({
+  size = 18,
+  label = "Loading",
+  className,
+  ...rest
+}: SpinnerProps) {
   return (
     <span
       className={cn(styles.spinner, className)}
@@ -117,7 +138,9 @@ export function EmptyState({
         {icon ?? <Inbox size={22} />}
       </div>
       <p className={styles.emptyTitle}>{title}</p>
-      {description ? <p className={styles.emptyDescription}>{description}</p> : null}
+      {description ? (
+        <p className={styles.emptyDescription}>{description}</p>
+      ) : null}
       {action ? <div className={styles.emptyAction}>{action}</div> : null}
     </div>
   );
@@ -263,7 +286,12 @@ export function ScoreRing({
       aria-label={`${Math.round(ratio * 100)}% complete`}
       {...rest}
     >
-      <svg width={size} height={size} className={styles.ringSvg} aria-hidden="true">
+      <svg
+        width={size}
+        height={size}
+        className={styles.ringSvg}
+        aria-hidden="true"
+      >
         <circle
           cx={size / 2}
           cy={size / 2}
@@ -286,7 +314,9 @@ export function ScoreRing({
           className={styles.ringProgress}
         />
       </svg>
-      <span className={styles.ringLabel}>{children ?? `${Math.round(ratio * 100)}%`}</span>
+      <span className={styles.ringLabel}>
+        {children ?? `${Math.round(ratio * 100)}%`}
+      </span>
     </div>
   );
 }

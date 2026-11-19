@@ -42,7 +42,10 @@ export interface FieldBaseProps {
 }
 
 /** Props accepted by {@link Input}. */
-export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "className">, FieldBaseProps {
+export interface InputProps
+  extends
+    Omit<InputHTMLAttributes<HTMLInputElement>, "className">,
+    FieldBaseProps {
   /** Icon rendered inside the leading edge of the control. */
   icon?: ReactNode;
 }
@@ -66,7 +69,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   return (
     <div className={cn(styles.field, error && styles.fieldInvalid, className)}>
       {label ? (
-        <label className={cn(styles.label, hideLabel && styles.visuallyHidden)} htmlFor={inputId}>
+        <label
+          className={cn(styles.label, hideLabel && styles.visuallyHidden)}
+          htmlFor={inputId}
+        >
           {label}
         </label>
       ) : null}
@@ -79,7 +85,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         <input
           ref={ref}
           id={inputId}
-          className={cn(styles.input, icon && styles.inputWithIcon, error && styles.inputInvalid)}
+          className={cn(
+            styles.input,
+            icon && styles.inputWithIcon,
+            error && styles.inputInvalid,
+          )}
           disabled={disabled}
           aria-invalid={error ? true : undefined}
           aria-describedby={joinIds(hintId, errorId)}
@@ -101,7 +111,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
 
 /** Props accepted by {@link Textarea}. */
 export interface TextareaProps
-  extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "className">,
+  extends
+    Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "className">,
     FieldBaseProps {
   /** Show the character counter. */
   showCount?: boolean;
@@ -114,53 +125,72 @@ export interface TextareaProps
  * @param ref - The forwarded DOM ref.
  * @returns The form control.
  */
-export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function Textarea(
-  { label, hint, error, hideLabel, disabled, className, showCount, id, value, maxLength, ...rest },
-  ref,
-) {
-  const generatedId = useId();
-  const inputId = id ?? generatedId;
-  const hintId = hint ? `${inputId}-hint` : undefined;
-  const errorId = error ? `${inputId}-error` : undefined;
-  const length = typeof value === "string" ? value.length : 0;
+export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
+  function Textarea(
+    {
+      label,
+      hint,
+      error,
+      hideLabel,
+      disabled,
+      className,
+      showCount,
+      id,
+      value,
+      maxLength,
+      ...rest
+    },
+    ref,
+  ) {
+    const generatedId = useId();
+    const inputId = id ?? generatedId;
+    const hintId = hint ? `${inputId}-hint` : undefined;
+    const errorId = error ? `${inputId}-error` : undefined;
+    const length = typeof value === "string" ? value.length : 0;
 
-  return (
-    <div className={cn(styles.field, error && styles.fieldInvalid, className)}>
-      <div className={styles.labelRow}>
-        {label ? (
-          <label className={cn(styles.label, hideLabel && styles.visuallyHidden)} htmlFor={inputId}>
-            {label}
-          </label>
-        ) : null}
-        {showCount && maxLength ? (
-          <span className={styles.counter}>
-            {length}/{maxLength}
-          </span>
+    return (
+      <div
+        className={cn(styles.field, error && styles.fieldInvalid, className)}
+      >
+        <div className={styles.labelRow}>
+          {label ? (
+            <label
+              className={cn(styles.label, hideLabel && styles.visuallyHidden)}
+              htmlFor={inputId}
+            >
+              {label}
+            </label>
+          ) : null}
+          {showCount && maxLength ? (
+            <span className={styles.counter}>
+              {length}/{maxLength}
+            </span>
+          ) : null}
+        </div>
+        <textarea
+          ref={ref}
+          id={inputId}
+          className={cn(styles.textarea, error && styles.inputInvalid)}
+          disabled={disabled}
+          value={value}
+          maxLength={maxLength}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={cn(hintId, errorId) || undefined}
+          {...rest}
+        />
+        {error ? (
+          <p className={styles.error} id={errorId} role="alert">
+            {error}
+          </p>
+        ) : hint ? (
+          <p className={styles.hint} id={hintId}>
+            {hint}
+          </p>
         ) : null}
       </div>
-      <textarea
-        ref={ref}
-        id={inputId}
-        className={cn(styles.textarea, error && styles.inputInvalid)}
-        disabled={disabled}
-        value={value}
-        maxLength={maxLength}
-        aria-invalid={error ? true : undefined}
-        aria-describedby={cn(hintId, errorId) || undefined}
-        {...rest}
-      />
-      {error ? (
-        <p className={styles.error} id={errorId} role="alert">
-          {error}
-        </p>
-      ) : hint ? (
-        <p className={styles.hint} id={hintId}>
-          {hint}
-        </p>
-      ) : null}
-    </div>
-  );
-});
+    );
+  },
+);
 
 /** An option rendered by the {@link Select} component. */
 export interface SelectOption {
@@ -174,7 +204,8 @@ export interface SelectOption {
 
 /** Props accepted by {@link Select}. */
 export interface SelectProps
-  extends Omit<SelectHTMLAttributes<HTMLSelectElement>, "className" | "children">,
+  extends
+    Omit<SelectHTMLAttributes<HTMLSelectElement>, "className" | "children">,
     FieldBaseProps {
   /** The available options. */
   options: SelectOption[];
@@ -189,61 +220,88 @@ export interface SelectProps
  * @param ref - The forwarded DOM ref.
  * @returns The form control.
  */
-export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select(
-  { label, hint, error, hideLabel, disabled, className, options, placeholder, id, ...rest },
-  ref,
-) {
-  const generatedId = useId();
-  const selectId = id ?? generatedId;
-  const hintId = hint ? `${selectId}-hint` : undefined;
-  const errorId = error ? `${selectId}-error` : undefined;
+export const Select = forwardRef<HTMLSelectElement, SelectProps>(
+  function Select(
+    {
+      label,
+      hint,
+      error,
+      hideLabel,
+      disabled,
+      className,
+      options,
+      placeholder,
+      id,
+      ...rest
+    },
+    ref,
+  ) {
+    const generatedId = useId();
+    const selectId = id ?? generatedId;
+    const hintId = hint ? `${selectId}-hint` : undefined;
+    const errorId = error ? `${selectId}-error` : undefined;
 
-  return (
-    <div className={cn(styles.field, error && styles.fieldInvalid, className)}>
-      {label ? (
-        <label className={cn(styles.label, hideLabel && styles.visuallyHidden)} htmlFor={selectId}>
-          {label}
-        </label>
-      ) : null}
-      <div className={styles.control}>
-        <select
-          ref={ref}
-          id={selectId}
-          className={cn(styles.select, error && styles.inputInvalid)}
-          disabled={disabled}
-          aria-invalid={error ? true : undefined}
-          aria-describedby={joinIds(hintId, errorId)}
-          {...rest}
-        >
-          {placeholder ? (
-            <option value="" disabled>
-              {placeholder}
-            </option>
-          ) : null}
-          {options.map((option) => (
-            <option key={option.value} value={option.value} disabled={option.disabled}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-        <ChevronDown className={styles.selectIcon} size={15} aria-hidden="true" />
+    return (
+      <div
+        className={cn(styles.field, error && styles.fieldInvalid, className)}
+      >
+        {label ? (
+          <label
+            className={cn(styles.label, hideLabel && styles.visuallyHidden)}
+            htmlFor={selectId}
+          >
+            {label}
+          </label>
+        ) : null}
+        <div className={styles.control}>
+          <select
+            ref={ref}
+            id={selectId}
+            className={cn(styles.select, error && styles.inputInvalid)}
+            disabled={disabled}
+            aria-invalid={error ? true : undefined}
+            aria-describedby={joinIds(hintId, errorId)}
+            {...rest}
+          >
+            {placeholder ? (
+              <option value="" disabled>
+                {placeholder}
+              </option>
+            ) : null}
+            {options.map((option) => (
+              <option
+                key={option.value}
+                value={option.value}
+                disabled={option.disabled}
+              >
+                {option.label}
+              </option>
+            ))}
+          </select>
+          <ChevronDown
+            className={styles.selectIcon}
+            size={15}
+            aria-hidden="true"
+          />
+        </div>
+        {error ? (
+          <p className={styles.error} id={errorId} role="alert">
+            {error}
+          </p>
+        ) : hint ? (
+          <p className={styles.hint} id={hintId}>
+            {hint}
+          </p>
+        ) : null}
       </div>
-      {error ? (
-        <p className={styles.error} id={errorId} role="alert">
-          {error}
-        </p>
-      ) : hint ? (
-        <p className={styles.hint} id={hintId}>
-          {hint}
-        </p>
-      ) : null}
-    </div>
-  );
-});
+    );
+  },
+);
 
 /** Props accepted by {@link Checkbox}. */
 export interface CheckboxProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "className">,
+  extends
+    Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "className">,
     FieldBaseProps {
   /** The visible label of the checkbox. */
   children?: ReactNode;
@@ -256,43 +314,62 @@ export interface CheckboxProps
  * @param ref - The forwarded DOM ref.
  * @returns The form control.
  */
-export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Checkbox(
-  { label, hint, error, hideLabel, disabled, className, children, id, ...rest },
-  ref,
-) {
-  const generatedId = useId();
-  const inputId = id ?? generatedId;
+export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
+  function Checkbox(
+    {
+      label,
+      hint,
+      error,
+      hideLabel,
+      disabled,
+      className,
+      children,
+      id,
+      ...rest
+    },
+    ref,
+  ) {
+    const generatedId = useId();
+    const inputId = id ?? generatedId;
 
-  return (
-    <div className={cn(styles.checkboxField, className)}>
-      <label className={cn(styles.checkboxLabel, hideLabel && styles.visuallyHidden)} htmlFor={inputId}>
-        <input
-          ref={ref}
-          id={inputId}
-          type="checkbox"
-          className={styles.checkboxInput}
-          disabled={disabled}
-          {...rest}
-        />
-        <span className={styles.checkboxBox} aria-hidden="true">
-          <Check size={12} strokeWidth={3} />
-        </span>
-        <span className={styles.checkboxText}>{children ?? label}</span>
-      </label>
-      {error ? (
-        <p className={styles.error} role="alert">
-          {error}
-        </p>
-      ) : hint ? (
-        <p className={styles.hint}>{hint}</p>
-      ) : null}
-    </div>
-  );
-});
+    return (
+      <div className={cn(styles.checkboxField, className)}>
+        <label
+          className={cn(
+            styles.checkboxLabel,
+            hideLabel && styles.visuallyHidden,
+          )}
+          htmlFor={inputId}
+        >
+          <input
+            ref={ref}
+            id={inputId}
+            type="checkbox"
+            className={styles.checkboxInput}
+            disabled={disabled}
+            {...rest}
+          />
+          <span className={styles.checkboxBox} aria-hidden="true">
+            <Check size={12} strokeWidth={3} />
+          </span>
+          <span className={styles.checkboxText}>{children ?? label}</span>
+        </label>
+        {error ? (
+          <p className={styles.error} role="alert">
+            {error}
+          </p>
+        ) : hint ? (
+          <p className={styles.hint}>{hint}</p>
+        ) : null}
+      </div>
+    );
+  },
+);
 
 /** Props accepted by {@link Switch}. */
 export interface SwitchProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "className">,
+  extends
+    Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "className">,
     FieldBaseProps {
   /** The visible label of the switch. */
   children?: ReactNode;
@@ -314,7 +391,10 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(function Switch(
 
   return (
     <div className={cn(styles.switchField, className)}>
-      <label className={cn(styles.switchLabel, hideLabel && styles.visuallyHidden)} htmlFor={inputId}>
+      <label
+        className={cn(styles.switchLabel, hideLabel && styles.visuallyHidden)}
+        htmlFor={inputId}
+      >
         <input
           ref={ref}
           id={inputId}

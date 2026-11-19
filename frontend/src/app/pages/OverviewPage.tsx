@@ -4,7 +4,11 @@
 
 import { useMemo } from "react";
 import { Flag, ShieldCheck, Target, Trophy, Users } from "lucide-react";
-import { useChallenges, useDashboardSnapshot, useMembers } from "../../api/resources";
+import {
+  useChallenges,
+  useDashboardSnapshot,
+  useMembers,
+} from "../../api/resources";
 import { useActiveTeamId } from "../../stores/dashboardStore";
 import { formatNumber, formatPercent } from "../../lib/utils";
 import {
@@ -30,15 +34,19 @@ import styles from "./OverviewPage.module.css";
  */
 export default function OverviewPage() {
   const teamId = useActiveTeamId();
-  const snapshot = useDashboardSnapshot(teamId ?? undefined, { staleTime: 10_000 });
+  const snapshot = useDashboardSnapshot(teamId ?? undefined, {
+    staleTime: 10_000,
+  });
   const members = useMembers(teamId ? { teamId } : {}, { staleTime: 30_000 });
-  const challenges = useChallenges(
-    teamId ? { teamId } : {},
-    { staleTime: 15_000 },
-  );
+  const challenges = useChallenges(teamId ? { teamId } : {}, {
+    staleTime: 15_000,
+  });
 
   const overview = snapshot.data?.overview;
-  const categories = useMemo(() => snapshot.data?.categories ?? [], [snapshot.data]);
+  const categories = useMemo(
+    () => snapshot.data?.categories ?? [],
+    [snapshot.data],
+  );
   const contributions = useMemo(
     () => snapshot.data?.contributions ?? [],
     [snapshot.data],
@@ -53,7 +61,11 @@ export default function OverviewPage() {
     return (
       <ErrorState
         title="The dashboard could not be loaded"
-        message={snapshot.error instanceof Error ? snapshot.error.message : "Unknown error"}
+        message={
+          snapshot.error instanceof Error
+            ? snapshot.error.message
+            : "Unknown error"
+        }
         onRetry={() => void snapshot.refetch()}
       />
     );
@@ -64,7 +76,13 @@ export default function OverviewPage() {
       <section className={styles.stats} aria-label="Headline statistics">
         <StatCard
           label="Teams"
-          value={overview ? formatNumber(overview.teams) : <Skeleton width={48} height={30} />}
+          value={
+            overview ? (
+              formatNumber(overview.teams)
+            ) : (
+              <Skeleton width={48} height={30} />
+            )
+          }
           icon={<ShieldCheck size={16} />}
           accent="#6366f1"
           loading={!overview}
@@ -72,7 +90,13 @@ export default function OverviewPage() {
         />
         <StatCard
           label="Solves"
-          value={overview ? formatNumber(overview.solves) : <Skeleton width={48} height={30} />}
+          value={
+            overview ? (
+              formatNumber(overview.solves)
+            ) : (
+              <Skeleton width={48} height={30} />
+            )
+          }
           icon={<Flag size={16} />}
           accent="#22d3ee"
           loading={!overview}
@@ -80,7 +104,13 @@ export default function OverviewPage() {
         />
         <StatCard
           label="Members online"
-          value={overview ? formatNumber(overview.active_members) : <Skeleton width={48} height={30} />}
+          value={
+            overview ? (
+              formatNumber(overview.active_members)
+            ) : (
+              <Skeleton width={48} height={30} />
+            )
+          }
           icon={<Users size={16} />}
           accent="#34d399"
           loading={!overview}
@@ -88,7 +118,13 @@ export default function OverviewPage() {
         />
         <StatCard
           label="Points scored"
-          value={overview ? formatNumber(overview.total_points) : <Skeleton width={48} height={30} />}
+          value={
+            overview ? (
+              formatNumber(overview.total_points)
+            ) : (
+              <Skeleton width={48} height={30} />
+            )
+          }
           icon={<Trophy size={16} />}
           accent="#f59e0b"
           loading={!overview}
@@ -128,7 +164,9 @@ export default function OverviewPage() {
                     <span className={styles.categoryValue}>
                       {entry.solves}/{entry.challenges}
                     </span>
-                    <Badge tone={entry.solve_rate >= 0.6 ? "success" : "neutral"}>
+                    <Badge
+                      tone={entry.solve_rate >= 0.6 ? "success" : "neutral"}
+                    >
                       {formatPercent(entry.solve_rate, 0)}
                     </Badge>
                   </li>
@@ -143,7 +181,11 @@ export default function OverviewPage() {
             <CardTitle>Completion</CardTitle>
           </CardHeader>
           <CardContent className={styles.completion}>
-            <ScoreRing value={overview?.completion_rate ?? 0} size={92} strokeWidth={8} />
+            <ScoreRing
+              value={overview?.completion_rate ?? 0}
+              size={92}
+              strokeWidth={8}
+            />
             <p className={styles.completionMeta}>
               {overview
                 ? `${formatNumber(overview.solved_challenges)} of ${formatNumber(overview.challenges)} challenges solved`
@@ -169,8 +211,12 @@ export default function OverviewPage() {
                   <li key={row.member_id} className={styles.contribution}>
                     <span className={styles.contributionRank}>{index + 1}</span>
                     <Avatar name={row.display_name} size="sm" />
-                    <span className={styles.contributionName}>{row.display_name}</span>
-                    <span className={styles.contributionPoints}>{formatNumber(row.points)}</span>
+                    <span className={styles.contributionName}>
+                      {row.display_name}
+                    </span>
+                    <span className={styles.contributionPoints}>
+                      {formatNumber(row.points)}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -191,7 +237,9 @@ export default function OverviewPage() {
                   .map((challenge) => (
                     <li key={challenge.id} className={styles.challenge}>
                       <div className={styles.challengeMain}>
-                        <span className={styles.challengeTitle}>{challenge.title}</span>
+                        <span className={styles.challengeTitle}>
+                          {challenge.title}
+                        </span>
                         <span className={styles.challengeMeta}>
                           {challenge.category} · {challenge.difficulty}
                         </span>

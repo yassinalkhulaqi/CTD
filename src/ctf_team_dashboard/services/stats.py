@@ -32,9 +32,7 @@ class StatsService:
         members = self.repositories.members.count_matching()
         challenges = self.repositories.challenges.count_matching()
         solves = self.repositories.solves.count_matching()
-        solved_challenges = self.repositories.challenges.count_matching(
-            "status = ?", ("solved",)
-        )
+        solved_challenges = self.repositories.challenges.count_matching("status = ?", ("solved",))
         points = int(
             self.repositories.solves.fetch_value(
                 "SELECT COALESCE(SUM(points_awarded), 0) FROM solves"
@@ -256,9 +254,7 @@ def compute_category_stats(
         solved_challenge = challenge_by_id.get(solve.challenge_id)
         if solved_challenge is None:
             continue
-        category = ChallengeCategory.parse(
-            str(solved_challenge.category), ChallengeCategory.MISC
-        )
+        category = ChallengeCategory.parse(str(solved_challenge.category), ChallengeCategory.MISC)
         key = category.value
         solve_counts[key] = solve_counts.get(key, 0) + 1
     return [

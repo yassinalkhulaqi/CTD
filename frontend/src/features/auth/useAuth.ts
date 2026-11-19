@@ -17,7 +17,8 @@ import {
 import type { AuthUser, Principal } from "./types";
 
 /** The lifecycle of an authentication attempt. */
-export type AuthStatus = "idle" | "loading" | "authenticated" | "anonymous" | "error";
+export type AuthStatus =
+  "idle" | "loading" | "authenticated" | "anonymous" | "error";
 
 /** The value returned by {@link useAuth}. */
 export interface AuthState {
@@ -98,7 +99,11 @@ export function useAuth(): AuthState {
         clearSession();
         setStatus("anonymous");
       } else {
-        setError(caught instanceof Error ? caught.message : "Unable to load the session");
+        setError(
+          caught instanceof Error
+            ? caught.message
+            : "Unable to load the session",
+        );
         setStatus("error");
       }
     }
@@ -116,27 +121,25 @@ export function useAuth(): AuthState {
     })();
   }, [loadPrincipal]);
 
-  const login = useCallback(
-    async (username: string, password: string) => {
-      setStatus("loading");
-      setError(null);
-      try {
-        const response = await authApi.login(username, password);
-        setTokenPair(response.tokens);
-        writeUser(response.user);
-        if (!mounted.current) return;
-        setUser(response.user);
-        setStatus("authenticated");
-      } catch (caught) {
-        if (!mounted.current) return;
-        const message = caught instanceof Error ? caught.message : "Unable to sign in";
-        setError(message);
-        setStatus("error");
-        throw caught instanceof Error ? caught : new Error(message);
-      }
-    },
-    [],
-  );
+  const login = useCallback(async (username: string, password: string) => {
+    setStatus("loading");
+    setError(null);
+    try {
+      const response = await authApi.login(username, password);
+      setTokenPair(response.tokens);
+      writeUser(response.user);
+      if (!mounted.current) return;
+      setUser(response.user);
+      setStatus("authenticated");
+    } catch (caught) {
+      if (!mounted.current) return;
+      const message =
+        caught instanceof Error ? caught.message : "Unable to sign in";
+      setError(message);
+      setStatus("error");
+      throw caught instanceof Error ? caught : new Error(message);
+    }
+  }, []);
 
   const logout = useCallback(async () => {
     const refreshToken = getRefreshToken();

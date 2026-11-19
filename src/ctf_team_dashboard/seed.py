@@ -288,9 +288,7 @@ def build_seed_data(
         for solver in rng.sample(team_members, solver_count):
             solved_counter += 1
             base_time = challenge.starts_at or starts_at
-            solved_at = base_time + timedelta(
-                hours=rng.randint(0, max(1, competition_hours // 2))
-            )
+            solved_at = base_time + timedelta(hours=rng.randint(0, max(1, competition_hours // 2)))
             if solved_at > now:
                 solved_at = now - timedelta(minutes=rng.randint(1, 90))
             solves.append(

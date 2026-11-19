@@ -5,12 +5,18 @@
 import { useMemo } from "react";
 import { Flag, Pause, Play, RefreshCw, TriangleAlert } from "lucide-react";
 import { cn, formatRelativeTime } from "../../lib/utils";
-import { useActivityStore, useFilteredActivity } from "../../stores/activityStore";
+import {
+  useActivityStore,
+  useFilteredActivity,
+} from "../../stores/activityStore";
 import type { ActivityEvent, EventKind } from "../../types";
 import { Badge, Button, EmptyState, IconButton, Skeleton } from "../ui";
 import styles from "./ActivityFeed.module.css";
 
-const KIND_TONES: Record<EventKind, "accent" | "success" | "warning" | "danger" | "info" | "neutral"> = {
+const KIND_TONES: Record<
+  EventKind,
+  "accent" | "success" | "warning" | "danger" | "info" | "neutral"
+> = {
   "solve.created": "success",
   "solve.removed": "warning",
   "challenge.created": "accent",
@@ -43,8 +49,10 @@ const KIND_LABELS: Record<EventKind, string> = {
 export function describeEvent(event: ActivityEvent): string {
   const payload = event.payload as Record<string, unknown>;
   const title = typeof payload.title === "string" ? payload.title : undefined;
-  const handle = typeof payload.handle === "string" ? payload.handle : undefined;
-  const points = typeof payload.points === "number" ? payload.points : undefined;
+  const handle =
+    typeof payload.handle === "string" ? payload.handle : undefined;
+  const points =
+    typeof payload.points === "number" ? payload.points : undefined;
 
   if (event.kind === "solve.created") {
     const parts = [title ? `“${title}”` : "a challenge"];
@@ -73,7 +81,11 @@ export interface ActivityFeedProps {
  * @param props - The component props.
  * @returns The feed element.
  */
-export function ActivityFeed({ limit = 12, loading = false, className }: ActivityFeedProps) {
+export function ActivityFeed({
+  limit = 12,
+  loading = false,
+  className,
+}: ActivityFeedProps) {
   const events = useFilteredActivity();
   const paused = useActivityStore((state) => state.paused);
   const togglePaused = useActivityStore((state) => state.togglePaused);
@@ -116,21 +128,35 @@ export function ActivityFeed({ limit = 12, loading = false, className }: Activit
           >
             {paused ? "Resume" : "Pause"}
           </Button>
-          <IconButton icon={<RefreshCw size={14} />} label="Clear the feed" onClick={clear} />
+          <IconButton
+            icon={<RefreshCw size={14} />}
+            label="Clear the feed"
+            onClick={clear}
+          />
         </div>
       </div>
 
       <ol className={styles.list}>
         {visible.map((event) => (
           <li key={event.id} className={styles.item}>
-            <span className={cn(styles.icon, styles[`icon-${event.kind.replace(".", "-")}`])} aria-hidden="true">
+            <span
+              className={cn(
+                styles.icon,
+                styles[`icon-${event.kind.replace(".", "-")}`],
+              )}
+              aria-hidden="true"
+            >
               <Flag size={13} />
             </span>
             <div className={styles.body}>
               <p className={styles.title}>{describeEvent(event)}</p>
               <p className={styles.meta}>
-                <Badge tone={KIND_TONES[event.kind]}>{KIND_LABELS[event.kind]}</Badge>
-                <time dateTime={event.occurred_at}>{formatRelativeTime(event.occurred_at)}</time>
+                <Badge tone={KIND_TONES[event.kind]}>
+                  {KIND_LABELS[event.kind]}
+                </Badge>
+                <time dateTime={event.occurred_at}>
+                  {formatRelativeTime(event.occurred_at)}
+                </time>
               </p>
             </div>
           </li>

@@ -61,14 +61,11 @@ def list_challenges(
 
 
 @router.get("/api/challenges/board", response_model=dict[str, list[ChallengeRead]])
-def get_board(
-    service: ChallengeServiceDep, team_id: str
-) -> dict[str, list[ChallengeRead]]:
+def get_board(service: ChallengeServiceDep, team_id: str) -> dict[str, list[ChallengeRead]]:
     """Return the challenge board grouped by lifecycle status."""
     board = service.board(team_id)
     return {
-        status_value: [_to_read(item) for item in items]
-        for status_value, items in board.items()
+        status_value: [_to_read(item) for item in items] for status_value, items in board.items()
     }
 
 

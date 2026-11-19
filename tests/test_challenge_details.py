@@ -54,9 +54,7 @@ def test_mask_flag_handles_a_short_value() -> None:
 def test_add_note_requires_a_known_challenge(repositories: Repositories) -> None:
     """A note cannot be attached to an unknown challenge."""
     try:
-        NoteService(repositories).add_note(
-            challenge_id="ghost", member_id="member-1", body="hello"
-        )
+        NoteService(repositories).add_note(challenge_id="ghost", member_id="member-1", body="hello")
     except NotFoundError:
         pass
     else:
@@ -68,9 +66,7 @@ def test_add_note_rejects_an_empty_body(repositories: Repositories) -> None:
     team = _team(repositories)
     challenge = _challenge(repositories, team)
     try:
-        NoteService(repositories).add_note(
-            challenge_id=challenge, member_id="member-1", body="   "
-        )
+        NoteService(repositories).add_note(challenge_id=challenge, member_id="member-1", body="   ")
     except ValidationError:
         pass
     else:
@@ -162,9 +158,7 @@ def test_notes_endpoints_round_trip(client: TestClient) -> None:
     """A note should be created, listed and deleted through the API."""
     teams = client.get("/api/teams").json()
     team_id = teams[0]["id"]
-    member = client.post(
-        "/api/members", json={"team_id": team_id, "handle": "notewriter"}
-    ).json()
+    member = client.post("/api/members", json={"team_id": team_id, "handle": "notewriter"}).json()
     challenge = client.post(
         "/api/challenges",
         json={
@@ -198,9 +192,7 @@ def test_update_note_endpoint(client: TestClient) -> None:
     """The note body should be editable through the API."""
     teams = client.get("/api/teams").json()
     team_id = teams[0]["id"]
-    member = client.post(
-        "/api/members", json={"team_id": team_id, "handle": "editor"}
-    ).json()
+    member = client.post("/api/members", json={"team_id": team_id, "handle": "editor"}).json()
     challenge = client.post(
         "/api/challenges",
         json={
@@ -228,9 +220,7 @@ def test_timeline_endpoint(client: TestClient) -> None:
     """The timeline should list the solves of a challenge."""
     teams = client.get("/api/teams").json()
     team_id = teams[0]["id"]
-    member = client.post(
-        "/api/members", json={"team_id": team_id, "handle": "solver"}
-    ).json()
+    member = client.post("/api/members", json={"team_id": team_id, "handle": "solver"}).json()
     challenge = client.post(
         "/api/challenges",
         json={
@@ -262,9 +252,7 @@ def test_flag_submission_records_a_solve(client: TestClient) -> None:
     """A valid flag should be accepted and award the points."""
     teams = client.get("/api/teams").json()
     team_id = teams[0]["id"]
-    member = client.post(
-        "/api/members", json={"team_id": team_id, "handle": "flagger"}
-    ).json()
+    member = client.post("/api/members", json={"team_id": team_id, "handle": "flagger"}).json()
     challenge = client.post(
         "/api/challenges",
         json={
@@ -295,9 +283,7 @@ def test_flag_submission_rejects_a_malformed_flag(client: TestClient) -> None:
     """A malformed flag should be reported without recording a solve."""
     teams = client.get("/api/teams").json()
     team_id = teams[0]["id"]
-    member = client.post(
-        "/api/members", json={"team_id": team_id, "handle": "typo"}
-    ).json()
+    member = client.post("/api/members", json={"team_id": team_id, "handle": "typo"}).json()
     challenge = client.post(
         "/api/challenges",
         json={
@@ -326,9 +312,7 @@ def test_flag_submission_rejects_a_mismatched_challenge(client: TestClient) -> N
     """The challenge identifier of the payload must match the path."""
     teams = client.get("/api/teams").json()
     team_id = teams[0]["id"]
-    member = client.post(
-        "/api/members", json={"team_id": team_id, "handle": "mismatch"}
-    ).json()
+    member = client.post("/api/members", json={"team_id": team_id, "handle": "mismatch"}).json()
     challenge = client.post(
         "/api/challenges",
         json={

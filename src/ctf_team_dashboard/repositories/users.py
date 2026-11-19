@@ -51,9 +51,7 @@ class UserRepository(BaseRepository):
 
     def get_by_username(self, username: str) -> User | None:
         """Return a user by username, case insensitively."""
-        row = self.fetch_one(
-            "SELECT * FROM users WHERE username = ? COLLATE NOCASE", (username,)
-        )
+        row = self.fetch_one("SELECT * FROM users WHERE username = ? COLLATE NOCASE", (username,))
         return self.to_model(row) if row is not None else None
 
     def get_by_email(self, email: str) -> User | None:

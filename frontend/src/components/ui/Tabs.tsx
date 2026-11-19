@@ -39,7 +39,10 @@ export function useTabs(): TabsContextValue {
 }
 
 /** Props accepted by {@link Tabs}. */
-export interface TabsProps extends Omit<HTMLAttributes<HTMLDivElement>, "onChange"> {
+export interface TabsProps extends Omit<
+  HTMLAttributes<HTMLDivElement>,
+  "onChange"
+> {
   /** The identifier of the active tab. */
   value: string;
   /** Called when the active tab changes. */
@@ -94,11 +97,20 @@ export interface TabsListProps extends HTMLAttributes<HTMLDivElement> {
  * @param props - The component props.
  * @returns The tab list element.
  */
-export function TabsList({ scrollable = false, className, children, ...rest }: TabsListProps) {
+export function TabsList({
+  scrollable = false,
+  className,
+  children,
+  ...rest
+}: TabsListProps) {
   const context = useTabs();
   return (
     <div
-      className={cn(styles.list, scrollable && styles.listScrollable, className)}
+      className={cn(
+        styles.list,
+        scrollable && styles.listScrollable,
+        className,
+      )}
       role="tablist"
       aria-label={rest["aria-label"] ?? context.label}
       {...rest}
@@ -149,7 +161,9 @@ export function TabsTrigger({
       disabled={disabled}
       className={cn(
         styles.trigger,
-        context.variant === "pill" ? styles.triggerPill : styles.triggerUnderline,
+        context.variant === "pill"
+          ? styles.triggerPill
+          : styles.triggerUnderline,
         active && styles.triggerActive,
         className,
       )}
@@ -257,12 +271,19 @@ export function SegmentedControl<T extends string = string>({
   );
 
   return (
-    <div className={cn(styles.segmented, className)} role="group" aria-label={label}>
+    <div
+      className={cn(styles.segmented, className)}
+      role="group"
+      aria-label={label}
+    >
       {options.map((option) => (
         <button
           key={option.value}
           type="button"
-          className={cn(styles.segment, option.value === value && styles.segmentActive)}
+          className={cn(
+            styles.segment,
+            option.value === value && styles.segmentActive,
+          )}
           aria-pressed={option.value === value}
           tabIndex={option.value === value ? 0 : -1}
           onClick={() => {

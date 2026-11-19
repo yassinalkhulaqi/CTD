@@ -45,7 +45,10 @@ export interface ModalProps {
  * @param container - The element that holds the focusable content.
  * @param active - Whether the trap is enabled.
  */
-function useFocusTrap(container: React.RefObject<HTMLElement | null>, active: boolean): void {
+function useFocusTrap(
+  container: React.RefObject<HTMLElement | null>,
+  active: boolean,
+): void {
   useEffect(() => {
     if (!active || !container.current) return;
 
@@ -155,14 +158,20 @@ export function Modal({
               ) : null}
             </div>
             {hideClose ? null : (
-              <IconButton icon={<X size={16} />} label="Close dialog" onClick={onClose} />
+              <IconButton
+                icon={<X size={16} />}
+                label="Close dialog"
+                onClick={onClose}
+              />
             )}
           </header>
         ) : null}
 
         <div className={styles.modalBody}>{children}</div>
 
-        {footer ? <footer className={styles.modalFooter}>{footer}</footer> : null}
+        {footer ? (
+          <footer className={styles.modalFooter}>{footer}</footer>
+        ) : null}
       </div>
     </div>,
     document.body,
@@ -232,10 +241,16 @@ export function Drawer({
       >
         <header className={styles.drawerHeader}>
           <h2 className={styles.modalTitle}>{title}</h2>
-          <IconButton icon={<X size={16} />} label="Close panel" onClick={onClose} />
+          <IconButton
+            icon={<X size={16} />}
+            label="Close panel"
+            onClick={onClose}
+          />
         </header>
         <div className={styles.drawerBody}>{children}</div>
-        {footer ? <footer className={styles.drawerFooter}>{footer}</footer> : null}
+        {footer ? (
+          <footer className={styles.drawerFooter}>{footer}</footer>
+        ) : null}
       </div>
     </div>,
     document.body,
@@ -260,7 +275,12 @@ export interface TooltipProps {
  * @param props - The component props.
  * @returns The wrapped element.
  */
-export function Tooltip({ content, children, side = "top", delay = 250 }: TooltipProps) {
+export function Tooltip({
+  content,
+  children,
+  side = "top",
+  delay = 250,
+}: TooltipProps) {
   const [visible, setVisible] = useState(false);
   const timer = useRef<number | null>(null);
 
@@ -291,7 +311,10 @@ export function Tooltip({ content, children, side = "top", delay = 250 }: Toolti
     >
       {children}
       {visible ? (
-        <span className={cn(styles.tooltip, styles[`tooltip-${side}`])} role="tooltip">
+        <span
+          className={cn(styles.tooltip, styles[`tooltip-${side}`])}
+          role="tooltip"
+        >
           {content}
         </span>
       ) : null}
@@ -319,7 +342,13 @@ export interface PopoverProps {
  * @param props - The component props.
  * @returns The popover element.
  */
-export function Popover({ trigger, children, open, onClose, align = "start" }: PopoverProps) {
+export function Popover({
+  trigger,
+  children,
+  open,
+  onClose,
+  align = "start",
+}: PopoverProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -343,7 +372,10 @@ export function Popover({ trigger, children, open, onClose, align = "start" }: P
     <div className={styles.popoverAnchor} ref={containerRef}>
       {trigger}
       {open ? (
-        <div className={cn(styles.popover, styles[`popover-${align}`])} role="dialog">
+        <div
+          className={cn(styles.popover, styles[`popover-${align}`])}
+          role="dialog"
+        >
           {children}
         </div>
       ) : null}
@@ -367,10 +399,21 @@ export interface MenuProps extends HTMLAttributes<HTMLDivElement> {
  * @param props - The component props.
  * @returns The menu element.
  */
-export function Menu({ open, children, width = 200, className, ...rest }: MenuProps) {
+export function Menu({
+  open,
+  children,
+  width = 200,
+  className,
+  ...rest
+}: MenuProps) {
   if (!open) return null;
   return (
-    <div className={cn(styles.menu, className)} style={{ width }} role="menu" {...rest}>
+    <div
+      className={cn(styles.menu, className)}
+      style={{ width }}
+      role="menu"
+      {...rest}
+    >
       {children}
     </div>
   );
@@ -392,12 +435,24 @@ export interface MenuItemProps extends HTMLAttributes<HTMLButtonElement> {
  * @param props - The component props.
  * @returns The menu item element.
  */
-export function MenuItem({ icon, danger = false, active = false, className, children, ...rest }: MenuItemProps) {
+export function MenuItem({
+  icon,
+  danger = false,
+  active = false,
+  className,
+  children,
+  ...rest
+}: MenuItemProps) {
   return (
     <button
       type="button"
       role="menuitem"
-      className={cn(styles.menuItem, danger && styles.menuItemDanger, active && styles.menuItemActive, className)}
+      className={cn(
+        styles.menuItem,
+        danger && styles.menuItemDanger,
+        active && styles.menuItemActive,
+        className,
+      )}
       {...rest}
     >
       {icon ? (
@@ -416,6 +471,15 @@ export function MenuItem({ icon, danger = false, active = false, className, chil
  * @param props - The component props.
  * @returns The separator element.
  */
-export function MenuDivider({ className, ...rest }: HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn(styles.menuDivider, className)} role="separator" {...rest} />;
+export function MenuDivider({
+  className,
+  ...rest
+}: HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      className={cn(styles.menuDivider, className)}
+      role="separator"
+      {...rest}
+    />
+  );
 }

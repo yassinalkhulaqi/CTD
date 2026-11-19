@@ -10,7 +10,10 @@ import type { ChallengeCategory, ChallengeStatus } from "../../types";
 import { Badge, Button, IconButton, Input, SegmentedControl } from "../ui";
 import styles from "./TopBar.module.css";
 
-const CATEGORY_OPTIONS: Array<{ value: ChallengeCategory | "all"; label: string }> = [
+const CATEGORY_OPTIONS: Array<{
+  value: ChallengeCategory | "all";
+  label: string;
+}> = [
   { value: "all", label: "All" },
   { value: "web", label: "Web" },
   { value: "crypto", label: "Crypto" },
@@ -21,13 +24,14 @@ const CATEGORY_OPTIONS: Array<{ value: ChallengeCategory | "all"; label: string 
   { value: "misc", label: "Misc" },
 ];
 
-const STATUS_OPTIONS: Array<{ value: ChallengeStatus | "all"; label: string }> = [
-  { value: "all", label: "All" },
-  { value: "pending", label: "Pending" },
-  { value: "active", label: "Active" },
-  { value: "solved", label: "Solved" },
-  { value: "locked", label: "Locked" },
-];
+const STATUS_OPTIONS: Array<{ value: ChallengeStatus | "all"; label: string }> =
+  [
+    { value: "all", label: "All" },
+    { value: "pending", label: "Pending" },
+    { value: "active", label: "Active" },
+    { value: "solved", label: "Solved" },
+    { value: "locked", label: "Locked" },
+  ];
 
 const DENSITY_OPTIONS = [
   { value: "comfortable", label: "Comfortable" },
@@ -52,7 +56,9 @@ export function TopBar({ title, className }: TopBarProps) {
   const searchQuery = useDashboardStore((state) => state.searchQuery);
   const setSearchQuery = useDashboardStore((state) => state.setSearchQuery);
   const categoryFilter = useDashboardStore((state) => state.categoryFilter);
-  const setCategoryFilter = useDashboardStore((state) => state.setCategoryFilter);
+  const setCategoryFilter = useDashboardStore(
+    (state) => state.setCategoryFilter,
+  );
   const statusFilter = useDashboardStore((state) => state.statusFilter);
   const setStatusFilter = useDashboardStore((state) => state.setStatusFilter);
   const resetFilters = useDashboardStore((state) => state.resetFilters);
@@ -61,7 +67,9 @@ export function TopBar({ title, className }: TopBarProps) {
   const setDensity = usePreferencesStore((state) => state.setDensity);
 
   const hasFilters =
-    categoryFilter !== "all" || statusFilter !== "all" || searchQuery.trim().length > 0;
+    categoryFilter !== "all" ||
+    statusFilter !== "all" ||
+    searchQuery.trim().length > 0;
 
   return (
     <header className={cn(styles.topBar, className)}>
@@ -107,11 +115,20 @@ export function TopBar({ title, className }: TopBarProps) {
         />
 
         {hasFilters ? (
-          <Button variant="ghost" size="sm" icon={<X size={13} />} onClick={resetFilters}>
+          <Button
+            variant="ghost"
+            size="sm"
+            icon={<X size={13} />}
+            onClick={resetFilters}
+          >
             Clear
           </Button>
         ) : (
-          <IconButton icon={<Filter size={15} />} label="No active filter" disabled />
+          <IconButton
+            icon={<Filter size={15} />}
+            label="No active filter"
+            disabled
+          />
         )}
       </div>
     </header>

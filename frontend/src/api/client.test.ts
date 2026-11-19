@@ -1,9 +1,18 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { ApiError, buildQuery, configureAuth, get, request, toApiError } from "./client";
+import {
+  ApiError,
+  buildQuery,
+  configureAuth,
+  get,
+  request,
+  toApiError,
+} from "./client";
 
 const originalFetch = globalThis.fetch;
 
-function mockFetch(handler: (url: string, init?: RequestInit) => Response | Promise<Response>) {
+function mockFetch(
+  handler: (url: string, init?: RequestInit) => Response | Promise<Response>,
+) {
   const spy = vi.fn((input: RequestInfo | URL, init?: RequestInit) =>
     Promise.resolve(handler(String(input), init)),
   );
@@ -11,7 +20,11 @@ function mockFetch(handler: (url: string, init?: RequestInit) => Response | Prom
   return spy;
 }
 
-function jsonResponse(body: unknown, status = 200, headers: Record<string, string> = {}) {
+function jsonResponse(
+  body: unknown,
+  status = 200,
+  headers: Record<string, string> = {},
+) {
   return new Response(JSON.stringify(body), {
     status,
     headers: { "content-type": "application/json", ...headers },
@@ -43,9 +56,11 @@ describe("request", () => {
 
   it("returns the parsed body", async () => {
     mockFetch(() => jsonResponse({ id: "team-1" }));
-    await expect(request<{ id: string }>("/api/teams/team-1")).resolves.toEqual({
-      id: "team-1",
-    });
+    await expect(request<{ id: string }>("/api/teams/team-1")).resolves.toEqual(
+      {
+        id: "team-1",
+      },
+    );
   });
 
   it("throws an ApiError carrying the error envelope", async () => {
@@ -78,10 +93,13 @@ describe("request", () => {
     let attempts = 0;
     mockFetch(() => {
       attempts += 1;
-      if (attempts < 3) return jsonResponse({ error: { message: "boom" } }, 500);
+      if (attempts < 3)
+        return jsonResponse({ error: { message: "boom" } }, 500);
       return jsonResponse({ ok: true });
     });
-    await expect(get("/api/teams", { retryDelay: 1 })).resolves.toEqual({ ok: true });
+    await expect(get("/api/teams", { retryDelay: 1 })).resolves.toEqual({
+      ok: true,
+    });
     expect(attempts).toBe(3);
   });
 

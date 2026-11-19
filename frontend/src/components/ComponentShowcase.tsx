@@ -88,7 +88,8 @@ export function ComponentShowcase() {
         <div>
           <h1 className={styles.showcaseTitle}>Design system</h1>
           <p className={styles.showcaseSubtitle}>
-            Every primitive used by the CTF Team Dashboard, rendered with live data.
+            Every primitive used by the CTF Team Dashboard, rendered with live
+            data.
           </p>
         </div>
         <ThemeToggle />
@@ -135,7 +136,11 @@ export function ComponentShowcase() {
           <CardHeader
             actions={
               <ButtonGroup>
-                <Button variant="secondary" size="sm" icon={<Search size={14} />}>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  icon={<Search size={14} />}
+                >
                   Search
                 </Button>
                 <Button size="sm" icon={<Zap size={14} />}>
@@ -175,7 +180,11 @@ export function ComponentShowcase() {
               </div>
               <div className={styles.row}>
                 <IconButton icon={<Bell size={16} />} label="Notifications" />
-                <IconButton icon={<Activity size={16} />} label="Activity" variant="secondary" />
+                <IconButton
+                  icon={<Activity size={16} />}
+                  label="Activity"
+                  variant="secondary"
+                />
                 <Tooltip content="Tooltips appear after a short delay">
                   <Button variant="secondary">Hover me</Button>
                 </Tooltip>
@@ -184,8 +193,16 @@ export function ComponentShowcase() {
 
             <TabsContent value="forms" className={styles.panel}>
               <div className={styles.formGrid}>
-                <Input label="Handle" placeholder="nyx" hint="Lowercase, 2 to 32 characters" />
-                <Input label="Flag" placeholder="flag{...}" error="Flag format looks wrong" />
+                <Input
+                  label="Handle"
+                  placeholder="nyx"
+                  hint="Lowercase, 2 to 32 characters"
+                />
+                <Input
+                  label="Flag"
+                  placeholder="flag{...}"
+                  error="Flag format looks wrong"
+                />
                 <Select
                   label="Category"
                   options={[
@@ -194,14 +211,25 @@ export function ComponentShowcase() {
                     { value: "pwn", label: "Binary" },
                   ]}
                 />
-                <Textarea label="Notes" maxLength={200} showCount defaultValue="Reverse the packer first." />
+                <Textarea
+                  label="Notes"
+                  maxLength={200}
+                  showCount
+                  defaultValue="Reverse the packer first."
+                />
               </div>
               <Divider />
               <div className={styles.row}>
-                <Checkbox checked={checked} onChange={(event) => setChecked(event.target.checked)}>
+                <Checkbox
+                  checked={checked}
+                  onChange={(event) => setChecked(event.target.checked)}
+                >
                   Send a heartbeat
                 </Checkbox>
-                <Switch checked={toggled} onChange={(event) => setToggled(event.target.checked)}>
+                <Switch
+                  checked={toggled}
+                  onChange={(event) => setToggled(event.target.checked)}
+                >
                   Auto refresh
                 </Switch>
               </div>
@@ -225,7 +253,12 @@ export function ComponentShowcase() {
               <div className={styles.row}>
                 <AvatarGroup>
                   {TEAM_MEMBERS.map((member) => (
-                    <Avatar key={member.name} name={member.name} presence={member.presence} size="sm" />
+                    <Avatar
+                      key={member.name}
+                      name={member.name}
+                      presence={member.presence}
+                      size="sm"
+                    />
                   ))}
                 </AvatarGroup>
                 <ScoreRing value={0.68} size={56} />
@@ -281,12 +314,17 @@ export function ComponentShowcase() {
                   Open drawer
                 </Button>
                 <div className={styles.menuAnchor}>
-                  <Button variant="ghost" onClick={() => setMenuOpen((open) => !open)}>
+                  <Button
+                    variant="ghost"
+                    onClick={() => setMenuOpen((open) => !open)}
+                  >
                     Open menu
                   </Button>
                   <Menu open={menuOpen}>
                     <MenuItem icon={<Flag size={14} />}>Record solve</MenuItem>
-                    <MenuItem icon={<Users size={14} />}>Manage members</MenuItem>
+                    <MenuItem icon={<Users size={14} />}>
+                      Manage members
+                    </MenuItem>
                     <MenuDivider />
                     <MenuItem danger>Remove team</MenuItem>
                   </Menu>
@@ -314,7 +352,11 @@ export function ComponentShowcase() {
         <Input label="Flag" placeholder="flag{...}" />
       </Modal>
 
-      <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)} title="Team details">
+      <Drawer
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        title="Team details"
+      >
         <p>RedScribe is ranked first with 4,120 points across 34 solves.</p>
       </Drawer>
     </div>

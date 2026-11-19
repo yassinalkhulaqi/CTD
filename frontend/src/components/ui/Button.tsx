@@ -8,7 +8,8 @@ import { cn } from "../../lib/utils";
 import styles from "./Button.module.css";
 
 /** The visual variants supported by the button. */
-export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger" | "subtle";
+export type ButtonVariant =
+  "primary" | "secondary" | "ghost" | "danger" | "subtle";
 
 /** The size scale of the button. */
 export type ButtonSize = "sm" | "md" | "lg";
@@ -38,59 +39,66 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
  * @param ref - The forwarded DOM ref.
  * @returns The button element.
  */
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
-  {
-    variant = "primary",
-    size = "md",
-    loading = false,
-    block = false,
-    icon,
-    trailingIcon,
-    loadingLabel = "Loading",
-    className,
-    children,
-    disabled,
-    type = "button",
-    ...rest
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  function Button(
+    {
+      variant = "primary",
+      size = "md",
+      loading = false,
+      block = false,
+      icon,
+      trailingIcon,
+      loadingLabel = "Loading",
+      className,
+      children,
+      disabled,
+      type = "button",
+      ...rest
+    },
+    ref,
+  ) {
+    return (
+      <button
+        ref={ref}
+        type={type}
+        className={cn(
+          styles.button,
+          styles[variant],
+          styles[size],
+          block && styles.block,
+          loading && styles.loading,
+          className,
+        )}
+        disabled={disabled || loading}
+        aria-busy={loading || undefined}
+        aria-live={loading ? "polite" : undefined}
+        {...rest}
+      >
+        {loading ? (
+          <Loader2 className={styles.spinner} size={16} aria-hidden="true" />
+        ) : icon ? (
+          <span className={styles.icon} aria-hidden="true">
+            {icon}
+          </span>
+        ) : null}
+        <span className={styles.label}>
+          {loading ? loadingLabel : children}
+        </span>
+        {!loading && trailingIcon ? (
+          <span className={styles.trailingIcon} aria-hidden="true">
+            {trailingIcon}
+          </span>
+        ) : null}
+      </button>
+    );
   },
-  ref,
-) {
-  return (
-    <button
-      ref={ref}
-      type={type}
-      className={cn(
-        styles.button,
-        styles[variant],
-        styles[size],
-        block && styles.block,
-        loading && styles.loading,
-        className,
-      )}
-      disabled={disabled || loading}
-      aria-busy={loading || undefined}
-      aria-live={loading ? "polite" : undefined}
-      {...rest}
-    >
-      {loading ? (
-        <Loader2 className={styles.spinner} size={16} aria-hidden="true" />
-      ) : icon ? (
-        <span className={styles.icon} aria-hidden="true">
-          {icon}
-        </span>
-      ) : null}
-      <span className={styles.label}>{loading ? loadingLabel : children}</span>
-      {!loading && trailingIcon ? (
-        <span className={styles.trailingIcon} aria-hidden="true">
-          {trailingIcon}
-        </span>
-      ) : null}
-    </button>
-  );
-});
+);
 
 /** Props accepted by {@link IconButton}. */
-export interface IconButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "children"> {
+export interface IconButtonProps extends Omit<
+  ButtonHTMLAttributes<HTMLButtonElement>,
+  "children"
+> {
   /** The visual variant. */
   variant?: ButtonVariant;
   /** The size of the button. */
@@ -110,25 +118,46 @@ export interface IconButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonEle
  * @param ref - The forwarded DOM ref.
  * @returns The button element.
  */
-export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(function IconButton(
-  { variant = "ghost", size = "md", loading = false, icon, label, className, disabled, ...rest },
-  ref,
-) {
-  return (
-    <button
-      ref={ref}
-      type="button"
-      className={cn(styles.button, styles.iconButton, styles[variant], styles[size], className)}
-      disabled={disabled || loading}
-      aria-label={label}
-      aria-busy={loading || undefined}
-      title={label}
-      {...rest}
-    >
-      {loading ? <Loader2 className={styles.spinner} size={16} aria-hidden="true" /> : icon}
-    </button>
-  );
-});
+export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
+  function IconButton(
+    {
+      variant = "ghost",
+      size = "md",
+      loading = false,
+      icon,
+      label,
+      className,
+      disabled,
+      ...rest
+    },
+    ref,
+  ) {
+    return (
+      <button
+        ref={ref}
+        type="button"
+        className={cn(
+          styles.button,
+          styles.iconButton,
+          styles[variant],
+          styles[size],
+          className,
+        )}
+        disabled={disabled || loading}
+        aria-label={label}
+        aria-busy={loading || undefined}
+        title={label}
+        {...rest}
+      >
+        {loading ? (
+          <Loader2 className={styles.spinner} size={16} aria-hidden="true" />
+        ) : (
+          icon
+        )}
+      </button>
+    );
+  },
+);
 
 /** Props accepted by {@link ButtonGroup}. */
 export interface ButtonGroupProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -142,7 +171,12 @@ export interface ButtonGroupProps extends React.HTMLAttributes<HTMLDivElement> {
  * @param props - The component props.
  * @returns The group element.
  */
-export function ButtonGroup({ attached = false, className, children, ...rest }: ButtonGroupProps) {
+export function ButtonGroup({
+  attached = false,
+  className,
+  children,
+  ...rest
+}: ButtonGroupProps) {
   return (
     <div
       className={cn(styles.group, attached && styles.groupAttached, className)}

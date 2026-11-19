@@ -11,6 +11,7 @@ import { Spinner } from "../components/ui";
 import { useDashboardSnapshot } from "../api/resources";
 import { useHydrateDashboard } from "../hooks/useDashboardData";
 import { useActivityStore } from "../stores/activityStore";
+import { discoverPlugins, pluginForPath } from "../features/plugins";
 import { NAVIGATION_ROUTES } from "./routes";
 import styles from "./AppShell.module.css";
 
@@ -48,8 +49,17 @@ export function navigationFor(pathname: string): NavigationId {
 export function AppShell() {
   const location = useLocation();
   const navigate = useNavigate();
-  const active = useMemo(() => navigationFor(location.pathname), [location.pathname]);
-  const title = PAGE_TITLES[location.pathname] ?? "Dashboard";
+  const active = useMemo(
+    () => navigationFor(location.pathname),
+    [location.pathname],
+  );
+  const plugins = useMemo(() => discoverPlugins(), []);
+  const activePlugin = useMemo(
+    () => pluginForPath(location.pathname),
+    [location.pathname],
+  );
+  const title =
+    activePlugin?.label ?? PAGE_TITLES[location.pathname] ?? "Dashboard";
 
   const snapshot = useDashboardSnapshot(undefined, { refetchInterval: 30_000 });
   const { members } = useHydrateDashboard();
@@ -76,6 +86,25 @@ export function AppShell() {
       />
       <div className={styles.content}>
         <TopBar title={title} />
+        {plugins.length > 0 ? (
+          <nav className={styles.modules} aria-label="Feature modules">
+            <span className={styles.modulesLabel}>Modules</span>
+            <div className={styles.moduleLinks}>
+              {plugins.map((plugin) => (
+                <NavLink
+                  key={plugin.id}
+                  to={plugin.path}
+                  title={plugin.description}
+                  className={({ isActive }) =>
+                    isActive ? styles.moduleLinkActive : styles.moduleLink
+                  }
+                >
+                  {plugin.label}
+                </NavLink>
+              ))}
+            </div>
+          </nav>
+        ) : null}
         <main className={styles.main} id="main-content">
           <Suspense
             fallback={
@@ -93,7 +122,9 @@ export function AppShell() {
         <h2 className={styles.asideTitle}>Live activity</h2>
         <ActivityFeed loading={!snapshot.data} limit={8} />
         {members.data ? (
-          <p className={styles.asideMeta}>{members.data.length} members loaded</p>
+          <p className={styles.asideMeta}>
+            {members.data.length} members loaded
+          </p>
         ) : null}
       </aside>
     </div>

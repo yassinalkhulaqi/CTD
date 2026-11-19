@@ -56,7 +56,11 @@ export function Sidebar({ active, onNavigate, className }: SidebarProps) {
 
   return (
     <aside
-      className={cn(styles.sidebar, collapsed && styles.sidebarCollapsed, className)}
+      className={cn(
+        styles.sidebar,
+        collapsed && styles.sidebarCollapsed,
+        className,
+      )}
       aria-label="Primary navigation"
     >
       <nav className={styles.nav}>
@@ -73,7 +77,9 @@ export function Sidebar({ active, onNavigate, className }: SidebarProps) {
             >
               <Icon size={16} aria-hidden="true" />
               <span className={styles.navLabel}>{entry.label}</span>
-              {isActive ? <span className={styles.navIndicator} aria-hidden="true" /> : null}
+              {isActive ? (
+                <span className={styles.navIndicator} aria-hidden="true" />
+              ) : null}
             </button>
           );
 
@@ -91,24 +97,34 @@ export function Sidebar({ active, onNavigate, className }: SidebarProps) {
         {!collapsed ? <p className={styles.sectionLabel}>Teams</p> : null}
         <button
           type="button"
-          className={cn(styles.teamItem, selectedTeamId === null && styles.teamItemActive)}
+          className={cn(
+            styles.teamItem,
+            selectedTeamId === null && styles.teamItemActive,
+          )}
           onClick={() => setSelectedTeam(null)}
         >
           <span className={styles.teamMark} aria-hidden="true">
             <ShieldCheck size={13} />
           </span>
-          {!collapsed ? <span className={styles.teamName}>All teams</span> : null}
+          {!collapsed ? (
+            <span className={styles.teamName}>All teams</span>
+          ) : null}
         </button>
 
         {teams.map((team) => (
           <button
             key={team.id}
             type="button"
-            className={cn(styles.teamItem, selectedTeamId === team.id && styles.teamItemActive)}
+            className={cn(
+              styles.teamItem,
+              selectedTeamId === team.id && styles.teamItemActive,
+            )}
             onClick={() => setSelectedTeam(team.id)}
           >
             <Avatar name={team.name} size="xs" color={team.color} />
-            {!collapsed ? <span className={styles.teamName}>{team.name}</span> : null}
+            {!collapsed ? (
+              <span className={styles.teamName}>{team.name}</span>
+            ) : null}
             {!collapsed ? (
               <Badge tone="neutral" className={styles.teamBadge}>
                 {team.initials}
