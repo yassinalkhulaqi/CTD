@@ -1,0 +1,110 @@
+.wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.table {
+  width: 100%;
+  min-width: 560px;
+}
+
+.rank {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-sunken);
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.podiumRank {
+  background: var(--warning-soft);
+  color: var(--warning-base);
+}
+
+.teamButton,
+.teamName {
+  display: inline-block;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-primary);
+  font-size: var(--text-base);
+  font-weight: 650;
+  text-align: left;
+}
+
+.teamButton {
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.teamButton:hover {
+  color: var(--accent-text);
+  text-decoration: underline;
+}
+
+.teamButton:focus-visible {
+  outline: 2px solid var(--accent-base);
+  outline-offset: 2px;
+}
+
+.lastSolve {
+  display: block;
+  margin-top: 2px;
+  color: var(--text-tertiary);
+  font-size: 10px;
+}
+
+.points {
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+}
+
+.solves {
+  display: inline-block;
+  min-width: 28px;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.topRow {
+  background: color-mix(in srgb, var(--accent-soft) 45%, transparent);
+}
+
+.empty {
+  margin: 0;
+  padding: var(--space-6);
+  text-align: center;
+  color: var(--text-tertiary);
+  font-size: var(--text-sm);
+}
+
+@media (max-width: 640px) {
+  .table {
+    min-width: 460px;
+    font-size: var(--text-xs);
+  }
+
+  .lastSolve {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .teamButton {
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .teamButton {
+    transition: none;
+  }
+}
