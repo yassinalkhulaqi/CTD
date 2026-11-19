@@ -1,0 +1,94 @@
+.card {
+  min-width: 0;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.ring {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 112px;
+  height: 112px;
+}
+
+.track {
+  stroke: var(--surface-sunken);
+}
+
+.progress {
+  transition:
+    stroke-dashoffset var(--duration-slow) var(--ease-out),
+    stroke var(--duration-base) var(--ease-out);
+}
+
+.center {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.1;
+}
+
+.value {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.unit {
+  margin-top: var(--space-1);
+  color: var(--text-tertiary);
+  font-size: var(--text-xs);
+}
+
+.details {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2) var(--space-4);
+  width: 100%;
+  margin: 0;
+}
+
+.detail {
+  min-width: 0;
+}
+
+.detail dt {
+  color: var(--text-tertiary);
+  font-size: var(--text-xs);
+}
+
+.detail dd {
+  margin: 2px 0 0;
+  overflow: hidden;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progress {
+    transition: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .track {
+    stroke: var(--border-strong);
+  }
+
+  .unit,
+  .detail dt,
+  .detail dd {
+    color: var(--text-primary);
+  }
+}
