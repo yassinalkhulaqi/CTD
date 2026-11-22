@@ -1,0 +1,15 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  white-space: nowrap;
+}
+
+.code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  opacity: 0.75;
+  border-left: 1px solid currentcolor;
+  padding-left: var(--space-1);
+  margin-left: 2px;
+}
