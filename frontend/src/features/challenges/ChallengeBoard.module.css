@@ -6,10 +6,38 @@
 }
 
 .column {
+  position: relative;
+  overflow: hidden;
   background: var(--surface-sunken);
+  --board-accent: var(--border-subtle);
   transition:
     border-color var(--duration-base) var(--ease-out),
     box-shadow var(--duration-base) var(--ease-out);
+}
+
+.column::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 2px;
+  background: var(--board-accent);
+  opacity: 0.85;
+}
+
+.column[data-board-column="active"] {
+  --board-accent: var(--accent-base);
+}
+
+.column[data-board-column="solved"] {
+  --board-accent: var(--success-base);
+}
+
+.column[data-board-column="locked"] {
+  --board-accent: var(--danger-base);
+}
+
+.column[data-board-column="pending"] {
+  --board-accent: var(--warning-base);
 }
 
 .columnTarget {
@@ -18,8 +46,13 @@
 }
 
 .columnHeader {
+  position: sticky;
+  top: 0;
+  z-index: 1;
   padding: var(--space-3) var(--space-4);
   border-bottom: 1px solid var(--border-subtle);
+  background: color-mix(in srgb, var(--surface-sunken) 88%, transparent);
+  backdrop-filter: blur(8px);
 }
 
 .columnTitle {
@@ -76,6 +109,11 @@
     transform var(--duration-fast) var(--ease-out),
     border-color var(--duration-fast) var(--ease-out),
     box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.card:focus-visible {
+  outline: var(--ring-width) solid var(--ring-color);
+  outline-offset: 1px;
 }
 
 .card:hover {

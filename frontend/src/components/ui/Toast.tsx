@@ -97,8 +97,14 @@ export function ToastProvider({
 }: ToastProviderProps) {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const counter = useRef(0);
+  const timers = useRef(new Map<string, number>());
 
   const dismiss = useCallback((id: string) => {
+    const timer = timers.current.get(id);
+    if (timer !== undefined) {
+      window.clearTimeout(timer);
+      timers.current.delete(id);
+    }
     setToasts((current) => current.filter((toast) => toast.id !== id));
   }, []);
 
@@ -113,16 +119,38 @@ export function ToastProvider({
         description: options.description,
         duration: options.duration ?? defaultDuration,
       };
-      setToasts((current) => [...current, toast].slice(-max));
+      setToasts((current) => {
+        const next = [...current, toast].slice(-max);
+        for (const dropped of current.filter((item) => !next.includes(item))) {
+          const timer = timers.current.get(dropped.id);
+          if (timer !== undefined) {
+            window.clearTimeout(timer);
+            timers.current.delete(dropped.id);
+          }
+        }
+        return next;
+      });
       if (toast.duration > 0) {
-        window.setTimeout(() => dismiss(id), toast.duration);
+        timers.current.set(id, window.setTimeout(() => dismiss(id), toast.duration));
       }
       return id;
     },
     [defaultDuration, dismiss, max],
   );
 
-  const clear = useCallback(() => setToasts([]), []);
+  const clear = useCallback(() => {
+    for (const timer of timers.current.values()) window.clearTimeout(timer);
+    timers.current.clear();
+    setToasts([]);
+  }, []);
+
+  useEffect(
+    () => () => {
+      for (const timer of timers.current.values()) window.clearTimeout(timer);
+      timers.current.clear();
+    },
+    [],
+  );
 
   const value = useMemo<ToastContextValue>(
     () => ({ toasts, push, dismiss, clear }),
@@ -155,6 +183,7 @@ export function ToastViewport() {
           className={cn(styles.toast, styles[`toast-${toast.tone}`])}
           role={toast.tone === "error" ? "alert" : "status"}
           aria-live={toast.tone === "error" ? "assertive" : "polite"}
+          aria-atomic="true"
         >
           <span className={styles.toastIcon}>{TONE_ICONS[toast.tone]}</span>
           <div className={styles.toastBody}>
@@ -171,6 +200,13 @@ export function ToastViewport() {
           >
             <X size={14} aria-hidden="true" />
           </button>
+          {toast.duration > 0 ? (
+            <span
+              className={styles.toastTimer}
+              style={{ animationDuration: `${toast.duration}ms` }}
+              aria-hidden="true"
+            />
+          ) : null}
         </div>
       ))}
     </div>,
