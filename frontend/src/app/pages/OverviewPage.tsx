@@ -3,12 +3,9 @@
  */
 
 import { useMemo } from "react";
-import { Flag, ShieldCheck, Target, Trophy, Users } from "lucide-react";
-import {
-  useChallenges,
-  useDashboardSnapshot,
-  useMembers,
-} from "../../api/resources";
+import { ArrowUpRight, Flag, RefreshCw, ShieldCheck, Target, Trophy, Users } from "lucide-react";
+import { useChallenges, useDashboardSnapshot, useMembers } from "../../api/resources";
+import { Link } from "react-router-dom";
 import { useActiveTeamId } from "../../stores/dashboardStore";
 import { formatNumber, formatPercent } from "../../lib/utils";
 import {
@@ -20,6 +17,7 @@ import {
   CardTitle,
   EmptyState,
   ErrorState,
+  Button,
   Progress,
   ScoreRing,
   Skeleton,
@@ -34,19 +32,15 @@ import styles from "./OverviewPage.module.css";
  */
 export default function OverviewPage() {
   const teamId = useActiveTeamId();
-  const snapshot = useDashboardSnapshot(teamId ?? undefined, {
-    staleTime: 10_000,
-  });
+  const snapshot = useDashboardSnapshot(teamId ?? undefined, { staleTime: 10_000 });
   const members = useMembers(teamId ? { teamId } : {}, { staleTime: 30_000 });
-  const challenges = useChallenges(teamId ? { teamId } : {}, {
-    staleTime: 15_000,
-  });
+  const challenges = useChallenges(
+    teamId ? { teamId } : {},
+    { staleTime: 15_000 },
+  );
 
   const overview = snapshot.data?.overview;
-  const categories = useMemo(
-    () => snapshot.data?.categories ?? [],
-    [snapshot.data],
-  );
+  const categories = useMemo(() => snapshot.data?.categories ?? [], [snapshot.data]);
   const contributions = useMemo(
     () => snapshot.data?.contributions ?? [],
     [snapshot.data],
@@ -61,11 +55,7 @@ export default function OverviewPage() {
     return (
       <ErrorState
         title="The dashboard could not be loaded"
-        message={
-          snapshot.error instanceof Error
-            ? snapshot.error.message
-            : "Unknown error"
-        }
+        message={snapshot.error instanceof Error ? snapshot.error.message : "Unknown error"}
         onRetry={() => void snapshot.refetch()}
       />
     );
@@ -73,16 +63,69 @@ export default function OverviewPage() {
 
   return (
     <div className={styles.page}>
+      <section className={styles.hero} aria-label="Competition summary">
+        <div className={styles.heroBody}>
+          <span className={styles.heroEyebrow}>
+            <span className={styles.heroPulse} aria-hidden="true" />
+            Live competition
+          </span>
+          <h2 className={styles.heroTitle}>
+            {overview
+              ? `${formatPercent(overview.completion_rate, 0)} of the board cleared`
+              : "Reading the scoreboard?"}
+          </h2>
+          <p className={styles.heroText}>
+            {overview
+              ? `${formatNumber(overview.solved_challenges)} of ${formatNumber(overview.challenges)} challenges solved for ${formatNumber(overview.total_points)} points across ${formatNumber(overview.teams)} teams.`
+              : "The headline numbers appear as soon as the event feed responds."}
+          </p>
+          <div className={styles.heroActions}>
+            <Link to="/challenges" className={styles.heroCta}>
+              Open challenge board
+              <ArrowUpRight size={14} aria-hidden="true" />
+            </Link>
+            <Button
+              variant="ghost"
+              size="sm"
+              icon={<RefreshCw size={14} />}
+              onClick={() => void snapshot.refetch()}
+              loading={snapshot.isFetching}
+              loadingLabel="Refreshing"
+            >
+              Refresh
+            </Button>
+          </div>
+        </div>
+        <div className={styles.heroSide}>
+          <div className={styles.heroMeter}>
+            <span className={styles.heroMeterLabel}>Completion</span>
+            <span className={styles.heroMeterValue}>
+              {formatPercent(overview?.completion_rate ?? 0, 0)}
+            </span>
+            <Progress
+              value={overview?.completion_rate ?? 0}
+              max={1}
+              tone="accent"
+              label="Overall completion"
+            />
+          </div>
+          <dl className={styles.heroStats}>
+            <div>
+              <dt>Solved</dt>
+              <dd>{formatNumber(overview?.solved_challenges ?? 0)}</dd>
+            </div>
+            <div>
+              <dt>Online</dt>
+              <dd>{formatNumber(overview?.active_members ?? 0)}</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
       <section className={styles.stats} aria-label="Headline statistics">
         <StatCard
           label="Teams"
-          value={
-            overview ? (
-              formatNumber(overview.teams)
-            ) : (
-              <Skeleton width={48} height={30} />
-            )
-          }
+          value={overview ? formatNumber(overview.teams) : <Skeleton width={48} height={30} />}
           icon={<ShieldCheck size={16} />}
           accent="#6366f1"
           loading={!overview}
@@ -90,13 +133,7 @@ export default function OverviewPage() {
         />
         <StatCard
           label="Solves"
-          value={
-            overview ? (
-              formatNumber(overview.solves)
-            ) : (
-              <Skeleton width={48} height={30} />
-            )
-          }
+          value={overview ? formatNumber(overview.solves) : <Skeleton width={48} height={30} />}
           icon={<Flag size={16} />}
           accent="#22d3ee"
           loading={!overview}
@@ -104,13 +141,7 @@ export default function OverviewPage() {
         />
         <StatCard
           label="Members online"
-          value={
-            overview ? (
-              formatNumber(overview.active_members)
-            ) : (
-              <Skeleton width={48} height={30} />
-            )
-          }
+          value={overview ? formatNumber(overview.active_members) : <Skeleton width={48} height={30} />}
           icon={<Users size={16} />}
           accent="#34d399"
           loading={!overview}
@@ -118,13 +149,7 @@ export default function OverviewPage() {
         />
         <StatCard
           label="Points scored"
-          value={
-            overview ? (
-              formatNumber(overview.total_points)
-            ) : (
-              <Skeleton width={48} height={30} />
-            )
-          }
+          value={overview ? formatNumber(overview.total_points) : <Skeleton width={48} height={30} />}
           icon={<Trophy size={16} />}
           accent="#f59e0b"
           loading={!overview}
@@ -164,9 +189,7 @@ export default function OverviewPage() {
                     <span className={styles.categoryValue}>
                       {entry.solves}/{entry.challenges}
                     </span>
-                    <Badge
-                      tone={entry.solve_rate >= 0.6 ? "success" : "neutral"}
-                    >
+                    <Badge tone={entry.solve_rate >= 0.6 ? "success" : "neutral"}>
                       {formatPercent(entry.solve_rate, 0)}
                     </Badge>
                   </li>
@@ -181,11 +204,7 @@ export default function OverviewPage() {
             <CardTitle>Completion</CardTitle>
           </CardHeader>
           <CardContent className={styles.completion}>
-            <ScoreRing
-              value={overview?.completion_rate ?? 0}
-              size={92}
-              strokeWidth={8}
-            />
+            <ScoreRing value={overview?.completion_rate ?? 0} size={92} strokeWidth={8} />
             <p className={styles.completionMeta}>
               {overview
                 ? `${formatNumber(overview.solved_challenges)} of ${formatNumber(overview.challenges)} challenges solved`
@@ -211,12 +230,8 @@ export default function OverviewPage() {
                   <li key={row.member_id} className={styles.contribution}>
                     <span className={styles.contributionRank}>{index + 1}</span>
                     <Avatar name={row.display_name} size="sm" />
-                    <span className={styles.contributionName}>
-                      {row.display_name}
-                    </span>
-                    <span className={styles.contributionPoints}>
-                      {formatNumber(row.points)}
-                    </span>
+                    <span className={styles.contributionName}>{row.display_name}</span>
+                    <span className={styles.contributionPoints}>{formatNumber(row.points)}</span>
                   </li>
                 ))}
               </ul>
@@ -235,29 +250,30 @@ export default function OverviewPage() {
                   .filter((challenge) => challenge.status !== "solved")
                   .slice(0, 6)
                   .map((challenge) => (
-                    <li key={challenge.id} className={styles.challenge}>
-                      <div className={styles.challengeMain}>
-                        <span className={styles.challengeTitle}>
-                          {challenge.title}
+                    <li key={challenge.id} className={styles.challengeItem}>
+                      <Link to={`/challenges/${challenge.id}`} className={styles.challenge}>
+                        <div className={styles.challengeMain}>
+                          <span className={styles.challengeTitle}>{challenge.title}</span>
+                          <span className={styles.challengeMeta}>
+                            {challenge.category} · {challenge.difficulty}
+                          </span>
+                        </div>
+                        <Badge
+                          tone={
+                            challenge.status === "active"
+                              ? "accent"
+                              : challenge.status === "locked"
+                                ? "danger"
+                                : "neutral"
+                          }
+                        >
+                          {challenge.status}
+                        </Badge>
+                        <span className={styles.challengePoints}>
+                          {formatNumber(challenge.points)} pts
                         </span>
-                        <span className={styles.challengeMeta}>
-                          {challenge.category} · {challenge.difficulty}
-                        </span>
-                      </div>
-                      <Badge
-                        tone={
-                          challenge.status === "active"
-                            ? "accent"
-                            : challenge.status === "locked"
-                              ? "danger"
-                              : "neutral"
-                        }
-                      >
-                        {challenge.status}
-                      </Badge>
-                      <span className={styles.challengePoints}>
-                        {formatNumber(challenge.points)} pts
-                      </span>
+                        <ArrowUpRight size={14} className={styles.challengeArrow} aria-hidden="true" />
+                      </Link>
                     </li>
                   ))}
               </ul>

@@ -1,28 +1,48 @@
 .backdrop {
   position: fixed;
   inset: 0;
-  z-index: 60;
+  z-index: var(--z-overlay);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: var(--space-6);
-  background: rgb(8 9 13 / 55%);
-  backdrop-filter: blur(3px);
+  background: rgb(6 7 11 / 62%);
+  backdrop-filter: blur(8px) saturate(120%);
   animation: overlay-fade var(--duration-base) var(--ease-out);
 }
 
 /* Modal ---------------------------------------------------------------- */
 .modal {
+  position: relative;
   width: 100%;
   max-height: min(88vh, 900px);
   display: flex;
   flex-direction: column;
   border-radius: var(--radius-xl);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--border-default);
   background: var(--surface-overlay);
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-xl);
   animation: modal-rise var(--duration-base) var(--ease-out);
   overflow: hidden;
+}
+
+.modal::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(255 255 255 / 26%),
+    transparent
+  );
+  pointer-events: none;
+}
+
+.modal:focus-visible {
+  outline: var(--ring-width) solid var(--ring-color);
+  outline-offset: 2px;
 }
 
 .modal-sm {
@@ -48,18 +68,27 @@
   gap: var(--space-4);
   padding: var(--space-5) var(--space-5) var(--space-4);
   border-bottom: 1px solid var(--border-subtle);
+  background:
+    radial-gradient(
+      120% 180% at 0% 0%,
+      color-mix(in srgb, var(--accent-base) 7%, transparent),
+      transparent 60%
+    );
 }
 
 .modalTitle {
   font-size: var(--text-lg);
-  font-weight: 620;
-  letter-spacing: -0.02em;
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-tight);
+  line-height: var(--leading-snug);
+  color: var(--text-primary);
 }
 
 .modalDescription {
   margin-top: var(--space-1);
   font-size: var(--text-sm);
   color: var(--text-secondary);
+  line-height: var(--leading-relaxed);
 }
 
 .modalBody {
@@ -85,31 +114,46 @@
   display: flex;
   flex-direction: column;
   background: var(--surface-overlay);
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-xl);
   animation: drawer-slide var(--duration-base) var(--ease-out);
 }
 
 .drawer-right {
+  --drawer-offset: 28px;
   top: 0;
   right: 0;
   height: 100%;
   max-width: 92vw;
+  border-left: 1px solid var(--border-default);
 }
 
 .drawer-left {
+  --drawer-offset: -28px;
   top: 0;
   left: 0;
   height: 100%;
   max-width: 92vw;
+  border-right: 1px solid var(--border-default);
 }
 
 .drawer-bottom {
+  --drawer-offset: 0;
   left: 0;
   right: 0;
   bottom: 0;
   max-height: 82vh;
+  border-top: 1px solid var(--border-default);
   border-start-start-radius: var(--radius-xl);
   border-start-end-radius: var(--radius-xl);
+}
+
+.drawerGrip {
+  width: 36px;
+  height: 4px;
+  margin: var(--space-2) auto 0;
+  border-radius: var(--radius-full);
+  background: var(--border-strong);
+  flex: none;
 }
 
 .drawerHeader {
@@ -142,43 +186,47 @@
 .tooltipAnchor {
   position: relative;
   display: inline-flex;
+  max-width: 100%;
 }
 
 .tooltip {
   position: absolute;
-  z-index: 70;
-  padding: 4px 8px;
+  z-index: var(--z-tooltip);
+  max-width: 260px;
+  padding: 5px 9px;
   border-radius: var(--radius-sm);
-  background: var(--text-primary);
-  color: var(--surface-base);
+  border: 1px solid var(--border-default);
+  background: var(--surface-overlay);
+  color: var(--text-primary);
   font-size: var(--text-xs);
-  line-height: 1.4;
-  white-space: nowrap;
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-snug);
+  text-wrap: balance;
   pointer-events: none;
   box-shadow: var(--shadow-md);
   animation: overlay-fade var(--duration-fast) var(--ease-out);
 }
 
 .tooltip-top {
-  bottom: calc(100% + 6px);
+  bottom: calc(100% + 7px);
   left: 50%;
   transform: translateX(-50%);
 }
 
 .tooltip-bottom {
-  top: calc(100% + 6px);
+  top: calc(100% + 7px);
   left: 50%;
   transform: translateX(-50%);
 }
 
 .tooltip-left {
-  right: calc(100% + 6px);
+  right: calc(100% + 7px);
   top: 50%;
   transform: translateY(-50%);
 }
 
 .tooltip-right {
-  left: calc(100% + 6px);
+  left: calc(100% + 7px);
   top: 50%;
   transform: translateY(-50%);
 }
@@ -192,13 +240,13 @@
 .popover {
   position: absolute;
   top: calc(100% + 8px);
-  z-index: 55;
+  z-index: var(--z-dropdown);
   padding: var(--space-3);
   border-radius: var(--radius-lg);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--border-default);
   background: var(--surface-overlay);
   box-shadow: var(--shadow-lg);
-  animation: overlay-fade var(--duration-fast) var(--ease-out);
+  animation: popover-in var(--duration-fast) var(--ease-out);
 }
 
 .popover-start {
@@ -219,13 +267,18 @@
   position: absolute;
   top: calc(100% + 6px);
   left: 0;
-  z-index: 55;
+  z-index: var(--z-dropdown);
   padding: var(--space-1);
   border-radius: var(--radius-lg);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--border-default);
   background: var(--surface-overlay);
   box-shadow: var(--shadow-lg);
-  animation: overlay-fade var(--duration-fast) var(--ease-out);
+  animation: popover-in var(--duration-fast) var(--ease-out);
+}
+
+.menu-end {
+  left: auto;
+  right: 0;
 }
 
 .menuItem {
@@ -233,7 +286,7 @@
   align-items: center;
   gap: var(--space-2);
   width: 100%;
-  padding: 6px var(--space-2);
+  padding: 7px var(--space-2);
   border: none;
   border-radius: var(--radius-sm);
   background: transparent;
@@ -241,10 +294,18 @@
   font-size: var(--text-sm);
   text-align: left;
   cursor: pointer;
-  transition: background-color var(--duration-fast) var(--ease-out);
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
 }
 
 .menuItem:hover {
+  background: var(--surface-hover);
+}
+
+.menuItem:focus-visible {
+  outline: var(--ring-width) solid var(--ring-color);
+  outline-offset: -2px;
   background: var(--surface-hover);
 }
 
@@ -254,7 +315,7 @@
 }
 
 .menuItemDanger {
-  color: var(--danger-base);
+  color: var(--danger-text);
 }
 
 .menuItemDanger:hover {
@@ -267,7 +328,7 @@
 }
 
 .menuItemDanger .menuIcon {
-  color: var(--danger-base);
+  color: var(--danger-text);
 }
 
 .menuLabel {
@@ -275,6 +336,14 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.menuShortcut {
+  flex: none;
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.02em;
 }
 
 .menuDivider {
@@ -295,7 +364,18 @@
 @keyframes modal-rise {
   from {
     opacity: 0;
-    transform: translateY(10px) scale(0.985);
+    transform: translateY(12px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes popover-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
   }
   to {
     opacity: 1;
@@ -314,14 +394,33 @@
   }
 }
 
-.drawer-right {
-  --drawer-offset: 24px;
-}
+@media (max-width: 640px) {
+  .backdrop {
+    padding: var(--space-3);
+  }
 
-.drawer-left {
-  --drawer-offset: -24px;
-}
+  .modal {
+    max-height: calc(100dvh - var(--space-6));
+  }
 
-.drawer-bottom {
-  --drawer-offset: 0;
+  .modalHeader,
+  .modalBody {
+    padding: var(--space-4);
+  }
+
+  .modalFooter,
+  .drawerFooter {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .drawerBody,
+  .drawerHeader {
+    padding: var(--space-4);
+  }
+
+  .drawer-right,
+  .drawer-left {
+    width: 100% !important;
+    max-width: 100vw;
+  }
 }
