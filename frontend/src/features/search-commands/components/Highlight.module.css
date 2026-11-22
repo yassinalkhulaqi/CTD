@@ -1,0 +1,7 @@
+.mark {
+  padding: 0 2px;
+  border-radius: var(--radius-sm);
+  background: var(--warning-soft);
+  color: var(--warning-base);
+  font-weight: 650;
+}
