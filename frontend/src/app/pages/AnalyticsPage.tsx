@@ -18,6 +18,7 @@ import {
   type DonutSlice,
 } from "../../components/charts";
 import {
+  Avatar,
   Card,
   CardContent,
   CardDescription,
@@ -48,22 +49,20 @@ export default function AnalyticsPage() {
   const setTimeWindow = usePreferencesStore((state) => state.setTimeWindow);
 
   const hours = windowToHours(timeWindow);
-  const snapshot = useDashboardSnapshot(teamId ?? undefined, {
-    staleTime: 30_000,
-  });
-  const timeline = useTimeline(hours, teamId ?? undefined, {
-    staleTime: 30_000,
-  });
+  const snapshot = useDashboardSnapshot(teamId ?? undefined, { staleTime: 30_000 });
+  const timeline = useTimeline(hours, teamId ?? undefined, { staleTime: 30_000 });
 
   const buckets = timeline.data ?? [];
   const total = buckets.reduce((sum, value) => sum + value, 0);
   const peak = Math.max(0, ...buckets);
   const average = buckets.length > 0 ? total / buckets.length : 0;
 
-  const labels = useMemo(
-    () => timelineLabels(buckets.length),
-    [buckets.length],
+  const labels = useMemo(() => timelineLabels(buckets.length), [buckets.length]);
+  const contributions = useMemo(
+    () => [...(snapshot.data?.contributions ?? [])].sort((a, b) => b.points - a.points),
+    [snapshot.data],
   );
+  const maxPoints = Math.max(1, ...contributions.map((row) => row.points));
 
   const categorySlices = useMemo<DonutSlice[]>(
     () =>
@@ -76,17 +75,12 @@ export default function AnalyticsPage() {
   );
 
   const heatmapMatrix = useMemo(() => {
-    const matrix = Array.from({ length: 7 }, () =>
-      new Array<number>(24).fill(0),
-    );
+    const matrix = Array.from({ length: 7 }, () => new Array<number>(24).fill(0));
     const solves = snapshot.data?.contributions ?? [];
     for (const contribution of solves) {
-      const first = contribution.first_solve_at
-        ? new Date(contribution.first_solve_at)
-        : null;
+      const first = contribution.first_solve_at ? new Date(contribution.first_solve_at) : null;
       if (!first) continue;
-      matrix[first.getDay() === 0 ? 6 : first.getDay() - 1][first.getHours()] +=
-        contribution.solves;
+      matrix[first.getDay() === 0 ? 6 : first.getDay() - 1][first.getHours()] += contribution.solves;
     }
     return matrix;
   }, [snapshot.data]);
@@ -94,6 +88,12 @@ export default function AnalyticsPage() {
   return (
     <div className={styles.page}>
       <div className={styles.toolbar}>
+        <div className={styles.toolbarText}>
+          <h2 className={styles.toolbarTitle}>Momentum</h2>
+          <p className={styles.toolbarMeta}>
+            {`${formatNumber(total)} solves in the last ${timeWindow}, peaking at ${formatNumber(peak)} per hour.`}
+          </p>
+        </div>
         <SegmentedControl
           options={WINDOW_OPTIONS}
           value={timeWindow}
@@ -122,11 +122,9 @@ export default function AnalyticsPage() {
         <StatCard
           label="Completion"
           value={
-            snapshot.data ? (
-              `${Math.round(snapshot.data.overview.completion_rate * 100)}%`
-            ) : (
-              <Skeleton width={48} height={30} />
-            )
+            snapshot.data
+              ? `${Math.round(snapshot.data.overview.completion_rate * 100)}%`
+              : <Skeleton width={48} height={30} />
           }
           icon={<Target size={16} />}
           accent="#34d399"
@@ -136,11 +134,9 @@ export default function AnalyticsPage() {
         <StatCard
           label="Time remaining"
           value={
-            snapshot.data ? (
-              formatDuration(snapshot.data.competition_seconds_remaining)
-            ) : (
-              <Skeleton width={64} height={30} />
-            )
+            snapshot.data
+              ? formatDuration(snapshot.data.competition_seconds_remaining)
+              : <Skeleton width={64} height={30} />
           }
           icon={<Clock size={16} />}
           accent="#a855f7"
@@ -153,9 +149,7 @@ export default function AnalyticsPage() {
         <Card className={styles.spanTwo}>
           <CardHeader>
             <CardTitle>Solve velocity</CardTitle>
-            <CardDescription>
-              Solves recorded per hour over the trailing window.
-            </CardDescription>
+            <CardDescription>Solves recorded per hour over the trailing window.</CardDescription>
           </CardHeader>
           <CardContent>
             {!timeline.data ? (
@@ -181,9 +175,7 @@ export default function AnalyticsPage() {
         <Card>
           <CardHeader>
             <CardTitle>Challenge mix</CardTitle>
-            <CardDescription>
-              Published challenges per category.
-            </CardDescription>
+            <CardDescription>Published challenges per category.</CardDescription>
           </CardHeader>
           <CardContent>
             {categorySlices.length === 0 ? (
@@ -207,9 +199,7 @@ export default function AnalyticsPage() {
         <Card className={styles.spanTwo}>
           <CardHeader>
             <CardTitle>Hourly distribution</CardTitle>
-            <CardDescription>
-              Number of solves recorded during each hour.
-            </CardDescription>
+            <CardDescription>Number of solves recorded during each hour.</CardDescription>
           </CardHeader>
           <CardContent>
             {!timeline.data ? (
@@ -229,9 +219,7 @@ export default function AnalyticsPage() {
         <Card className={styles.spanTwo}>
           <CardHeader>
             <CardTitle>Activity heatmap</CardTitle>
-            <CardDescription>
-              First solves per weekday and hour.
-            </CardDescription>
+            <CardDescription>First solves per weekday and hour.</CardDescription>
           </CardHeader>
           <CardContent>
             {heatmapMatrix.every((row) => row.every((value) => value === 0)) ? (
@@ -249,24 +237,41 @@ export default function AnalyticsPage() {
         <Card className={styles.spanTwo}>
           <CardHeader>
             <CardTitle>Contributors</CardTitle>
+            <CardDescription>Points secured by each member in this event.</CardDescription>
           </CardHeader>
           <CardContent>
-            <ul className={styles.contributors}>
-              {(snapshot.data?.contributions ?? []).slice(0, 8).map((row) => (
-                <li key={row.member_id} className={styles.contributor}>
-                  <span className={styles.contributorName}>
-                    {row.display_name}
-                  </span>
-                  <Sparkline
-                    values={[0, row.solves / 2, row.solves]}
-                    label={`Trend of ${row.display_name}`}
-                  />
-                  <span className={styles.contributorPoints}>
-                    {formatNumber(row.points)}
-                  </span>
-                </li>
-              ))}
-            </ul>
+            {contributions.length === 0 ? (
+              <EmptyState
+                icon={<Target size={22} />}
+                title="No contributors yet"
+                description="Points appear here once the first flag is captured."
+              />
+            ) : (
+              <ul className={styles.contributors}>
+                {contributions.slice(0, 8).map((row, index) => (
+                  <li key={row.member_id} className={styles.contributor}>
+                    <span className={styles.contributorRank}>{index + 1}</span>
+                    <Avatar name={row.display_name} size="xs" />
+                    <span className={styles.contributorBody}>
+                      <span className={styles.contributorName}>{row.display_name}</span>
+                      <span className={styles.contributorBar} aria-hidden="true">
+                        <span
+                          className={styles.contributorBarFill}
+                          style={{ width: `${Math.max(4, (row.points / maxPoints) * 100)}%` }}
+                        />
+                      </span>
+                    </span>
+                    <Sparkline
+                      values={[0, row.solves / 2, row.solves]}
+                      label={`Trend of ${row.display_name}`}
+                      width={72}
+                      height={24}
+                    />
+                    <span className={styles.contributorPoints}>{formatNumber(row.points)}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
           </CardContent>
         </Card>
       </div>
