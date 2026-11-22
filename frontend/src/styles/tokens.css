@@ -1,0 +1,322 @@
+/**
+ * Design tokens for the CTF Team Dashboard.
+ *
+ * Tokens are CSS custom properties so the light and dark themes can be
+ * swapped at runtime without re-rendering the component tree. Every value
+ * here is a single source of truth: components reference the token, never
+ * the raw value.
+ */
+
+:root {
+  color-scheme: light;
+
+  /* Typography -------------------------------------------------- */
+  --font-sans:
+    "Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display:
+    "Inter", "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono:
+    "JetBrains Mono", "SFMono-Regular", "Cascadia Code", "Menlo", monospace;
+  --font-feature-numeric: "tnum" 1, "ss01" 1, "cv05" 1;
+
+  --text-2xs: 0.625rem;
+  --text-xs: 0.6875rem;
+  --text-sm: 0.8125rem;
+  --text-base: 0.875rem;
+  --text-lg: 1rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: clamp(2.125rem, 1.85rem + 1.2vw, 2.5rem);
+  --text-5xl: clamp(2.5rem, 2rem + 2.2vw, 3.5rem);
+
+  --leading-none: 1;
+  --leading-tight: 1.15;
+  --leading-snug: 1.3;
+  --leading-normal: 1.55;
+  --leading-relaxed: 1.7;
+
+  --tracking-tighter: -0.04em;
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.04em;
+  --tracking-wider: 0.09em;
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  /* Radii -------------------------------------------------------- */
+  --radius-2xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-2xl: 28px;
+  --radius-full: 9999px;
+
+  /* Spacing scale ------------------------------------------------ */
+  --space-0: 0;
+  --space-px: 1px;
+  --space-0-5: 2px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 28px;
+  --space-8: 32px;
+  --space-9: 36px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-14: 56px;
+  --space-16: 64px;
+  --space-20: 80px;
+
+  /* Layout ------------------------------------------------------- */
+  --topbar-height: 64px;
+  --sidebar-width: 256px;
+  --sidebar-width-collapsed: 76px;
+  --aside-width: 320px;
+  --content-max: 1680px;
+  --prose-max: 68ch;
+
+  --control-height-sm: 28px;
+  --control-height-md: 36px;
+  --control-height-lg: 44px;
+  --touch-target: 44px;
+
+  /* Layers ------------------------------------------------------- */
+  --z-base: 0;
+  --z-sticky: 10;
+  --z-dropdown: 40;
+  --z-overlay: 60;
+  --z-modal: 70;
+  --z-command: 80;
+  --z-toast: 90;
+  --z-tooltip: 100;
+
+  /* Motion ------------------------------------------------------- */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-instant: 80ms;
+  --duration-fast: 140ms;
+  --duration-base: 220ms;
+  --duration-slow: 380ms;
+  --duration-slower: 600ms;
+
+  /* Semantic colours (light) ------------------------------------ */
+  --surface-base: #f6f7fa;
+  --surface-raised: #ffffff;
+  --surface-overlay: #ffffff;
+  --surface-sunken: #edeff4;
+  --surface-muted: #f1f2f6;
+  --surface-hover: rgb(15 23 42 / 6%);
+  --surface-active: rgb(15 23 42 / 9%);
+  --surface-glass: rgb(255 255 255 / 78%);
+  --surface-glass-strong: rgb(255 255 255 / 92%);
+
+  --border-subtle: rgb(15 23 42 / 8%);
+  --border-default: rgb(15 23 42 / 12%);
+  --border-strong: rgb(15 23 42 / 20%);
+  --border-accent: rgb(79 70 229 / 32%);
+
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-tertiary: #8a94a6;
+  --text-inverted: #ffffff;
+  --text-on-accent: #ffffff;
+
+  --accent-base: #4f46e5;
+  --accent-hover: #4338ca;
+  --accent-active: #3730a3;
+  --accent-soft: rgb(79 70 229 / 12%);
+  --accent-soft-strong: rgb(79 70 229 / 20%);
+  --accent-text: #4338ca;
+  --accent-contrast: #312e81;
+
+  --success-base: #059669;
+  --success-hover: #047857;
+  --success-soft: rgb(5 150 105 / 12%);
+  --success-text: #047857;
+  --warning-base: #d97706;
+  --warning-hover: #b45309;
+  --warning-soft: rgb(217 119 6 / 14%);
+  --warning-text: #b45309;
+  --danger-base: #dc2626;
+  --danger-hover: #b91c1c;
+  --danger-soft: rgb(220 38 38 / 12%);
+  --danger-text: #b91c1c;
+  --info-base: #0284c7;
+  --info-hover: #0369a1;
+  --info-soft: rgb(2 132 199 / 12%);
+  --info-text: #0369a1;
+
+  /* Gradients ---------------------------------------------------- */
+  --gradient-accent: linear-gradient(135deg, #4f46e5 0%, #7c3aed 48%, #06b6d4 100%);
+  --gradient-accent-soft: linear-gradient(
+    135deg,
+    rgb(79 70 229 / 14%) 0%,
+    rgb(6 182 212 / 10%) 100%
+  );
+  --gradient-surface: radial-gradient(
+    120% 120% at 0% 0%,
+    rgb(79 70 229 / 8%) 0%,
+    transparent 55%
+  );
+  --gradient-text: linear-gradient(120deg, #312e81 0%, #4f46e5 45%, #0891b2 100%);
+
+  /* Elevation ---------------------------------------------------- */
+  --shadow-xs: 0 1px 1px rgb(15 23 42 / 4%);
+  --shadow-sm: 0 1px 2px rgb(15 23 42 / 6%);
+  --shadow-md: 0 4px 16px -4px rgb(15 23 42 / 12%);
+  --shadow-lg: 0 18px 40px -12px rgb(15 23 42 / 24%);
+  --shadow-xl: 0 32px 64px -24px rgb(15 23 42 / 32%);
+  --shadow-inner: inset 0 1px 0 rgb(255 255 255 / 70%);
+  --shadow-glow: 0 0 0 1px rgb(79 70 229 / 16%), 0 12px 32px -12px rgb(79 70 229 / 45%);
+  --shadow-focus: 0 0 0 3px rgb(79 70 229 / 32%);
+
+  /* Focus -------------------------------------------------------- */
+  --ring-color: var(--accent-base);
+  --ring-width: 2px;
+  --ring-offset: 2px;
+
+  /* Data visualisation ------------------------------------------ */
+  --chart-1: #6366f1;
+  --chart-2: #06b6d4;
+  --chart-3: #10b981;
+  --chart-4: #f59e0b;
+  --chart-5: #f43f5e;
+  --chart-6: #a855f7;
+  --chart-7: #0ea5e9;
+  --chart-8: #84cc16;
+  --chart-grid: rgb(15 23 42 / 8%);
+  --chart-axis: #8a94a6;
+
+  /* Difficulty --------------------------------------------------- */
+  --difficulty-trivial: #64748b;
+  --difficulty-easy: #059669;
+  --difficulty-medium: #0284c7;
+  --difficulty-hard: #d97706;
+  --difficulty-insane: #e11d48;
+
+  /* Lifecycle ---------------------------------------------------- */
+  --status-pending: #64748b;
+  --status-active: #0284c7;
+  --status-solved: #059669;
+  --status-locked: #d97706;
+
+  /* Category accents -------------------------------------------- */
+  --category-web: #6366f1;
+  --category-crypto: #a855f7;
+  --category-pwn: #f43f5e;
+  --category-reverse: #f59e0b;
+  --category-forensics: #06b6d4;
+  --category-osint: #10b981;
+  --category-misc: #84cc16;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --surface-base: #08090d;
+  --surface-raised: #101218;
+  --surface-overlay: #15171f;
+  --surface-sunken: #0c0e13;
+  --surface-muted: #0d0f15;
+  --surface-hover: rgb(255 255 255 / 6%);
+  --surface-active: rgb(255 255 255 / 10%);
+  --surface-glass: rgb(12 14 19 / 74%);
+  --surface-glass-strong: rgb(16 18 24 / 92%);
+
+  --border-subtle: rgb(255 255 255 / 6%);
+  --border-default: rgb(255 255 255 / 11%);
+  --border-strong: rgb(255 255 255 / 20%);
+  --border-accent: rgb(129 140 248 / 38%);
+
+  --text-primary: #f2f5f9;
+  --text-secondary: #a6b0c0;
+  --text-tertiary: #66748a;
+  --text-inverted: #0f172a;
+  --text-on-accent: #ffffff;
+
+  --accent-base: #6366f1;
+  --accent-hover: #818cf8;
+  --accent-active: #a5b4fc;
+  --accent-soft: rgb(99 102 241 / 18%);
+  --accent-soft-strong: rgb(99 102 241 / 28%);
+  --accent-text: #a5b4fc;
+  --accent-contrast: #e0e7ff;
+
+  --success-base: #10b981;
+  --success-hover: #34d399;
+  --success-soft: rgb(16 185 129 / 16%);
+  --success-text: #6ee7b7;
+  --warning-base: #f59e0b;
+  --warning-hover: #fbbf24;
+  --warning-soft: rgb(245 158 11 / 16%);
+  --warning-text: #fcd34d;
+  --danger-base: #f43f5e;
+  --danger-hover: #fb7185;
+  --danger-soft: rgb(244 63 94 / 16%);
+  --danger-text: #fda4af;
+  --info-base: #38bdf8;
+  --info-hover: #7dd3fc;
+  --info-soft: rgb(56 189 248 / 16%);
+  --info-text: #7dd3fc;
+
+  --gradient-accent: linear-gradient(135deg, #6366f1 0%, #8b5cf6 48%, #22d3ee 100%);
+  --gradient-accent-soft: linear-gradient(
+    135deg,
+    rgb(99 102 241 / 22%) 0%,
+    rgb(34 211 238 / 12%) 100%
+  );
+  --gradient-surface: radial-gradient(
+    120% 120% at 0% 0%,
+    rgb(99 102 241 / 12%) 0%,
+    transparent 55%
+  );
+  --gradient-text: linear-gradient(120deg, #e0e7ff 0%, #a5b4fc 45%, #67e8f9 100%);
+
+  --shadow-xs: 0 1px 1px rgb(0 0 0 / 32%);
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 40%);
+  --shadow-md: 0 4px 16px -4px rgb(0 0 0 / 56%);
+  --shadow-lg: 0 18px 40px -12px rgb(0 0 0 / 72%);
+  --shadow-xl: 0 32px 64px -24px rgb(0 0 0 / 80%);
+  --shadow-inner: inset 0 1px 0 rgb(255 255 255 / 6%);
+  --shadow-glow: 0 0 0 1px rgb(129 140 248 / 24%), 0 12px 32px -12px rgb(99 102 241 / 55%);
+  --shadow-focus: 0 0 0 3px rgb(129 140 248 / 40%);
+
+  --chart-1: #818cf8;
+  --chart-2: #22d3ee;
+  --chart-3: #34d399;
+  --chart-4: #fbbf24;
+  --chart-5: #fb7185;
+  --chart-6: #c084fc;
+  --chart-7: #38bdf8;
+  --chart-8: #a3e635;
+  --chart-grid: rgb(255 255 255 / 8%);
+  --chart-axis: #66748a;
+
+  --difficulty-trivial: #94a3b8;
+  --difficulty-easy: #34d399;
+  --difficulty-medium: #38bdf8;
+  --difficulty-hard: #fbbf24;
+  --difficulty-insane: #fb7185;
+
+  --status-pending: #94a3b8;
+  --status-active: #38bdf8;
+  --status-solved: #34d399;
+  --status-locked: #fbbf24;
+
+  --category-web: #818cf8;
+  --category-crypto: #c084fc;
+  --category-pwn: #fb7185;
+  --category-reverse: #fbbf24;
+  --category-forensics: #22d3ee;
+  --category-osint: #34d399;
+  --category-misc: #a3e635;
+}

@@ -113,6 +113,7 @@ export function ChallengeBoard({
           <Card
             key={column.id}
             className={cn(styles.column, isTarget && styles.columnTarget)}
+            data-board-column={column.id}
             onDragOver={(event) => {
               event.preventDefault();
               setDragTarget(column.id);
@@ -149,6 +150,7 @@ export function ChallengeBoard({
                       challenge.id === selectedId && styles.cardSelected,
                     )}
                     onClick={() => onSelect(challenge)}
+                    aria-pressed={challenge.id === selectedId}
                     draggable
                   >
                     <div className={styles.cardTop}>
