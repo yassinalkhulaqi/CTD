@@ -1,0 +1,14 @@
+[data-feature="admin-console"] {
+  min-height: 100%;
+  background:
+    radial-gradient(circle at 12% 0%, var(--accent-soft), transparent 28%),
+    var(--surface-base);
+}
+
+[data-feature="admin-console"] button:focus-visible,
+[data-feature="admin-console"] input:focus-visible,
+[data-feature="admin-console"] select:focus-visible,
+[data-feature="admin-console"] textarea:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
