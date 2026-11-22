@@ -2,9 +2,17 @@
  * Surface primitives: cards, panels and the statistic tiles.
  */
 
-import { forwardRef, type HTMLAttributes, type ReactNode } from "react";
+import {
+  forwardRef,
+  type CSSProperties,
+  type HTMLAttributes,
+  type ReactNode,
+} from "react";
 import { cn } from "../../lib/utils";
 import styles from "./Card.module.css";
+
+/** The surface treatment of a card. */
+export type CardVariant = "default" | "elevated" | "outlined" | "glass" | "featured";
 
 /** Props accepted by {@link Card}. */
 export interface CardProps extends HTMLAttributes<HTMLDivElement> {
@@ -12,6 +20,8 @@ export interface CardProps extends HTMLAttributes<HTMLDivElement> {
   bare?: boolean;
   /** Add a hover elevation effect. */
   interactive?: boolean;
+  /** The surface treatment. */
+  variant?: CardVariant;
   /** Render the card as a section with an accessible name. */
   as?: "div" | "section" | "article";
 }
@@ -27,6 +37,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(function Card(
   {
     bare = false,
     interactive = false,
+    variant = "default",
     as = "div",
     className,
     children,
@@ -40,6 +51,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(function Card(
       ref={ref as never}
       className={cn(
         styles.card,
+        variant !== "default" && styles[variant],
         bare && styles.bare,
         interactive && styles.interactive,
         className,
@@ -63,12 +75,7 @@ export interface CardHeaderProps extends HTMLAttributes<HTMLDivElement> {
  * @param props - The component props.
  * @returns The header element.
  */
-export function CardHeader({
-  actions,
-  className,
-  children,
-  ...rest
-}: CardHeaderProps) {
+export function CardHeader({ actions, className, children, ...rest }: CardHeaderProps) {
   return (
     <div className={cn(styles.header, className)} {...rest}>
       <div className={styles.headerText}>{children}</div>
@@ -89,12 +96,7 @@ export interface CardTitleProps extends HTMLAttributes<HTMLHeadingElement> {
  * @param props - The component props.
  * @returns The heading element.
  */
-export function CardTitle({
-  level = 2,
-  className,
-  children,
-  ...rest
-}: CardTitleProps) {
+export function CardTitle({ level = 2, className, children, ...rest }: CardTitleProps) {
   const Tag = `h${level}` as "h2" | "h3" | "h4";
   return (
     <Tag className={cn(styles.title, className)} {...rest}>
@@ -109,11 +111,7 @@ export function CardTitle({
  * @param props - The component props.
  * @returns The description element.
  */
-export function CardDescription({
-  className,
-  children,
-  ...rest
-}: HTMLAttributes<HTMLParagraphElement>) {
+export function CardDescription({ className, children, ...rest }: HTMLAttributes<HTMLParagraphElement>) {
   return (
     <p className={cn(styles.description, className)} {...rest}>
       {children}
@@ -127,11 +125,7 @@ export function CardDescription({
  * @param props - The component props.
  * @returns The content element.
  */
-export function CardContent({
-  className,
-  children,
-  ...rest
-}: HTMLAttributes<HTMLDivElement>) {
+export function CardContent({ className, children, ...rest }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div className={cn(styles.content, className)} {...rest}>
       {children}
@@ -145,11 +139,7 @@ export function CardContent({
  * @param props - The component props.
  * @returns The footer element.
  */
-export function CardFooter({
-  className,
-  children,
-  ...rest
-}: HTMLAttributes<HTMLDivElement>) {
+export function CardFooter({ className, children, ...rest }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div className={cn(styles.footer, className)} {...rest}>
       {children}
@@ -190,41 +180,35 @@ export function StatCard({
   loading = false,
   trend,
   className,
+  style,
   ...rest
 }: StatCardProps) {
   return (
-    <div className={cn(styles.stat, className)} {...rest}>
+    <div
+      className={cn(styles.stat, className)}
+      style={
+        accent ? ({ ...style, "--stat-accent": accent } as CSSProperties) : style
+      }
+      {...rest}
+    >
       <div className={styles.statTop}>
         <span className={styles.statLabel}>{label}</span>
         {icon ? (
-          <span
-            className={styles.statIcon}
-            style={
-              accent ? { color: accent, background: `${accent}1f` } : undefined
-            }
-            aria-hidden="true"
-          >
+          <span className={styles.statIcon} aria-hidden="true">
             {icon}
           </span>
         ) : null}
       </div>
 
       {loading ? (
-        <div
-          className={cn(styles.skeleton, styles.skeletonValue)}
-          aria-hidden="true"
-        />
+        <div className={cn(styles.skeleton, styles.skeletonValue)} aria-hidden="true" />
       ) : (
         <div className={styles.statValue}>{value}</div>
       )}
 
       <div className={styles.statMeta}>
         {trend ? (
-          <span
-            className={cn(styles.trend, styles[`trend-${trend.direction}`])}
-          >
-            {trend.value}
-          </span>
+          <span className={cn(styles.trend, styles[`trend-${trend.direction}`])}>{trend.value}</span>
         ) : null}
         {meta ? <span className={styles.meta}>{meta}</span> : null}
       </div>
@@ -232,17 +216,26 @@ export function StatCard({
   );
 }
 
+/** Props accepted by {@link Divider}. */
+export interface DividerProps extends HTMLAttributes<HTMLDivElement> {
+  /** The axis of the separator. */
+  orientation?: "horizontal" | "vertical";
+}
+
 /**
- * Render a horizontal section separator.
+ * Render a separator between sections or inline items.
  *
  * @param props - The component props.
  * @returns The separator element.
  */
-export function Divider({
-  className,
-  ...rest
-}: HTMLAttributes<HTMLDivElement>) {
+export function Divider({ orientation = "horizontal", className, ...rest }: DividerProps) {
   return (
-    <div role="separator" className={cn(styles.divider, className)} {...rest} />
+    <div
+      role="separator"
+      aria-orientation={orientation}
+      data-orientation={orientation}
+      className={cn(styles.divider, className)}
+      {...rest}
+    />
   );
 }
