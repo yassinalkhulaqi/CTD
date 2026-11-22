@@ -1,0 +1,29 @@
+.picker {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.details {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--surface-sunken);
+  color: var(--text-secondary);
+  font-size: var(--text-xs);
+}
+
+.description {
+  flex: 1 1 180px;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 640px) {
+  .details {
+    align-items: flex-start;
+  }
+}
