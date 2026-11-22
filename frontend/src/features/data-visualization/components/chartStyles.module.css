@@ -1,0 +1,204 @@
+.wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 160px;
+  overflow: visible;
+  background: var(--surface-raised);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.gridLine {
+  stroke: var(--border-subtle);
+  stroke-width: 1;
+  stroke-dasharray: 3 5;
+}
+
+.axisLine {
+  stroke: var(--border-default);
+  stroke-width: 1;
+}
+
+.tickLabel,
+.axisLabel {
+  fill: var(--text-tertiary);
+  font-family: var(--font-sans);
+  font-size: 10px;
+}
+
+.axisLabel {
+  fill: var(--text-secondary);
+  font-size: 11px;
+}
+
+.bar {
+  transition: opacity var(--duration-fast) var(--ease-out);
+  cursor: pointer;
+}
+
+.bar:hover,
+.bar:focus-visible {
+  opacity: 0.75;
+  outline: none;
+}
+
+.lineArea {
+  opacity: 0.12;
+}
+
+.line {
+  fill: none;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke-width var(--duration-fast) var(--ease-out);
+}
+
+.point {
+  stroke: var(--surface-raised);
+  stroke-width: 2;
+  cursor: pointer;
+  transition: r var(--duration-fast) var(--ease-out);
+}
+
+.point:hover,
+.point:focus-visible {
+  r: 6;
+  outline: none;
+}
+
+.radarRing {
+  fill: none;
+  stroke: var(--border-default);
+  stroke-width: 1;
+}
+
+.radarAxis {
+  stroke: var(--border-subtle);
+  stroke-width: 1;
+}
+
+.radarPolygon {
+  stroke-width: 2;
+  stroke-linejoin: round;
+  fill-opacity: 0.18;
+}
+
+.radarLabel {
+  fill: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-size: 10px;
+}
+
+.flow {
+  fill: none;
+  opacity: 0.42;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.flow:hover,
+.flow:focus-visible {
+  opacity: 0.7;
+  outline: none;
+}
+
+.node {
+  stroke: var(--surface-raised);
+  stroke-width: 2;
+}
+
+.nodeLabel {
+  fill: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 10px;
+}
+
+.sparkArea {
+  opacity: 0.16;
+}
+
+.sparkLine {
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.sparkDot {
+  stroke: var(--surface-raised);
+  stroke-width: 2;
+}
+
+.tooltip {
+  pointer-events: none;
+}
+
+.tooltipBackground {
+  fill: var(--surface-overlay);
+  stroke: var(--border-strong);
+}
+
+.tooltipText {
+  fill: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 10px;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  margin: var(--space-3) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.legendItem {
+  display: inline-flex;
+  gap: var(--space-2);
+  align-items: center;
+  color: var(--text-secondary);
+  font-size: var(--text-xs);
+}
+
+.legendSwatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+.empty {
+  display: grid;
+  min-height: 180px;
+  place-items: center;
+  color: var(--text-tertiary);
+  font-size: var(--text-sm);
+  text-align: center;
+}
+
+@media (max-width: 720px) {
+  .svg {
+    min-height: 140px;
+  }
+
+  .tickLabel,
+  .axisLabel,
+  .radarLabel {
+    font-size: 9px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar,
+  .line,
+  .point,
+  .flow {
+    transition: none;
+  }
+}
