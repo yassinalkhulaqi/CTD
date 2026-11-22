@@ -144,6 +144,8 @@ def main(argv: list[str] | None = None) -> int:
     """Run the gate and return a process exit code."""
     args = build_parser().parse_args(argv)
     refs = list(args.refs)
+    if refs and refs[-1].isdigit():
+        args.min = int(refs.pop())
     if args.all:
         refs = refs[:1]
     if not refs:

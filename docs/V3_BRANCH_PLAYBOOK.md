@@ -157,7 +157,7 @@ python3 -m ruff check . && python3 -m ruff format --check .
 python3 -m mypy
 python3 -m pytest -q
 (cd frontend && npm run lint && npm run format:check && npm run typecheck && npm test && npm run build)
-python3 scripts/loc_gate.py 448fe50 HEAD 2000
+python3 scripts/loc_gate.py 448fe50 HEAD --min 2000
 ```
 
 If `format:check` complains about pre-existing files, run `npm run format`
