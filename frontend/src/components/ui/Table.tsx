@@ -315,3 +315,26 @@ export function SortableTable<T>({
     </Table>
   );
 }
+
+/** Props accepted by {@link TableToolbar}. */
+export interface TableToolbarProps extends HTMLAttributes<HTMLDivElement> {
+  /** The leading controls, usually search and filters. */
+  children: ReactNode;
+  /** Actions rendered on the trailing edge. */
+  actions?: ReactNode;
+}
+
+/**
+ * Render the toolbar that sits above a table.
+ *
+ * @param props - The component props.
+ * @returns The toolbar element.
+ */
+export function TableToolbar({ children, actions, className, ...rest }: TableToolbarProps) {
+  return (
+    <div className={cn(styles.toolbar, className)} {...rest}>
+      <div className={styles.toolbarStart}>{children}</div>
+      {actions ? <div className={styles.toolbarActions}>{actions}</div> : null}
+    </div>
+  );
+}

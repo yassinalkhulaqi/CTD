@@ -4,6 +4,41 @@
   gap: var(--space-4);
 }
 
+.summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.summaryText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.summaryTitle {
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-tight);
+  color: var(--text-primary);
+}
+
+.summaryMeta {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
 .headerActions {
   display: flex;
   align-items: center;

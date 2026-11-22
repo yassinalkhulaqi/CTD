@@ -45,10 +45,7 @@ export interface ModalProps {
  * @param container - The element that holds the focusable content.
  * @param active - Whether the trap is enabled.
  */
-function useFocusTrap(
-  container: React.RefObject<HTMLElement | null>,
-  active: boolean,
-): void {
+function useFocusTrap(container: React.RefObject<HTMLElement | null>, active: boolean): void {
   useEffect(() => {
     if (!active || !container.current) return;
 
@@ -158,20 +155,14 @@ export function Modal({
               ) : null}
             </div>
             {hideClose ? null : (
-              <IconButton
-                icon={<X size={16} />}
-                label="Close dialog"
-                onClick={onClose}
-              />
+              <IconButton icon={<X size={16} />} label="Close dialog" onClick={onClose} />
             )}
           </header>
         ) : null}
 
         <div className={styles.modalBody}>{children}</div>
 
-        {footer ? (
-          <footer className={styles.modalFooter}>{footer}</footer>
-        ) : null}
+        {footer ? <footer className={styles.modalFooter}>{footer}</footer> : null}
       </div>
     </div>,
     document.body,
@@ -186,6 +177,8 @@ export interface DrawerProps {
   onClose: () => void;
   /** The drawer title. */
   title?: ReactNode;
+  /** Supporting copy rendered under the title. */
+  description?: ReactNode;
   /** The drawer body. */
   children?: ReactNode;
   /** The footer region of the drawer. */
@@ -194,6 +187,10 @@ export interface DrawerProps {
   side?: "left" | "right" | "bottom";
   /** The width of the drawer. */
   width?: number;
+  /** Hide the close button. */
+  hideClose?: boolean;
+  /** Prevent closing by clicking the backdrop or pressing Escape. */
+  persistent?: boolean;
 }
 
 /**
@@ -206,22 +203,32 @@ export function Drawer({
   open,
   onClose,
   title,
+  description,
   children,
   footer,
   side = "right",
   width = 420,
+  hideClose = false,
+  persistent = false,
 }: DrawerProps) {
+  const titleId = useId();
+  const descriptionId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
   useFocusTrap(panelRef, open);
 
   useEffect(() => {
     if (!open) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     function onKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") onClose();
+      if (event.key === "Escape" && !persistent) onClose();
     }
     document.addEventListener("keydown", onKeyDown);
-    return () => document.removeEventListener("keydown", onKeyDown);
-  }, [open, onClose]);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open, onClose, persistent]);
 
   if (!open || typeof document === "undefined") return null;
 
@@ -229,7 +236,7 @@ export function Drawer({
     <div
       className={styles.backdrop}
       onMouseDown={(event) => {
-        if (event.target === event.currentTarget) onClose();
+        if (event.target === event.currentTarget && !persistent) onClose();
       }}
     >
       <div
@@ -238,19 +245,30 @@ export function Drawer({
         style={side === "bottom" ? undefined : { width }}
         role="dialog"
         aria-modal="true"
+        aria-labelledby={title ? titleId : undefined}
+        aria-describedby={description ? descriptionId : undefined}
+        tabIndex={-1}
       >
+        {side === "bottom" ? <div className={styles.drawerGrip} aria-hidden="true" /> : null}
         <header className={styles.drawerHeader}>
-          <h2 className={styles.modalTitle}>{title}</h2>
-          <IconButton
-            icon={<X size={16} />}
-            label="Close panel"
-            onClick={onClose}
-          />
+          <div>
+            {title ? (
+              <h2 className={styles.modalTitle} id={titleId}>
+                {title}
+              </h2>
+            ) : null}
+            {description ? (
+              <p className={styles.modalDescription} id={descriptionId}>
+                {description}
+              </p>
+            ) : null}
+          </div>
+          {hideClose ? null : (
+            <IconButton icon={<X size={16} />} label="Close panel" onClick={onClose} />
+          )}
         </header>
         <div className={styles.drawerBody}>{children}</div>
-        {footer ? (
-          <footer className={styles.drawerFooter}>{footer}</footer>
-        ) : null}
+        {footer ? <footer className={styles.drawerFooter}>{footer}</footer> : null}
       </div>
     </div>,
     document.body,
@@ -275,12 +293,7 @@ export interface TooltipProps {
  * @param props - The component props.
  * @returns The wrapped element.
  */
-export function Tooltip({
-  content,
-  children,
-  side = "top",
-  delay = 250,
-}: TooltipProps) {
+export function Tooltip({ content, children, side = "top", delay = 250 }: TooltipProps) {
   const [visible, setVisible] = useState(false);
   const timer = useRef<number | null>(null);
 
@@ -311,10 +324,7 @@ export function Tooltip({
     >
       {children}
       {visible ? (
-        <span
-          className={cn(styles.tooltip, styles[`tooltip-${side}`])}
-          role="tooltip"
-        >
+        <span className={cn(styles.tooltip, styles[`tooltip-${side}`])} role="tooltip">
           {content}
         </span>
       ) : null}
@@ -342,13 +352,7 @@ export interface PopoverProps {
  * @param props - The component props.
  * @returns The popover element.
  */
-export function Popover({
-  trigger,
-  children,
-  open,
-  onClose,
-  align = "start",
-}: PopoverProps) {
+export function Popover({ trigger, children, open, onClose, align = "start" }: PopoverProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -372,10 +376,7 @@ export function Popover({
     <div className={styles.popoverAnchor} ref={containerRef}>
       {trigger}
       {open ? (
-        <div
-          className={cn(styles.popover, styles[`popover-${align}`])}
-          role="dialog"
-        >
+        <div className={cn(styles.popover, styles[`popover-${align}`])} role="dialog">
           {children}
         </div>
       ) : null}
@@ -399,21 +400,10 @@ export interface MenuProps extends HTMLAttributes<HTMLDivElement> {
  * @param props - The component props.
  * @returns The menu element.
  */
-export function Menu({
-  open,
-  children,
-  width = 200,
-  className,
-  ...rest
-}: MenuProps) {
+export function Menu({ open, children, width = 200, className, ...rest }: MenuProps) {
   if (!open) return null;
   return (
-    <div
-      className={cn(styles.menu, className)}
-      style={{ width }}
-      role="menu"
-      {...rest}
-    >
+    <div className={cn(styles.menu, className)} style={{ width }} role="menu" {...rest}>
       {children}
     </div>
   );
@@ -435,24 +425,12 @@ export interface MenuItemProps extends HTMLAttributes<HTMLButtonElement> {
  * @param props - The component props.
  * @returns The menu item element.
  */
-export function MenuItem({
-  icon,
-  danger = false,
-  active = false,
-  className,
-  children,
-  ...rest
-}: MenuItemProps) {
+export function MenuItem({ icon, danger = false, active = false, className, children, ...rest }: MenuItemProps) {
   return (
     <button
       type="button"
       role="menuitem"
-      className={cn(
-        styles.menuItem,
-        danger && styles.menuItemDanger,
-        active && styles.menuItemActive,
-        className,
-      )}
+      className={cn(styles.menuItem, danger && styles.menuItemDanger, active && styles.menuItemActive, className)}
       {...rest}
     >
       {icon ? (
@@ -471,15 +449,6 @@ export function MenuItem({
  * @param props - The component props.
  * @returns The separator element.
  */
-export function MenuDivider({
-  className,
-  ...rest
-}: HTMLAttributes<HTMLDivElement>) {
-  return (
-    <div
-      className={cn(styles.menuDivider, className)}
-      role="separator"
-      {...rest}
-    />
-  );
+export function MenuDivider({ className, ...rest }: HTMLAttributes<HTMLDivElement>) {
+  return <div className={cn(styles.menuDivider, className)} role="separator" {...rest} />;
 }
