@@ -3,7 +3,7 @@
  */
 
 import { useMemo, useState } from "react";
-import { Radio, Users } from "lucide-react";
+import { Activity, Radio, Trophy, Users } from "lucide-react";
 import { useContributions, useMembers } from "../../api/resources";
 import { useActiveTeamId } from "../../stores/dashboardStore";
 import { formatNumber, formatRelativeTime } from "../../lib/utils";
@@ -18,6 +18,7 @@ import {
   ErrorState,
   SegmentedControl,
   Skeleton,
+  StatCard,
   VirtualTable,
 } from "../../components/ui";
 import type { Presence } from "../../types";
@@ -79,6 +80,15 @@ export default function MembersPage() {
   }, [members.data, contributionById, sort]);
 
   const online = rows.filter((member) => member.is_online).length;
+  const totals = useMemo(() => {
+    let solves = 0;
+    let points = 0;
+    for (const stats of contributionById.values()) {
+      solves += stats.solves;
+      points += stats.points;
+    }
+    return { solves, points };
+  }, [contributionById]);
 
   if (members.error) {
     return (
@@ -96,6 +106,41 @@ export default function MembersPage() {
 
   return (
     <div className={styles.page}>
+      <section className={styles.stats} aria-label="Roster summary">
+        <StatCard
+          label="Members"
+          value={formatNumber(rows.length)}
+          icon={<Users size={16} />}
+          accent="#6366f1"
+          meta="on the active roster"
+          loading={!members.data}
+        />
+        <StatCard
+          label="Online now"
+          value={formatNumber(online)}
+          icon={<Activity size={16} />}
+          accent="#34d399"
+          meta="available to pick up work"
+          loading={!members.data}
+        />
+        <StatCard
+          label="Solves"
+          value={formatNumber(totals.solves)}
+          icon={<Radio size={16} />}
+          accent="#22d3ee"
+          meta="recorded by this team"
+          loading={!contributions.data}
+        />
+        <StatCard
+          label="Points"
+          value={formatNumber(totals.points)}
+          icon={<Trophy size={16} />}
+          accent="#f59e0b"
+          meta="across every member"
+          loading={!contributions.data}
+        />
+      </section>
+
       <Card>
         <CardHeader
           actions={
@@ -131,9 +176,18 @@ export default function MembersPage() {
             <VirtualTable
               rows={rows}
               rowKey={(member) => member.id}
-              rowHeight={48}
-              height={420}
+              rowHeight={52}
+              height={480}
+              label="Team members and contributions"
+              emptyMessage="No members to show."
               columns={[
+                {
+                  key: "rank",
+                  header: "#",
+                  render: (member) => (
+                    <span className={styles.rank}>{rows.indexOf(member) + 1}</span>
+                  ),
+                },
                 {
                   key: "member",
                   header: "Member",
@@ -168,8 +222,11 @@ export default function MembersPage() {
                   key: "presence",
                   header: "Presence",
                   render: (member) => (
-                    <span className={styles.presence}>
-                      <Radio size={12} aria-hidden="true" />
+                    <span
+                      className={styles.presence}
+                      data-presence={member.is_online ? "online" : "offline"}
+                    >
+                      <span className={styles.presenceDot} aria-hidden="true" />
                       {member.presence}
                     </span>
                   ),
