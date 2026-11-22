@@ -4,9 +4,17 @@
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-subtle);
   background: var(--surface-raised);
+  scrollbar-gutter: stable;
 }
 
 .viewport:focus-visible {
   outline: 2px solid var(--accent-base);
   outline-offset: -2px;
+}
+
+.empty {
+  padding: var(--space-10) var(--space-4);
+  text-align: center;
+  font-size: var(--text-sm);
+  color: var(--text-tertiary);
 }
