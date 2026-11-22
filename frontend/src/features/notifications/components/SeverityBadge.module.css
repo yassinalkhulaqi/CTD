@@ -1,0 +1,24 @@
+.badge {
+  text-transform: capitalize;
+  letter-spacing: 0.01em;
+  font-weight: 600;
+}
+
+.severity-info {
+  --badge-accent: var(--info-base);
+}
+
+.severity-warning {
+  --badge-accent: var(--warning-base);
+}
+
+.severity-critical {
+  --badge-accent: var(--danger-base);
+  box-shadow: inset 0 0 0 1px var(--danger-base);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .badge {
+    transition: none;
+  }
+}
