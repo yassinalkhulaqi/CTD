@@ -16,7 +16,7 @@ from ctf_team_dashboard.seed import build_seed_data, persist_seed_data
 
 
 @pytest.fixture(autouse=True)
-async def reset_shared_state() -> AsyncIterator[None]:
+async def reset_shared_state() -> None:
     """Reset process-wide limiters and audit state before every test.
 
     The merged program runs twenty feature suites in one process. The rate
@@ -26,10 +26,11 @@ async def reset_shared_state() -> AsyncIterator[None]:
     """
     from ctf_team_dashboard.dependencies import get_rate_limiter
     from ctf_team_dashboard.security.audit import get_audit_log
+    from ctf_team_dashboard.services.caching import reset_response_cache
 
     await get_rate_limiter().reset()
     get_audit_log().clear()
-    yield
+    reset_response_cache()
 
 
 @pytest.fixture
