@@ -1,0 +1,29 @@
+@page {
+  margin: 16mm;
+}
+
+@media print {
+  .printSurface {
+    border: 0;
+    box-shadow: none;
+    background: #ffffff;
+    color: #0f172a;
+  }
+
+  .printHidden {
+    display: none !important;
+  }
+
+  .printSurface :is(h1, h2, h3) {
+    break-after: avoid;
+    color: #0f172a;
+  }
+
+  .printSurface :is(tr, li, dl, dd) {
+    break-inside: avoid;
+  }
+
+  .printSurface :is(p, li, td, th) {
+    font-size: 10pt;
+  }
+}
