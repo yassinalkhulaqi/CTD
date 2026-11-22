@@ -2,7 +2,7 @@
  * Feedback primitives: skeletons, spinners, empty and error states, progress.
  */
 
-import type { HTMLAttributes, ReactNode } from "react";
+import { useId, type CSSProperties, type HTMLAttributes, type ReactNode } from "react";
 import { AlertTriangle, Inbox, RefreshCw } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { Button } from "./Button";
@@ -37,19 +37,12 @@ export function Skeleton({
 }: SkeletonProps) {
   if (lines && lines > 1) {
     return (
-      <div
-        className={cn(styles.skeletonGroup, className)}
-        aria-hidden="true"
-        {...rest}
-      >
+      <div className={cn(styles.skeletonGroup, className)} aria-hidden="true" {...rest}>
         {Array.from({ length: lines }, (_, index) => (
           <div
             key={index}
             className={styles.skeleton}
-            style={{
-              width: index === lines - 1 ? "65%" : "100%",
-              height: height ?? 12,
-            }}
+            style={{ width: index === lines - 1 ? "65%" : "100%", height: height ?? 12 }}
           />
         ))}
       </div>
@@ -58,17 +51,8 @@ export function Skeleton({
 
   return (
     <div
-      className={cn(
-        styles.skeleton,
-        circle && styles.skeletonCircle,
-        className,
-      )}
-      style={{
-        width,
-        height,
-        borderRadius: circle ? "50%" : undefined,
-        ...style,
-      }}
+      className={cn(styles.skeleton, circle && styles.skeletonCircle, className)}
+      style={{ width, height, borderRadius: circle ? "50%" : undefined, ...style }}
       aria-hidden="true"
       {...rest}
     />
@@ -89,12 +73,7 @@ export interface SpinnerProps extends HTMLAttributes<HTMLSpanElement> {
  * @param props - The component props.
  * @returns The spinner element.
  */
-export function Spinner({
-  size = 18,
-  label = "Loading",
-  className,
-  ...rest
-}: SpinnerProps) {
+export function Spinner({ size = 18, label = "Loading", className, ...rest }: SpinnerProps) {
   return (
     <span
       className={cn(styles.spinner, className)}
@@ -138,9 +117,7 @@ export function EmptyState({
         {icon ?? <Inbox size={22} />}
       </div>
       <p className={styles.emptyTitle}>{title}</p>
-      {description ? (
-        <p className={styles.emptyDescription}>{description}</p>
-      ) : null}
+      {description ? <p className={styles.emptyDescription}>{description}</p> : null}
       {action ? <div className={styles.emptyAction}>{action}</div> : null}
     </div>
   );
@@ -252,7 +229,7 @@ export interface ScoreRingProps extends HTMLAttributes<HTMLDivElement> {
   size?: number;
   /** The thickness of the ring stroke. */
   strokeWidth?: number;
-  /** The accent colour of the ring. */
+  /** The accent colour of the ring. Defaults to the accent gradient. */
   color?: string;
   /** The content rendered inside the ring. */
   children?: ReactNode;
@@ -261,6 +238,8 @@ export interface ScoreRingProps extends HTMLAttributes<HTMLDivElement> {
 /**
  * Render a circular progress indicator.
  *
+ * Unless a `color` is given the stroke uses the accent gradient.
+ *
  * @param props - The component props.
  * @returns The ring element.
  */
@@ -268,11 +247,12 @@ export function ScoreRing({
   value,
   size = 56,
   strokeWidth = 5,
-  color = "var(--accent-base)",
+  color,
   children,
   className,
   ...rest
 }: ScoreRingProps) {
+  const gradientId = `ring-${useId().replace(/[:]/g, "")}`;
   const ratio = Math.min(1, Math.max(0, value));
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
@@ -281,17 +261,18 @@ export function ScoreRing({
   return (
     <div
       className={cn(styles.ring, className)}
-      style={{ width: size, height: size }}
+      style={{ width: size, height: size, "--ring-accent": color ?? "var(--accent-base)" } as CSSProperties}
       role="img"
       aria-label={`${Math.round(ratio * 100)}% complete`}
       {...rest}
     >
-      <svg
-        width={size}
-        height={size}
-        className={styles.ringSvg}
-        aria-hidden="true"
-      >
+      <svg width={size} height={size} className={styles.ringSvg} aria-hidden="true">
+        <defs>
+          <linearGradient id={gradientId} x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="var(--accent-base)" />
+            <stop offset="100%" stopColor="var(--chart-2, #22d3ee)" />
+          </linearGradient>
+        </defs>
         <circle
           cx={size / 2}
           cy={size / 2}
@@ -305,7 +286,7 @@ export function ScoreRing({
           cy={size / 2}
           r={radius}
           fill="none"
-          stroke={color}
+          stroke={color ?? `url(#${gradientId})`}
           strokeWidth={strokeWidth}
           strokeLinecap="round"
           strokeDasharray={circumference}
@@ -314,9 +295,7 @@ export function ScoreRing({
           className={styles.ringProgress}
         />
       </svg>
-      <span className={styles.ringLabel}>
-        {children ?? `${Math.round(ratio * 100)}%`}
-      </span>
+      <span className={styles.ringLabel}>{children ?? `${Math.round(ratio * 100)}%`}</span>
     </div>
   );
 }

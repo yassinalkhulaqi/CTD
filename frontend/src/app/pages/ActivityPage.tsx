@@ -8,8 +8,10 @@ import { ActivityFeed } from "../../components/layout/ActivityFeed";
 import { useActivityStore } from "../../stores/activityStore";
 import type { EventKind } from "../../types";
 import {
+  Badge,
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
   SegmentedControl,
@@ -32,10 +34,27 @@ const KIND_OPTIONS = [
 export default function ActivityPage() {
   const kindFilter = useActivityStore((state) => state.kindFilter);
   const setKindFilter = useActivityStore((state) => state.setKindFilter);
+  const events = useActivityStore((state) => state.events);
+  const paused = useActivityStore((state) => state.paused);
   const [limit, setLimit] = useState(40);
+
+  const total = events.length;
+  const solves = events.filter((event) => event.kind === "solve.created").length;
 
   return (
     <div className={styles.page}>
+      <div className={styles.summary}>
+        <div className={styles.summaryText}>
+          <h2 className={styles.summaryTitle}>Team timeline</h2>
+          <p className={styles.summaryMeta}>
+            {total} events buffered ? {solves} solves ? {limit} shown
+          </p>
+        </div>
+        <Badge tone={paused ? "warning" : "success"} dot>
+          {paused ? "Paused" : "Streaming"}
+        </Badge>
+      </div>
+
       <Card>
         <CardHeader
           actions={
@@ -62,6 +81,9 @@ export default function ActivityPage() {
           }
         >
           <CardTitle>Activity feed</CardTitle>
+          <CardDescription>
+            Newest first. Pause the stream to read without the list shifting.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <ActivityFeed limit={limit} />

@@ -4,13 +4,10 @@
 
 import { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Flag, Filter, LayoutGrid, Rows3 } from "lucide-react";
+import { Flag, LayoutGrid, Rows3 } from "lucide-react";
 import { useChallenges } from "../../api/resources";
-import {
-  useActiveTeamId,
-  useDashboardStore,
-} from "../../stores/dashboardStore";
-import { formatNumber } from "../../lib/utils";
+import { useActiveTeamId, useDashboardStore } from "../../stores/dashboardStore";
+import { cn, formatNumber } from "../../lib/utils";
 import {
   Badge,
   Button,
@@ -20,7 +17,6 @@ import {
   CardTitle,
   EmptyState,
   ErrorState,
-  Input,
   SegmentedControl,
   Skeleton,
   Table,
@@ -44,16 +40,15 @@ const STATUS_TONES: Record<
   locked: "danger",
 };
 
-const DIFFICULTY_TONES: Record<
-  string,
-  "neutral" | "info" | "warning" | "danger"
-> = {
+const DIFFICULTY_TONES: Record<string, "neutral" | "info" | "warning" | "danger"> = {
   trivial: "neutral",
   easy: "neutral",
   medium: "info",
   hard: "warning",
   insane: "danger",
 };
+
+const STATUS_ORDER: ChallengeStatus[] = ["pending", "active", "solved", "locked"];
 
 type ViewMode = "board" | "table";
 
@@ -74,19 +69,17 @@ export default function ChallengesPage() {
 
   const categoryFilter = useDashboardStore((state) => state.categoryFilter);
   const statusFilter = useDashboardStore((state) => state.statusFilter);
+  const setStatusFilter = useDashboardStore((state) => state.setStatusFilter);
   const searchQuery = useDashboardStore((state) => state.searchQuery);
   const setSearchQuery = useDashboardStore((state) => state.setSearchQuery);
 
   const [view, setView] = useState<ViewMode>("board");
-  const [selectedId, setSelectedId] = useState<string | null>(
-    params.challengeId ?? null,
-  );
+  const [selectedId, setSelectedId] = useState<string | null>(params.challengeId ?? null);
 
   const challenges = useChallenges(
     {
       teamId: teamId ?? undefined,
       category: categoryFilter === "all" ? undefined : categoryFilter,
-      status: statusFilter === "all" ? undefined : statusFilter,
     },
     { staleTime: 8_000 },
   );
@@ -102,6 +95,22 @@ export default function ChallengesPage() {
     );
   }, [challenges.data, searchQuery]);
 
+  const statusCounts = useMemo(() => {
+    const source = challenges.data ?? [];
+    return STATUS_ORDER.map((status) => ({
+      status,
+      count: source.filter((challenge) => challenge.status === status).length,
+    }));
+  }, [challenges.data]);
+
+  const visible = useMemo(
+    () =>
+      statusFilter === "all"
+        ? filtered
+        : filtered.filter((challenge) => challenge.status === statusFilter),
+    [filtered, statusFilter],
+  );
+
   const selected = useMemo(
     () => filtered.find((challenge) => challenge.id === selectedId) ?? null,
     [filtered, selectedId],
@@ -116,11 +125,7 @@ export default function ChallengesPage() {
     return (
       <ErrorState
         title="The challenge board could not be loaded"
-        message={
-          challenges.error instanceof Error
-            ? challenges.error.message
-            : "Unknown error"
-        }
+        message={challenges.error instanceof Error ? challenges.error.message : "Unknown error"}
         onRetry={() => void challenges.refetch()}
       />
     );
@@ -128,44 +133,58 @@ export default function ChallengesPage() {
 
   return (
     <div className={styles.page}>
+      <div className={styles.header}>
+        <div className={styles.statusChips} role="group" aria-label="Filter by status">
+          <button
+            type="button"
+            className={cn(styles.chip, statusFilter === "all" && styles.chipActive)}
+            onClick={() => setStatusFilter("all")}
+            aria-pressed={statusFilter === "all"}
+          >
+            All
+            <span className={styles.chipCount}>{challenges.data?.length ?? 0}</span>
+          </button>
+          {statusCounts.map(({ status, count }) => (
+            <button
+              key={status}
+              type="button"
+              className={cn(styles.chip, statusFilter === status && styles.chipActive)}
+              onClick={() => setStatusFilter(statusFilter === status ? "all" : status)}
+              aria-pressed={statusFilter === status}
+              data-status={status}
+            >
+              <span className={styles.chipDot} aria-hidden="true" />
+              <span className={styles.chipLabel}>{status}</span>
+              <span className={styles.chipCount}>{count}</span>
+            </button>
+          ))}
+        </div>
+
+        <div className={styles.headerActions}>
+          <span className={styles.resultCount}>{visible.length} shown</span>
+          <SegmentedControl
+            options={VIEW_OPTIONS}
+            value={view}
+            onValueChange={setView}
+            label="View mode"
+          />
+        </div>
+      </div>
+
       <Card>
         <CardHeader
           actions={
-            <div className={styles.headerActions}>
-              <Badge tone="neutral">{filtered.length} challenges</Badge>
-              <SegmentedControl
-                options={VIEW_OPTIONS}
-                value={view}
-                onValueChange={setView}
-                label="View mode"
-              />
-            </div>
+            searchQuery ? (
+              <Button variant="ghost" size="sm" onClick={() => setSearchQuery("")}>
+                Clear search
+              </Button>
+            ) : null
           }
         >
-          <CardTitle>Challenge board</CardTitle>
+          <CardTitle>Challenges</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className={styles.toolbar}>
-            <Input
-              value={searchQuery}
-              onChange={(event) => setSearchQuery(event.target.value)}
-              placeholder="Filter by title, category or tag…"
-              icon={<Filter size={14} />}
-              hideLabel
-              aria-label="Filter challenges"
-              className={styles.search}
-            />
-            {searchQuery ? (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setSearchQuery("")}
-              >
-                Reset
-              </Button>
-            ) : null}
-          </div>
 
+        <CardContent>
           {!challenges.data ? (
             <div className={styles.skeletons}>
               <Skeleton height={36} />
@@ -187,7 +206,7 @@ export default function ChallengesPage() {
             ) : (
               <ChallengeBoard onSelect={select} selectedId={selectedId} />
             )
-          ) : filtered.length === 0 ? (
+          ) : visible.length === 0 ? (
             <EmptyState
               icon={<Flag size={22} />}
               title="No challenges match"
@@ -205,26 +224,20 @@ export default function ChallengesPage() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {filtered.map((challenge) => (
+                {visible.map((challenge) => (
                   <TableRow
                     key={challenge.id}
                     selected={challenge.id === selectedId}
                     onActivate={() => select(challenge)}
                   >
                     <TableCell>
-                      <span className={styles.challengeName}>
-                        {challenge.title}
-                      </span>
+                      <span className={styles.challengeName}>{challenge.title}</span>
                     </TableCell>
                     <TableCell>
                       <Badge tone="neutral">{challenge.category}</Badge>
                     </TableCell>
                     <TableCell>
-                      <Badge
-                        tone={
-                          DIFFICULTY_TONES[challenge.difficulty] ?? "neutral"
-                        }
-                      >
+                      <Badge tone={DIFFICULTY_TONES[challenge.difficulty] ?? "neutral"}>
                         {challenge.difficulty}
                       </Badge>
                     </TableCell>
@@ -233,9 +246,7 @@ export default function ChallengesPage() {
                         {challenge.status}
                       </Badge>
                     </TableCell>
-                    <TableCell align="right">
-                      {formatNumber(challenge.points)}
-                    </TableCell>
+                    <TableCell align="right">{formatNumber(challenge.points)}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -244,10 +255,7 @@ export default function ChallengesPage() {
         </CardContent>
       </Card>
 
-      <ChallengeDrawer
-        challenge={selected}
-        onClose={() => setSelectedId(null)}
-      />
+      <ChallengeDrawer challenge={selected} onClose={() => setSelectedId(null)} />
     </div>
   );
 }
