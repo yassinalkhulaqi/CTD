@@ -15,6 +15,7 @@ import {
   Button,
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
   Input,
@@ -52,6 +53,7 @@ export default function SettingsPage() {
       <Card>
         <CardHeader>
           <CardTitle>Appearance</CardTitle>
+          <CardDescription>How the interface feels and reads.</CardDescription>
         </CardHeader>
         <CardContent className={styles.rows}>
           <div className={styles.row}>

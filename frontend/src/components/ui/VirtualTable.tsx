@@ -43,6 +43,10 @@ export interface VirtualTableProps<T> {
   height?: number;
   /** Called when a row is activated. */
   onActivate?: (row: T) => void;
+  /** Accessible label of the scroll region. */
+  label?: string;
+  /** Copy shown when there are no rows. */
+  emptyMessage?: string;
   /** Additional class applied to the container. */
   className?: string;
 }
@@ -60,6 +64,8 @@ export function VirtualTable<T>({
   rowHeight = 44,
   height = 420,
   onActivate,
+  label = "Scrollable data table",
+  emptyMessage = "Nothing to show yet.",
   className,
 }: VirtualTableProps<T>) {
   const [activeKey, setActiveKey] = useState<string | null>(null);
@@ -111,7 +117,7 @@ export function VirtualTable<T>({
       className={cn(styles.viewport, className)}
       style={{ height }}
       role="region"
-      aria-label="Scrollable data table"
+      aria-label={label}
       tabIndex={0}
     >
       <Table scroll={false}>
@@ -129,6 +135,13 @@ export function VirtualTable<T>({
           </TableRow>
         </TableHead>
         <TableBody>
+          {rows.length === 0 ? (
+            <tr>
+              <td className={styles.empty} colSpan={columns.length}>
+                {emptyMessage}
+              </td>
+            </tr>
+          ) : null}
           <tr style={{ height: offsetY }} aria-hidden="true">
             <td
               colSpan={columns.length}
