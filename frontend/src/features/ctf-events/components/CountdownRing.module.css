@@ -1,0 +1,47 @@
+.ring {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: none;
+  border-radius: var(--radius-full);
+  background: radial-gradient(
+    circle at 30% 20%,
+    var(--surface-raised),
+    var(--surface-base)
+  );
+  box-shadow: inset 0 0 0 1px var(--border-subtle);
+}
+
+.svg {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+}
+
+.progress {
+  transition: stroke-dashoffset var(--duration-base) var(--ease-out);
+}
+
+.live .progress {
+  filter: drop-shadow(0 0 5px var(--success-base));
+}
+
+.text {
+  position: relative;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.live .text {
+  color: var(--success-base);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progress {
+    transition: none;
+  }
+}

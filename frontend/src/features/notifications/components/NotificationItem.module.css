@@ -1,0 +1,138 @@
+.item {
+  --severity-accent: var(--info-base);
+  position: relative;
+  display: flex;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+  transition:
+    background var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out);
+}
+
+.item:hover {
+  background: var(--surface-hover);
+  border-color: var(--border-default);
+}
+
+.unread {
+  border-color: var(--border-strong);
+  background: var(--accent-soft);
+}
+
+.severity-info {
+  --severity-accent: var(--info-base);
+}
+
+.severity-warning {
+  --severity-accent: var(--warning-base);
+}
+
+.severity-critical {
+  --severity-accent: var(--danger-base);
+}
+
+.rail {
+  flex: 0 0 3px;
+  border-radius: var(--radius-full);
+  background: var(--severity-accent);
+  opacity: 0.85;
+}
+
+.content {
+  min-width: 0;
+  flex: 1;
+}
+
+.heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.title {
+  font-size: var(--text-base);
+  font-weight: 650;
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+
+.body {
+  margin-top: var(--space-1);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+.channel {
+  color: var(--text-secondary);
+}
+
+.dot {
+  color: var(--text-tertiary);
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.read {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: var(--text-xs);
+  color: var(--accent-text);
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 640px) {
+  .item {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .rail {
+    width: 32px;
+    height: 3px;
+  }
+
+  .actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .item {
+    transition: none;
+  }
+}

@@ -1,0 +1,177 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding-bottom: 72px;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  align-items: flex-start;
+}
+.title {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.subtitle {
+  color: var(--text-secondary);
+  margin-top: var(--space-1);
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+.sectionCard {
+  min-width: 0;
+}
+.sectionContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.fieldBlock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.fieldLabel {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+.fieldHint {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+.switchRow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.switchRow:last-child {
+  border-bottom: none;
+}
+.layoutGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+.numberInput {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-default);
+  background: var(--surface-raised);
+  color: var(--text-primary);
+}
+.themePreview {
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+.previewHeader {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 12px;
+  font-size: var(--text-xs);
+  font-weight: 600;
+}
+.previewBody {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.previewButton {
+  align-self: flex-start;
+  border: none;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  cursor: default;
+}
+.pass {
+  color: var(--success-base);
+}
+.fail {
+  color: var(--danger-base);
+}
+.importExport {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.importExportActions {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+.hiddenInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+.importMsg {
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+}
+.saveBar {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--surface-overlay);
+  box-shadow: var(--shadow-md);
+  z-index: 20;
+}
+.saveMsg {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+.saveActions {
+  display: flex;
+  gap: var(--space-2);
+}
+.errorBanner {
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--danger-soft);
+  color: var(--danger-base);
+}
+@media (max-width: 1100px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 720px) {
+  .header {
+    flex-direction: column;
+  }
+  .layoutGrid {
+    grid-template-columns: 1fr;
+  }
+  .saveBar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .saveActions {
+    justify-content: flex-end;
+  }
+}

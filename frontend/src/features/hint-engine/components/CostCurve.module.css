@@ -1,0 +1,123 @@
+.chart {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.axis {
+  stroke: var(--border-strong);
+  stroke-width: 1;
+}
+
+.area {
+  fill: var(--accent-soft);
+  transition: fill var(--duration-base) var(--ease-out);
+}
+
+.line {
+  fill: none;
+  stroke: var(--accent-base);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke var(--duration-base) var(--ease-out);
+}
+
+.bar,
+.barActive {
+  transition:
+    fill var(--duration-base) var(--ease-out),
+    opacity var(--duration-base) var(--ease-out);
+}
+
+.bar {
+  fill: var(--accent-base);
+  opacity: 0.28;
+}
+
+.barActive {
+  fill: var(--accent-base);
+  opacity: 0.75;
+}
+
+.node {
+  fill: var(--surface-raised);
+  stroke: var(--accent-base);
+  stroke-width: 2;
+}
+
+.label {
+  fill: var(--text-tertiary);
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+.legend {
+  display: grid;
+  gap: var(--space-1);
+  margin: var(--space-2) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.legendItem {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: var(--space-3);
+  align-items: baseline;
+  padding: var(--space-1) 0;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: var(--text-xs);
+}
+
+.legendTier {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.legendValue {
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+}
+
+.legendTotal {
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+}
+
+.compact .legend {
+  display: none;
+}
+
+.empty {
+  margin: 0;
+  color: var(--text-tertiary);
+  font-size: var(--text-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .area,
+  .line,
+  .bar,
+  .barActive {
+    transition: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .bar {
+    opacity: 0.7;
+  }
+
+  .label,
+  .legendTotal {
+    color: var(--text-primary);
+    fill: var(--text-primary);
+  }
+
+  .axis,
+  .node {
+    stroke-width: 2;
+  }
+}

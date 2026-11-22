@@ -1,0 +1,60 @@
+.card {
+  min-width: 0;
+}
+
+.title {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.cost {
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.time {
+  color: var(--text-tertiary);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+}
+
+.totals {
+  display: grid;
+  gap: var(--space-1);
+  margin: var(--space-4) 0 0;
+  padding: var(--space-3) 0 0;
+  border-top: 1px solid var(--border-subtle);
+  list-style: none;
+}
+
+.total {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: var(--space-3);
+  color: var(--text-secondary);
+  font-size: var(--text-xs);
+}
+
+.totalCount {
+  color: var(--text-tertiary);
+}
+
+.totalSpend {
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+}
+
+@media (max-width: 640px) {
+  .time,
+  .totalCount {
+    display: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .time,
+  .totalCount {
+    color: var(--text-primary);
+  }
+}

@@ -1,0 +1,93 @@
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--surface-raised);
+}
+
+.windows {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.windowButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 7px 12px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition:
+    background var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+.windowButton:hover {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+}
+
+.windowButton:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.windowButton[aria-pressed="true"] {
+  background: linear-gradient(120deg, var(--accent-soft), var(--info-soft));
+  border-color: var(--border-default);
+  color: var(--accent-text);
+  font-weight: 600;
+}
+
+.count {
+  padding: 1px 6px;
+  border-radius: var(--radius-full);
+  background: var(--surface-sunken);
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.controls input,
+.controls select {
+  min-width: 180px;
+}
+
+@media (max-width: 720px) {
+  .bar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .controls {
+    width: 100%;
+  }
+
+  .controls > * {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .windowButton {
+    transition: none;
+  }
+}

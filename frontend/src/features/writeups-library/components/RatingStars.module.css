@@ -1,0 +1,90 @@
+.group {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.group:focus-within {
+  box-shadow: var(--shadow-focus);
+}
+
+.starButton {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+
+.starButton:hover:not(:disabled) {
+  color: var(--warning-base);
+  transform: translateY(-1px);
+}
+
+.starButton:focus-visible {
+  outline: 3px solid var(--warning-base);
+  outline-offset: 1px;
+}
+
+.activeStar {
+  color: #f59e0b;
+}
+
+.activeStar svg {
+  fill: currentColor;
+}
+
+.disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.readOnly {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--text-tertiary);
+}
+
+.readOnly .filled {
+  color: #f59e0b;
+}
+
+.readOnly .filled svg,
+.filled {
+  fill: currentColor;
+}
+
+.count {
+  margin-left: var(--space-2);
+  color: var(--text-tertiary);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.sm .starButton {
+  width: 20px;
+  height: 20px;
+}
+
+.lg .starButton {
+  width: 32px;
+  height: 32px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .starButton,
+  .starButton:hover:not(:disabled) {
+    transition: none;
+    transform: none;
+  }
+}
