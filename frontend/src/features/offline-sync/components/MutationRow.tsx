@@ -2,8 +2,8 @@
  * A single, keyboard operable row in the mutation queue.
  */
 
-import { cn } from "../../lib/utils";
-import { Badge } from "../../components/ui";
+import { cn } from "../../../lib/utils";
+import { Badge } from "../../../components/ui";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import {
   describeMutation,

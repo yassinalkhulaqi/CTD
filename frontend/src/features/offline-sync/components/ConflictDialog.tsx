@@ -4,8 +4,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { AlertTriangle, GitMerge, ShieldCheck } from "lucide-react";
-import { Badge, Button, Modal } from "../../components/ui";
-import { cn } from "../../lib/utils";
+import { Badge, Button, Modal } from "../../../components/ui";
+import { cn } from "../../../lib/utils";
 import {
   STRATEGY_OPTIONS,
   isValidStrategy,

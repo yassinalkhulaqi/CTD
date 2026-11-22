@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type * as ClientModule from "../../api/client";
 import type { ClearResponse, ConflictResolution, PendingMutation, ProcessResponse, QueueResponse, SyncStatus } from "./types";
 
 const mockGet = vi.hoisted(() => vi.fn());
@@ -6,7 +7,7 @@ const mockPost = vi.hoisted(() => vi.fn());
 const mockDel = vi.hoisted(() => vi.fn());
 
 vi.mock("../../api/client", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("../../api/client")>();
+  const actual = await importOriginal<typeof ClientModule>();
   return { ...actual, get: mockGet, post: mockPost, del: mockDel };
 });
 

@@ -4,7 +4,7 @@
 
 import { useState } from "react";
 import { Inbox, RefreshCw, Trash2 } from "lucide-react";
-import { cn } from "../../lib/utils";
+import { cn } from "../../../lib/utils";
 import {
   Badge,
   Button,
@@ -12,7 +12,7 @@ import {
   ErrorState,
   IconButton,
   Skeleton,
-} from "../../components/ui";
+} from "../../../components/ui";
 import { STATUS_FILTERS, summariseQueue } from "../sync";
 import type { MutationStatus, PendingMutation } from "../types";
 import { MutationRow } from "./MutationRow";

@@ -3,8 +3,8 @@
  */
 
 import { AlertOctagon, CheckCircle2, Clock3, CloudUpload, Layers3 } from "lucide-react";
-import { Badge, Button, Progress, StatCard } from "../../components/ui";
-import { cn } from "../../lib/utils";
+import { Badge, Button, Progress, StatCard } from "../../../components/ui";
+import { cn } from "../../../lib/utils";
 import { completionText, healthLabel, healthTone, syncButtonLabel } from "../sync";
 import type { SyncStatus as SyncStatusModel } from "../types";
 import styles from "./SyncStatus.module.css";

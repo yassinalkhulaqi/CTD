@@ -4,7 +4,7 @@
 
 import type { ReactNode } from "react";
 import { AlertTriangle, Check, CloudOff, RefreshCw } from "lucide-react";
-import { Badge } from "../../components/ui";
+import { Badge } from "../../../components/ui";
 import type { StatusTone } from "../types";
 import styles from "./OfflineBadge.module.css";
 
