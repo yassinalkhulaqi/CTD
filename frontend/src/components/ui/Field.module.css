@@ -14,7 +14,7 @@
 
 .label {
   font-size: var(--text-sm);
-  font-weight: 550;
+  font-weight: var(--weight-medium);
   color: var(--text-secondary);
   letter-spacing: -0.005em;
 }
@@ -37,6 +37,11 @@
   display: inline-flex;
   color: var(--text-tertiary);
   pointer-events: none;
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.control:focus-within .controlIcon {
+  color: var(--accent-base);
 }
 
 .input,
@@ -47,6 +52,7 @@
   border: 1px solid var(--border-default);
   background: var(--surface-raised);
   color: var(--text-primary);
+  box-shadow: var(--shadow-inner);
   transition:
     border-color var(--duration-fast) var(--ease-out),
     box-shadow var(--duration-fast) var(--ease-out),
@@ -55,9 +61,22 @@
 
 .input,
 .select {
-  height: 36px;
+  height: var(--control-height-md);
   padding: 0 var(--space-3);
   font-size: var(--text-sm);
+}
+
+.controlSm {
+  height: var(--control-height-sm);
+  font-size: var(--text-xs);
+  border-radius: var(--radius-sm);
+}
+
+.controlLg {
+  height: var(--control-height-lg);
+  font-size: var(--text-base);
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-lg);
 }
 
 .textarea {
@@ -65,11 +84,24 @@
   padding: var(--space-3);
   font-size: var(--text-sm);
   resize: vertical;
-  line-height: 1.55;
+  line-height: var(--leading-relaxed);
 }
 
 .inputWithIcon {
   padding-left: 34px;
+}
+
+.trailing {
+  position: absolute;
+  right: var(--space-2);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--text-tertiary);
+}
+
+.inputWithTrailing {
+  padding-right: 40px;
 }
 
 .select {
@@ -83,6 +115,12 @@
   right: var(--space-3);
   color: var(--text-tertiary);
   pointer-events: none;
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.control:has(.select:focus-visible) .selectIcon {
+  transform: translateY(1px);
+  color: var(--accent-base);
 }
 
 .input::placeholder,
@@ -101,7 +139,9 @@
 .select:focus-visible {
   outline: none;
   border-color: var(--accent-base);
-  box-shadow: var(--shadow-focus);
+  box-shadow:
+    var(--shadow-focus),
+    var(--shadow-inner);
 }
 
 .input:disabled,
@@ -110,6 +150,7 @@
   background: var(--surface-sunken);
   color: var(--text-tertiary);
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 .inputInvalid {
@@ -117,22 +158,28 @@
 }
 
 .inputInvalid:focus-visible {
+  border-color: var(--danger-base);
   box-shadow: 0 0 0 3px var(--danger-soft);
 }
 
 .fieldInvalid .label {
-  color: var(--danger-base);
+  color: var(--danger-text);
 }
 
 .hint {
   font-size: var(--text-xs);
   color: var(--text-tertiary);
+  line-height: var(--leading-snug);
 }
 
 .error {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
   font-size: var(--text-xs);
-  color: var(--danger-base);
-  font-weight: 500;
+  color: var(--danger-text);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-snug);
 }
 
 /* Checkbox ------------------------------------------------------------- */
@@ -146,7 +193,7 @@
 .checkboxLabel,
 .switchLabel {
   display: inline-flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--space-2);
   cursor: pointer;
   font-size: var(--text-sm);
@@ -163,12 +210,13 @@
 }
 
 .checkboxBox {
-  width: 16px;
-  height: 16px;
+  width: 17px;
+  height: 17px;
+  margin-top: 1px;
   flex: none;
   display: grid;
   place-items: center;
-  border-radius: 5px;
+  border-radius: var(--radius-2xs);
   border: 1px solid var(--border-strong);
   background: var(--surface-raised);
   color: transparent;
@@ -180,10 +228,10 @@
 }
 
 .checkboxInput:checked + .checkboxBox {
-  background: var(--accent-base);
-  border-color: var(--accent-base);
+  background: var(--gradient-accent);
+  border-color: transparent;
   color: #fff;
-  animation: checkbox-pop var(--duration-base) var(--ease-out);
+  animation: checkbox-pop var(--duration-base) var(--ease-spring);
 }
 
 .checkboxInput:focus-visible + .checkboxBox {
@@ -194,9 +242,13 @@
   opacity: 0.5;
 }
 
+.checkboxLabel:hover .checkboxBox {
+  border-color: var(--accent-base);
+}
+
 .checkboxText,
 .switchText {
-  line-height: 1.4;
+  line-height: var(--leading-normal);
 }
 
 /* Switch --------------------------------------------------------------- */
@@ -205,9 +257,10 @@
 }
 
 .switchTrack {
-  width: 34px;
-  height: 20px;
+  width: 36px;
+  height: 21px;
   flex: none;
+  margin-top: 1px;
   padding: 2px;
   border-radius: var(--radius-full);
   background: var(--surface-sunken);
@@ -219,22 +272,23 @@
 
 .switchThumb {
   display: block;
-  width: 14px;
-  height: 14px;
+  width: 15px;
+  height: 15px;
   border-radius: 50%;
   background: var(--text-tertiary);
+  box-shadow: var(--shadow-xs);
   transition:
-    transform var(--duration-base) var(--ease-out),
+    transform var(--duration-base) var(--ease-spring),
     background-color var(--duration-base) var(--ease-out);
 }
 
 .switchInput:checked + .switchTrack {
-  background: var(--accent-base);
-  border-color: var(--accent-base);
+  background: var(--gradient-accent);
+  border-color: transparent;
 }
 
 .switchInput:checked + .switchTrack .switchThumb {
-  transform: translateX(14px);
+  transform: translateX(15px);
   background: #fff;
 }
 
@@ -244,6 +298,46 @@
 
 .switchInput:disabled + .switchTrack {
   opacity: 0.5;
+}
+
+/* Horizontal settings row ---------------------------------------------- */
+.formRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-6);
+  padding: var(--space-4) 0;
+}
+
+.formRow + .formRow {
+  border-top: 1px solid var(--border-subtle);
+}
+
+.formRowText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+  max-width: 52ch;
+}
+
+.formRowTitle {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--text-primary);
+}
+
+.formRowDescription {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  line-height: var(--leading-relaxed);
+}
+
+.formRowControl {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
 }
 
 /* Utilities ------------------------------------------------------------ */
@@ -268,5 +362,17 @@
   }
   100% {
     transform: scale(1);
+  }
+}
+
+@media (max-width: 640px) {
+  .formRow {
+    flex-direction: column;
+    gap: var(--space-3);
+    align-items: stretch;
+  }
+
+  .formRowControl {
+    justify-content: flex-start;
   }
 }

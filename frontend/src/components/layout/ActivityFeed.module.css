@@ -12,8 +12,37 @@
 }
 
 .count {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-size: var(--text-xs);
   color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+.liveDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--success-base);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--success-base) 16%, transparent);
+  animation: live-pulse 2.4s var(--ease-out) infinite;
+}
+
+.liveDotPaused {
+  background: var(--text-tertiary);
+  box-shadow: none;
+  animation: none;
+}
+
+@keyframes live-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
 }
 
 .actions {
@@ -32,6 +61,7 @@
 }
 
 .item {
+  position: relative;
   display: flex;
   align-items: flex-start;
   gap: var(--space-3);
@@ -39,6 +69,20 @@
   border-radius: var(--radius-md);
   transition: background-color var(--duration-fast) var(--ease-out);
   animation: feed-enter var(--duration-base) var(--ease-out);
+}
+
+.item::before {
+  content: "";
+  position: absolute;
+  left: calc(var(--space-3) + 13px);
+  top: calc(var(--space-3) + 28px);
+  bottom: calc(-1 * var(--space-1) + 2px);
+  width: 1px;
+  background: var(--border-subtle);
+}
+
+.item:last-child::before {
+  display: none;
 }
 
 .item:hover {
@@ -88,6 +132,7 @@
 
 .title {
   font-size: var(--text-sm);
+  line-height: 1.4;
   color: var(--text-primary);
   overflow-wrap: anywhere;
 }
@@ -109,5 +154,12 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  .liveDot {
+    animation: none;
   }
 }
