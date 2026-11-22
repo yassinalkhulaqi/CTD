@@ -2,11 +2,7 @@
  * Barrel export for the realtime layer.
  */
 
-export {
-  RealtimeClient,
-  buildSocketUrl,
-  socketAuthHeaders,
-} from "./socket";
+export { RealtimeClient, buildSocketUrl, socketAuthHeaders } from "./socket";
 export type {
   ConnectionState,
   EventPayload,
@@ -17,4 +13,7 @@ export type {
 } from "./socket";
 
 export { RealtimeProvider, useRealtime } from "./RealtimeProvider";
-export type { RealtimeContextValue, RealtimeProviderProps } from "./RealtimeProvider";
+export type {
+  RealtimeContextValue,
+  RealtimeProviderProps,
+} from "./RealtimeProvider";

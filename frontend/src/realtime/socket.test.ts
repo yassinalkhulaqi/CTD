@@ -38,19 +38,27 @@ class FakeSocket {
 
 describe("buildSocketUrl", () => {
   it("builds a websocket url", () => {
-    expect(buildSocketUrl("http://localhost:8000")).toBe("ws://localhost:8000/ws");
+    expect(buildSocketUrl("http://localhost:8000")).toBe(
+      "ws://localhost:8000/ws",
+    );
   });
 
   it("uses the secure protocol for https hosts", () => {
-    expect(buildSocketUrl("https://dashboard.example")).toBe("wss://dashboard.example/ws");
+    expect(buildSocketUrl("https://dashboard.example")).toBe(
+      "wss://dashboard.example/ws",
+    );
   });
 
   it("appends the team filter", () => {
-    expect(buildSocketUrl("http://localhost:8000", "team-1")).toContain("team_id=team-1");
+    expect(buildSocketUrl("http://localhost:8000", "team-1")).toContain(
+      "team_id=team-1",
+    );
   });
 
   it("appends the resume cursor", () => {
-    expect(buildSocketUrl("http://localhost:8000", null, 42)).toContain("last_event_id=42");
+    expect(buildSocketUrl("http://localhost:8000", null, 42)).toContain(
+      "last_event_id=42",
+    );
   });
 });
 
@@ -62,7 +70,9 @@ describe("RealtimeClient", () => {
 
   it("connects and reports the open state", () => {
     const states: string[] = [];
-    const client = new RealtimeClient({ onStateChange: (state) => states.push(state) });
+    const client = new RealtimeClient({
+      onStateChange: (state) => states.push(state),
+    });
     client.connect();
 
     expect(FakeSocket.instances).toHaveLength(1);
@@ -73,7 +83,9 @@ describe("RealtimeClient", () => {
 
   it("forwards the received events", () => {
     const events: unknown[] = [];
-    const client = new RealtimeClient({ onEvent: (event) => events.push(event) });
+    const client = new RealtimeClient({
+      onEvent: (event) => events.push(event),
+    });
     client.connect();
     FakeSocket.instances[0].open();
     FakeSocket.instances[0].emit({
@@ -115,13 +127,17 @@ describe("RealtimeClient", () => {
     FakeSocket.instances[0].open();
     client.subscribe("team-1", ["solve.created"]);
 
-    const sent = FakeSocket.instances[0].sent.map((raw) => JSON.parse(raw) as { type: string });
+    const sent = FakeSocket.instances[0].sent.map(
+      (raw) => JSON.parse(raw) as { type: string },
+    );
     expect(sent[0].type).toBe("subscribe");
   });
 
   it("reports the malformed frames", () => {
     const errors: Error[] = [];
-    const client = new RealtimeClient({ onError: (error) => errors.push(error) });
+    const client = new RealtimeClient({
+      onError: (error) => errors.push(error),
+    });
     client.connect();
     FakeSocket.instances[0].open();
     FakeSocket.instances[0].onmessage?.({ data: "not json" });

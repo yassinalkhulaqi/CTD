@@ -138,9 +138,7 @@ def get_dashboard_categories(services: ServicesDep) -> list[CategoryStats]:
 
 
 @router.get("/api/dashboard/categories/{category}", response_model=CategoryStats)
-def get_dashboard_category(
-    category: ChallengeCategory, services: ServicesDep
-) -> CategoryStats:
+def get_dashboard_category(category: ChallengeCategory, services: ServicesDep) -> CategoryStats:
     """Return the statistics of a single category."""
     stats_service = services[0]
     for entry in stats_service.categories():

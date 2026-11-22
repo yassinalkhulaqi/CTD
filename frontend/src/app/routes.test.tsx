@@ -37,7 +37,9 @@ describe("routes", () => {
       </MemoryRouter>,
     );
 
-    expect(await screen.findByText("This screen does not exist")).toBeInTheDocument();
+    expect(
+      await screen.findByText("This screen does not exist"),
+    ).toBeInTheDocument();
   });
 });
 

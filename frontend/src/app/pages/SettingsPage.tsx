@@ -5,7 +5,10 @@
 import { useState } from "react";
 import { KeyRound, RotateCcw, ShieldCheck } from "lucide-react";
 import { useAuth } from "../../features/auth/useAuth";
-import { usePreferencesStore, DEFAULT_PREFERENCES } from "../../stores/preferencesStore";
+import {
+  usePreferencesStore,
+  DEFAULT_PREFERENCES,
+} from "../../stores/preferencesStore";
 import { useDashboardStore } from "../../stores/dashboardStore";
 import {
   Badge,
@@ -74,7 +77,9 @@ export default function SettingsPage() {
               options={DENSITY_OPTIONS}
               value={preferences.density}
               onChange={(event) =>
-                preferences.setDensity(event.target.value as "comfortable" | "compact")
+                preferences.setDensity(
+                  event.target.value as "comfortable" | "compact",
+                )
               }
               hideLabel
               aria-label="Information density"
@@ -92,7 +97,9 @@ export default function SettingsPage() {
               options={WINDOW_OPTIONS}
               value={preferences.timeWindow}
               onChange={(event) =>
-                preferences.setTimeWindow(event.target.value as "6h" | "12h" | "24h" | "7d")
+                preferences.setTimeWindow(
+                  event.target.value as "6h" | "12h" | "24h" | "7d",
+                )
               }
               hideLabel
               aria-label="Analytics window"
@@ -125,7 +132,9 @@ export default function SettingsPage() {
               checked={preferences.activityFeedPinned}
               onChange={() => preferences.toggleActivityFeed()}
             >
-              <span className={styles.visuallyHidden}>Pinned activity feed</span>
+              <span className={styles.visuallyHidden}>
+                Pinned activity feed
+              </span>
             </Switch>
           </div>
         </CardContent>
@@ -140,7 +149,9 @@ export default function SettingsPage() {
             <div className={styles.rowText}>
               <span className={styles.rowTitle}>Signed in as</span>
               <span className={styles.rowDescription}>
-                {user ? `${user.username} · ${user.email}` : "Open mode — no account required."}
+                {user
+                  ? `${user.username} · ${user.email}`
+                  : "Open mode — no account required."}
               </span>
             </div>
             {principal ? (
@@ -213,8 +224,8 @@ export default function SettingsPage() {
             </Button>
           </div>
           <p className={styles.note}>
-            The default page size is {DEFAULT_PREFERENCES.pageSize} rows and the default time
-            window is {DEFAULT_PREFERENCES.timeWindow}.
+            The default page size is {DEFAULT_PREFERENCES.pageSize} rows and the
+            default time window is {DEFAULT_PREFERENCES.timeWindow}.
           </p>
         </CardContent>
       </Card>

@@ -29,9 +29,7 @@ def test_create_user_requires_strong_password(
 
 def test_create_user_rejects_duplicate_username(auth_service: AuthService) -> None:
     """Usernames must be unique."""
-    auth_service.create_user(
-        username="alice", email="alice@example.com", password="password123"
-    )
+    auth_service.create_user(username="alice", email="alice@example.com", password="password123")
     with pytest.raises(ConflictError, match="Username"):
         auth_service.create_user(
             username="alice", email="other@example.com", password="password123"
@@ -46,9 +44,7 @@ def test_create_user_rejects_invalid_email(auth_service: AuthService) -> None:
 
 def test_login_succeeds_with_valid_credentials(auth_service: AuthService) -> None:
     """Valid credentials should return a token pair."""
-    auth_service.create_user(
-        username="alice", email="alice@example.com", password="password123"
-    )
+    auth_service.create_user(username="alice", email="alice@example.com", password="password123")
     user, tokens = auth_service.login(username="alice", password="password123")
     assert user.username == "alice"
     assert tokens.access_token
@@ -58,9 +54,7 @@ def test_login_succeeds_with_valid_credentials(auth_service: AuthService) -> Non
 
 def test_login_rejects_wrong_password(auth_service: AuthService) -> None:
     """Invalid credentials should raise an authentication error."""
-    auth_service.create_user(
-        username="alice", email="alice@example.com", password="password123"
-    )
+    auth_service.create_user(username="alice", email="alice@example.com", password="password123")
     with pytest.raises(AuthenticationError, match="Invalid username or password"):
         auth_service.login(username="alice", password="nope")
 
@@ -73,9 +67,7 @@ def test_login_rejects_unknown_user(auth_service: AuthService) -> None:
 
 def test_refresh_rotates_the_refresh_token(auth_service: AuthService) -> None:
     """Refreshing should issue a new pair and invalidate the old refresh token."""
-    auth_service.create_user(
-        username="alice", email="alice@example.com", password="password123"
-    )
+    auth_service.create_user(username="alice", email="alice@example.com", password="password123")
     _, tokens = auth_service.login(username="alice", password="password123")
     rotated = auth_service.refresh(tokens.refresh_token)
     assert rotated.refresh_token != tokens.refresh_token
@@ -85,9 +77,7 @@ def test_refresh_rotates_the_refresh_token(auth_service: AuthService) -> None:
 
 def test_refresh_rejects_access_token(auth_service: AuthService) -> None:
     """An access token must not be usable as a refresh token."""
-    auth_service.create_user(
-        username="alice", email="alice@example.com", password="password123"
-    )
+    auth_service.create_user(username="alice", email="alice@example.com", password="password123")
     _, tokens = auth_service.login(username="alice", password="password123")
     with pytest.raises(AuthenticationError, match="refresh token is required"):
         auth_service.refresh(tokens.access_token)
@@ -95,9 +85,7 @@ def test_refresh_rejects_access_token(auth_service: AuthService) -> None:
 
 def test_logout_revokes_the_session(auth_service: AuthService) -> None:
     """Logging out should invalidate the refresh token."""
-    auth_service.create_user(
-        username="alice", email="alice@example.com", password="password123"
-    )
+    auth_service.create_user(username="alice", email="alice@example.com", password="password123")
     _, tokens = auth_service.login(username="alice", password="password123")
     auth_service.logout(tokens.refresh_token)
     with pytest.raises(AuthenticationError, match="revoked"):
@@ -158,9 +146,7 @@ def test_login_endpoint_returns_tokens(client: TestClient) -> None:
             "password": "password123",
         },
     )
-    response = client.post(
-        "/api/auth/login", json={"username": "alice", "password": "password123"}
-    )
+    response = client.post("/api/auth/login", json={"username": "alice", "password": "password123"})
     assert response.status_code == 200
     payload = response.json()
     assert payload["user"]["username"] == "alice"

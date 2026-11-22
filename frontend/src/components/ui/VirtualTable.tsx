@@ -4,7 +4,14 @@
 
 import { useMemo, useState, type ReactNode } from "react";
 import { cn } from "../../lib/utils";
-import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "./Table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeaderCell,
+  TableRow,
+} from "./Table";
 import { useVirtualList } from "./useVirtualList";
 import styles from "./VirtualTable.module.css";
 
@@ -62,11 +69,13 @@ export function VirtualTable<T>({
   className,
 }: VirtualTableProps<T>) {
   const [activeKey, setActiveKey] = useState<string | null>(null);
-  const { visible, totalHeight, offsetY, scrollRef, onScroll } = useVirtualList({
-    items: rows,
-    itemHeight: rowHeight,
-    viewportHeight: height,
-  });
+  const { visible, totalHeight, offsetY, scrollRef, onScroll } = useVirtualList(
+    {
+      items: rows,
+      itemHeight: rowHeight,
+      viewportHeight: height,
+    },
+  );
 
   const body = useMemo(
     () =>
@@ -87,7 +96,11 @@ export function VirtualTable<T>({
             style={{ height: rowHeight }}
           >
             {columns.map((column) => (
-              <TableCell key={column.key} align={column.align} style={{ width: column.width }}>
+              <TableCell
+                key={column.key}
+                align={column.align}
+                style={{ width: column.width }}
+              >
                 {column.render(row)}
               </TableCell>
             ))}
@@ -111,7 +124,11 @@ export function VirtualTable<T>({
         <TableHead>
           <TableRow>
             {columns.map((column) => (
-              <TableHeaderCell key={column.key} align={column.align} style={{ width: column.width }}>
+              <TableHeaderCell
+                key={column.key}
+                align={column.align}
+                style={{ width: column.width }}
+              >
                 {column.header}
               </TableHeaderCell>
             ))}
@@ -126,11 +143,25 @@ export function VirtualTable<T>({
             </tr>
           ) : null}
           <tr style={{ height: offsetY }} aria-hidden="true">
-            <td colSpan={columns.length} style={{ padding: 0, border: "none" }} />
+            <td
+              colSpan={columns.length}
+              style={{ padding: 0, border: "none" }}
+            />
           </tr>
           {body}
-          <tr style={{ height: Math.max(0, totalHeight - offsetY - visible.length * rowHeight) }} aria-hidden="true">
-            <td colSpan={columns.length} style={{ padding: 0, border: "none" }} />
+          <tr
+            style={{
+              height: Math.max(
+                0,
+                totalHeight - offsetY - visible.length * rowHeight,
+              ),
+            }}
+            aria-hidden="true"
+          >
+            <td
+              colSpan={columns.length}
+              style={{ padding: 0, border: "none" }}
+            />
           </tr>
         </TableBody>
       </Table>

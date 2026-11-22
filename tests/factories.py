@@ -202,9 +202,7 @@ def build_scenario(
     for challenge in challenge_records:
         if rng.random() > solve_rate:
             continue
-        candidates = [
-            member for member in member_records if member.team_id == challenge.team_id
-        ]
+        candidates = [member for member in member_records if member.team_id == challenge.team_id]
         if not candidates:
             continue
         solver = rng.choice(candidates)

@@ -106,9 +106,7 @@ class SolveService:
         """Return the number of solves per hour over the last 24 hours."""
         now = utcnow()
         buckets = [0] * 24
-        solves = self.repositories.solves.solved_at_between(
-            now - timedelta(hours=24), now, team_id
-        )
+        solves = self.repositories.solves.solved_at_between(now - timedelta(hours=24), now, team_id)
         for solve in solves:
             offset = int((now - solve.solved_at).total_seconds() // 3600)
             index = max(0, min(23, 23 - offset))

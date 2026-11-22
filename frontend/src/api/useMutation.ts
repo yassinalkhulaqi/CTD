@@ -17,11 +17,23 @@ export interface UseMutationOptions<TInput, TResult, TContext = unknown> {
    */
   onMutate?: (input: TInput) => TContext | Promise<TContext>;
   /** Called after the mutation succeeds. */
-  onSuccess?: (result: TResult, input: TInput, context: TContext | undefined) => void;
+  onSuccess?: (
+    result: TResult,
+    input: TInput,
+    context: TContext | undefined,
+  ) => void;
   /** Called after the mutation fails. */
-  onError?: (error: unknown, input: TInput, context: TContext | undefined) => void;
+  onError?: (
+    error: unknown,
+    input: TInput,
+    context: TContext | undefined,
+  ) => void;
   /** Called after the mutation settles, regardless of the outcome. */
-  onSettled?: (result: TResult | undefined, error: unknown, input: TInput) => void;
+  onSettled?: (
+    result: TResult | undefined,
+    error: unknown,
+    input: TInput,
+  ) => void;
   /** Cache keys invalidated once the mutation settles. */
   invalidates?: string[];
   /** Cache key prefixes invalidated once the mutation settles. */

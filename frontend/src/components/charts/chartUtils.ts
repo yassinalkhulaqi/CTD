@@ -29,7 +29,10 @@ export interface Band {
  */
 export function maxOf(values: readonly number[], fallback = 0): number {
   if (values.length === 0) return fallback;
-  return values.reduce((max, value) => (value > max ? value : max), Number.NEGATIVE_INFINITY);
+  return values.reduce(
+    (max, value) => (value > max ? value : max),
+    Number.NEGATIVE_INFINITY,
+  );
 }
 
 /**
@@ -41,7 +44,10 @@ export function maxOf(values: readonly number[], fallback = 0): number {
  */
 export function minOf(values: readonly number[], fallback = 0): number {
   if (values.length === 0) return fallback;
-  return values.reduce((min, value) => (value < min ? value : min), Number.POSITIVE_INFINITY);
+  return values.reduce(
+    (min, value) => (value < min ? value : min),
+    Number.POSITIVE_INFINITY,
+  );
 }
 
 /**
@@ -55,7 +61,8 @@ export function niceCeiling(value: number): number {
   const exponent = Math.floor(Math.log10(value));
   const magnitude = 10 ** exponent;
   const normalised = value / magnitude;
-  const step = normalised <= 1 ? 1 : normalised <= 2 ? 2 : normalised <= 5 ? 5 : 10;
+  const step =
+    normalised <= 1 ? 1 : normalised <= 2 ? 2 : normalised <= 5 ? 5 : 10;
   return step * magnitude;
 }
 
@@ -69,7 +76,9 @@ export function niceCeiling(value: number): number {
 export function linearTicks(max: number, count = 4): number[] {
   if (max <= 0) return [0];
   const step = max / count;
-  return Array.from({ length: count + 1 }, (_, index) => Number((step * index).toFixed(6)));
+  return Array.from({ length: count + 1 }, (_, index) =>
+    Number((step * index).toFixed(6)),
+  );
 }
 
 /**
@@ -100,7 +109,11 @@ export function scaleY(
  * @param gapRatio - The ratio of the band occupied by the gap.
  * @returns The bands of the scale.
  */
-export function buildBands(count: number, width: number, gapRatio = 0.3): Band[] {
+export function buildBands(
+  count: number,
+  width: number,
+  gapRatio = 0.3,
+): Band[] {
   if (count <= 0) return [];
   const band = width / count;
   const gap = band * gapRatio;
@@ -138,7 +151,10 @@ export function buildSmoothPath(points: readonly Point[]): string {
  * @param baseline - The vertical position of the baseline.
  * @returns The path data.
  */
-export function buildAreaPath(points: readonly Point[], baseline: number): string {
+export function buildAreaPath(
+  points: readonly Point[],
+  baseline: number,
+): string {
   if (points.length === 0) return "";
   const line = buildSmoothPath(points);
   const first = points[0];
@@ -154,7 +170,11 @@ export function buildAreaPath(points: readonly Point[], baseline: number): strin
  * @param reference - The most recent hour of the timeline.
  * @returns The label of the bucket.
  */
-export function hourLabel(index: number, total: number, reference: number): string {
+export function hourLabel(
+  index: number,
+  total: number,
+  reference: number,
+): string {
   const offset = total - 1 - index;
   const hour = (reference - offset + 24) % 24;
   return `${String(hour).padStart(2, "0")}:00`;

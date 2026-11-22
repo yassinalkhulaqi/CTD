@@ -63,7 +63,8 @@ export const usePreferencesStore = create<PreferencesState>()(
         set((state) => ({ animatedNumbers: !state.animatedNumbers })),
       setDensity: (density) => set({ density }),
       setTimeWindow: (timeWindow) => set({ timeWindow }),
-      setPageSize: (pageSize) => set({ pageSize: Math.max(5, Math.min(pageSize, 200)) }),
+      setPageSize: (pageSize) =>
+        set({ pageSize: Math.max(5, Math.min(pageSize, 200)) }),
       reset: () => set({ ...DEFAULT_PREFERENCES }),
     }),
     {

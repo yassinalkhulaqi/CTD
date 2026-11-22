@@ -97,9 +97,7 @@ def get_timeline(
 
 
 @router.get("/api/stats/heatmap", response_model=list[list[int]])
-def get_heatmap(
-    service: StatsServiceDep, team_id: str | None = None
-) -> list[list[int]]:
+def get_heatmap(service: StatsServiceDep, team_id: str | None = None) -> list[list[int]]:
     """Return a 7x24 matrix of solves indexed by weekday and hour."""
     return service.solve_heatmap(team_id)
 
@@ -135,7 +133,5 @@ def get_events(
 ) -> list[ActivityEventRead]:
     """Return the raw event feed used by the realtime dashboard."""
     repositories = Repositories()
-    events = repositories.events.recent(
-        team_id=team_id, limit=max(1, min(limit, 200)), kinds=None
-    )
+    events = repositories.events.recent(team_id=team_id, limit=max(1, min(limit, 200)), kinds=None)
     return [_event_to_read(event) for event in events]

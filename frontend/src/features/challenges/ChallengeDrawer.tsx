@@ -74,7 +74,11 @@ export function ChallengeDrawer({ challenge, onClose }: ChallengeDrawerProps) {
       toast.push(result.message, { tone: "success" });
       setFlag("");
     } else {
-      notify({ tone: "error", title: "Flag rejected", description: result?.message });
+      notify({
+        tone: "error",
+        title: "Flag rejected",
+        description: result?.message,
+      });
       toast.push(result?.message ?? "The flag was rejected", { tone: "error" });
     }
   }, [author, challenge, flag, notify, submitFlag, toast]);
@@ -112,13 +116,17 @@ export function ChallengeDrawer({ challenge, onClose }: ChallengeDrawerProps) {
         <Tabs value={tab} onValueChange={setTab} label="Challenge details">
           <TabsContent value="details" className={styles.tabPanel}>
             <p className={styles.description}>
-              {challenge.description || "No description has been published for this challenge."}
+              {challenge.description ||
+                "No description has been published for this challenge."}
             </p>
 
             <div className={styles.metaGrid}>
               <div>
                 <span className={styles.metaLabel}>Status</span>
-                <Badge tone={challenge.status === "solved" ? "success" : "accent"} dot>
+                <Badge
+                  tone={challenge.status === "solved" ? "success" : "accent"}
+                  dot
+                >
                   {challenge.status}
                 </Badge>
               </div>
@@ -133,7 +141,8 @@ export function ChallengeDrawer({ challenge, onClose }: ChallengeDrawerProps) {
               <div>
                 <span className={styles.metaLabel}>Time left</span>
                 <span className={styles.metaValue}>
-                  {Math.max(0, Math.round(challenge.seconds_remaining / 60))} minutes
+                  {Math.max(0, Math.round(challenge.seconds_remaining / 60))}{" "}
+                  minutes
                 </span>
               </div>
             </div>
@@ -173,7 +182,9 @@ export function ChallengeDrawer({ challenge, onClose }: ChallengeDrawerProps) {
                 Submit flag
               </Button>
               {!author ? (
-                <p className={styles.hint}>Add a team member before recording a solve.</p>
+                <p className={styles.hint}>
+                  Add a team member before recording a solve.
+                </p>
               ) : null}
             </div>
           </TabsContent>
@@ -214,10 +225,13 @@ export function ChallengeDrawer({ challenge, onClose }: ChallengeDrawerProps) {
                   <li key={item.id} className={styles.note}>
                     <div className={styles.noteHead}>
                       <span className={styles.noteAuthor}>
-                        {members.find((member) => member.id === item.member_id)?.display_name ??
-                          "Anonymous"}
+                        {members.find((member) => member.id === item.member_id)
+                          ?.display_name ?? "Anonymous"}
                       </span>
-                      <time className={styles.noteTime} dateTime={item.created_at}>
+                      <time
+                        className={styles.noteTime}
+                        dateTime={item.created_at}
+                      >
                         {formatRelativeTime(item.created_at)}
                       </time>
                     </div>
@@ -244,7 +258,8 @@ export function ChallengeDrawer({ challenge, onClose }: ChallengeDrawerProps) {
                     <span className={styles.timelineDot} aria-hidden="true" />
                     <div className={styles.timelineBody}>
                       <p className={styles.timelineTitle}>
-                        <strong>@{entry.member_handle}</strong> solved the challenge
+                        <strong>@{entry.member_handle}</strong> solved the
+                        challenge
                       </p>
                       <p className={styles.timelineMeta}>
                         {formatRelativeTime(entry.solved_at)} ·{" "}

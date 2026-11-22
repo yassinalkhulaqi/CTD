@@ -52,7 +52,9 @@ export function LoginPage({ onSuccess, notice }: LoginPageProps) {
             <h1 className={styles.login__title} id="login-title">
               Team Dashboard
             </h1>
-            <p className={styles.login__subtitle}>Sign in to track the competition</p>
+            <p className={styles.login__subtitle}>
+              Sign in to track the competition
+            </p>
           </div>
         </div>
 
@@ -105,14 +107,18 @@ export function LoginPage({ onSuccess, notice }: LoginPageProps) {
             </p>
           ) : null}
 
-          <button className={styles.login__submit} type="submit" disabled={busy}>
+          <button
+            className={styles.login__submit}
+            type="submit"
+            disabled={busy}
+          >
             {busy ? "Signing in…" : "Sign in"}
           </button>
         </form>
 
         <p className={styles.login__footer}>
-          Access is restricted to registered team members. Contact your team lead to obtain
-          credentials.
+          Access is restricted to registered team members. Contact your team
+          lead to obtain credentials.
         </p>
       </section>
     </main>

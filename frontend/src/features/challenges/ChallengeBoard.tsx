@@ -43,7 +43,11 @@ export interface ChallengeBoardProps {
  * @param props - The component props.
  * @returns The board element.
  */
-export function ChallengeBoard({ onSelect, selectedId, className }: ChallengeBoardProps) {
+export function ChallengeBoard({
+  onSelect,
+  selectedId,
+  className,
+}: ChallengeBoardProps) {
   const teamId = useDashboardStore((state) => state.selectedTeamId);
   const categoryFilter = useDashboardStore((state) => state.categoryFilter);
   const statusFilter = useDashboardStore((state) => state.statusFilter);
@@ -58,7 +62,10 @@ export function ChallengeBoard({ onSelect, selectedId, className }: ChallengeBoa
     },
     { staleTime: 8_000 },
   );
-  const solves = useSolves({ teamId: teamId ?? undefined }, { staleTime: 15_000 });
+  const solves = useSolves(
+    { teamId: teamId ?? undefined },
+    { staleTime: 15_000 },
+  );
 
   const solveCountByChallenge = useMemo(() => {
     const counts = new Map<string, number>();
@@ -92,7 +99,10 @@ export function ChallengeBoard({ onSelect, selectedId, className }: ChallengeBoa
     );
   }
 
-  const total = columns.reduce((sum, column) => sum + column.challenges.length, 0);
+  const total = columns.reduce(
+    (sum, column) => sum + column.challenges.length,
+    0,
+  );
 
   return (
     <div className={cn(styles.board, className)}>
@@ -115,7 +125,9 @@ export function ChallengeBoard({ onSelect, selectedId, className }: ChallengeBoa
               <div>
                 <h3 className={styles.columnTitle}>
                   {column.label}
-                  <span className={styles.columnCount}>{column.challenges.length}</span>
+                  <span className={styles.columnCount}>
+                    {column.challenges.length}
+                  </span>
                 </h3>
                 <p className={styles.columnHint}>{meta?.hint}</p>
               </div>
@@ -142,7 +154,9 @@ export function ChallengeBoard({ onSelect, selectedId, className }: ChallengeBoa
                     draggable
                   >
                     <div className={styles.cardTop}>
-                      <span className={styles.cardTitle}>{challenge.title}</span>
+                      <span className={styles.cardTitle}>
+                        {challenge.title}
+                      </span>
                       {challenge.status === "locked" ? (
                         <Lock size={13} aria-hidden="true" />
                       ) : challenge.status === "solved" ? (
@@ -156,7 +170,9 @@ export function ChallengeBoard({ onSelect, selectedId, className }: ChallengeBoa
                       >
                         {challenge.difficulty}
                       </span>
-                      <span className={styles.cardCategory}>{challenge.category}</span>
+                      <span className={styles.cardCategory}>
+                        {challenge.category}
+                      </span>
                       <span className={styles.cardPoints}>
                         {formatNumber(challenge.points)} pts
                       </span>
@@ -172,7 +188,11 @@ export function ChallengeBoard({ onSelect, selectedId, className }: ChallengeBoa
                       {challenge.ends_at ? (
                         <span className={styles.cardTimer}>
                           <Timer size={11} aria-hidden="true" />
-                          {Math.max(0, Math.round(challenge.seconds_remaining / 60))}m
+                          {Math.max(
+                            0,
+                            Math.round(challenge.seconds_remaining / 60),
+                          )}
+                          m
                         </span>
                       ) : null}
                       {solveCountByChallenge.has(challenge.id) ? (
@@ -189,7 +209,9 @@ export function ChallengeBoard({ onSelect, selectedId, className }: ChallengeBoa
         );
       })}
       {total === 0 ? (
-        <p className={styles.emptyHint}>No challenge matches the current filters.</p>
+        <p className={styles.emptyHint}>
+          No challenge matches the current filters.
+        </p>
       ) : null}
     </div>
   );

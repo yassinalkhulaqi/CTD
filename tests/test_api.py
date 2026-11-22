@@ -81,9 +81,7 @@ def test_unknown_team_returns_error_envelope(client: TestClient) -> None:
 def test_create_challenge_and_solve(client: TestClient) -> None:
     """A full create/solve cycle should be reflected in the statistics."""
     team = client.post("/api/teams", json={"name": "Cycle Team"}).json()
-    member = client.post(
-        "/api/members", json={"team_id": team["id"], "handle": "analyst"}
-    ).json()
+    member = client.post("/api/members", json={"team_id": team["id"], "handle": "analyst"}).json()
     challenge = client.post(
         "/api/challenges",
         json={

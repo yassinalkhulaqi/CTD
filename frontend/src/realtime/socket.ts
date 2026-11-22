@@ -8,17 +8,12 @@
 import { getAccessToken } from "../features/auth/tokenStorage";
 
 /** The lifecycle of the realtime connection. */
-export type ConnectionState = "idle" | "connecting" | "open" | "reconnecting" | "closed";
+export type ConnectionState =
+  "idle" | "connecting" | "open" | "reconnecting" | "closed";
 
 /** The frames exchanged with the server. */
 export type ServerFrameType =
-  | "hello"
-  | "event"
-  | "snapshot"
-  | "ping"
-  | "pong"
-  | "error"
-  | "bye";
+  "hello" | "event" | "snapshot" | "ping" | "pong" | "error" | "bye";
 
 /** A frame received from the server. */
 export interface ServerFrame {
@@ -79,7 +74,8 @@ export function buildSocketUrl(
   teamId?: string | null,
   lastEventId?: number | null,
 ): string {
-  const origin = typeof window !== "undefined" ? window.location.origin : "http://localhost";
+  const origin =
+    typeof window !== "undefined" ? window.location.origin : "http://localhost";
   const base = baseUrl || origin;
   const protocol = base.startsWith("https") ? "wss" : "ws";
   const host = base.replace(/^https?:\/\//, "").replace(/\/$/, "");
@@ -116,7 +112,11 @@ export class RealtimeClient {
    * @returns The state.
    */
   getState(): RealtimeClientState {
-    return { state: this.state, attempts: this.attempts, subscriberId: this.subscriberId };
+    return {
+      state: this.state,
+      attempts: this.attempts,
+      subscriberId: this.subscriberId,
+    };
   }
 
   /**
@@ -167,7 +167,11 @@ export class RealtimeClient {
     if (this.closed) return;
     this.setState(this.attempts === 0 ? "connecting" : "reconnecting");
 
-    const url = buildSocketUrl(this.options.baseUrl, this.options.teamId, this.lastEventId);
+    const url = buildSocketUrl(
+      this.options.baseUrl,
+      this.options.teamId,
+      this.lastEventId,
+    );
     const socket = new WebSocket(url);
     this.socket = socket;
 
@@ -219,7 +223,10 @@ export class RealtimeClient {
     }
   }
 
-  private send(frame: { type: string; payload: Record<string, unknown> }): void {
+  private send(frame: {
+    type: string;
+    payload: Record<string, unknown>;
+  }): void {
     if (!this.socket || this.socket.readyState !== WebSocket.OPEN) return;
     this.socket.send(JSON.stringify(frame));
   }

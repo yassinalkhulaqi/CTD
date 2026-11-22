@@ -37,4 +37,8 @@ export {
   useNotificationStore,
   useNotifications,
 } from "./notificationStore";
-export type { Notification, NotificationState, NotificationTone } from "./notificationStore";
+export type {
+  Notification,
+  NotificationState,
+  NotificationTone,
+} from "./notificationStore";

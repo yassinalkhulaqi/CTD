@@ -13,6 +13,7 @@ import { useDashboardSnapshot } from "../api/resources";
 import { useHydrateDashboard } from "../hooks/useDashboardData";
 import { useMediaQuery } from "../hooks/useMediaQuery";
 import { useActivityStore } from "../stores/activityStore";
+import { discoverPlugins, pluginForPath } from "../features/plugins";
 import { NAVIGATION_ROUTES } from "./routes";
 import styles from "./AppShell.module.css";
 
@@ -54,10 +55,16 @@ export function AppShell() {
   const [navOpen, setNavOpen] = useState(false);
 
   const active = useMemo(() => navigationFor(location.pathname), [location.pathname]);
+  const plugins = useMemo(() => discoverPlugins(), []);
+  const activePlugin = useMemo(
+    () => pluginForPath(location.pathname),
+    [location.pathname],
+  );
   const page = PAGE_TITLES[location.pathname] ?? {
     title: "Challenge detail",
     subtitle: "Everything known about this challenge",
   };
+  const title = activePlugin?.label ?? page.title;
 
   const snapshot = useDashboardSnapshot(undefined, { refetchInterval: 30_000 });
   const { members } = useHydrateDashboard();
@@ -119,10 +126,29 @@ export function AppShell() {
       <div className={styles.workspace}>
         <div className={styles.content}>
           <TopBar
-            title={page.title}
+            title={title}
             subtitle={page.subtitle}
             onOpenNavigation={isMobile ? () => setNavOpen(true) : undefined}
           />
+          {plugins.length > 0 ? (
+            <nav className={styles.modules} aria-label="Feature modules">
+              <span className={styles.modulesLabel}>Modules</span>
+              <div className={styles.moduleLinks}>
+                {plugins.map((plugin) => (
+                  <NavLink
+                    key={plugin.id}
+                    to={plugin.path}
+                    title={plugin.description}
+                    className={({ isActive }) =>
+                      isActive ? styles.moduleLinkActive : styles.moduleLink
+                    }
+                  >
+                    {plugin.label}
+                  </NavLink>
+                ))}
+              </div>
+            </nav>
+          ) : null}
           <main className={styles.main} id="main-content">
             <Suspense
               fallback={

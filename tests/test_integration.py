@@ -26,9 +26,7 @@ def _persist(repositories: Repositories) -> None:
 def test_full_competition_lifecycle(client: TestClient, repositories: Repositories) -> None:
     """A team, a member, a challenge and a solve should flow through the API."""
     team = client.post("/api/teams", json={"name": "Lifecycle Crew"}).json()
-    member = client.post(
-        "/api/members", json={"team_id": team["id"], "handle": "lifecycle"}
-    ).json()
+    member = client.post("/api/members", json={"team_id": team["id"], "handle": "lifecycle"}).json()
     challenge = client.post(
         "/api/challenges",
         json={
@@ -77,9 +75,7 @@ def test_dashboard_snapshot_matches_the_individual_endpoints(
     assert snapshot["categories"] == categories
 
 
-def test_challenge_filters_are_applied(
-    client: TestClient, repositories: Repositories
-) -> None:
+def test_challenge_filters_are_applied(client: TestClient, repositories: Repositories) -> None:
     """The challenge filters should narrow the result."""
     _persist(repositories)
 
@@ -106,9 +102,7 @@ def test_member_contributions_are_aggregated(
     contributions = client.get("/api/members/contributions").json()
     assert contributions
     assert all("solves" in entry and "points" in entry for entry in contributions)
-    assert sum(entry["solves"] for entry in contributions) == len(
-        repositories.solves.list_all()
-    )
+    assert sum(entry["solves"] for entry in contributions) == len(repositories.solves.list_all())
 
 
 def test_solve_withdrawal_reopens_the_challenge(

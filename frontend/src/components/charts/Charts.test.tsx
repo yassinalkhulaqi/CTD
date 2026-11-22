@@ -5,7 +5,9 @@ import { AreaChart, BarChart, DonutChart, Heatmap, Sparkline } from "./Charts";
 describe("BarChart", () => {
   it("renders an accessible figure", () => {
     render(<BarChart values={[1, 2, 3]} label="Solves per hour" />);
-    expect(screen.getByRole("img", { name: /Solves per hour/ })).toBeInTheDocument();
+    expect(
+      screen.getByRole("img", { name: /Solves per hour/ }),
+    ).toBeInTheDocument();
   });
 
   it("renders a placeholder without data", () => {

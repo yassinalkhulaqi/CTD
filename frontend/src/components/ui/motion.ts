@@ -32,7 +32,11 @@ export function usePrefersReducedMotion(): boolean {
  * @param decimals - The number of fraction digits of the rendered value.
  * @returns The current animated value.
  */
-export function useCountUp(target: number, duration = 900, decimals = 0): number {
+export function useCountUp(
+  target: number,
+  duration = 900,
+  decimals = 0,
+): number {
   const [value, setValue] = useState(target);
   const fromRef = useRef(target);
   const frameRef = useRef<number | null>(null);
@@ -94,7 +98,10 @@ export function useDebouncedValue<T>(value: T, delay = 250): T {
  *
  * @returns Whether the pointer is over the element.
  */
-export function useHover(): [boolean, { onMouseEnter: () => void; onMouseLeave: () => void }] {
+export function useHover(): [
+  boolean,
+  { onMouseEnter: () => void; onMouseLeave: () => void },
+] {
   const [hovered, setHovered] = useState(false);
   return [
     hovered,

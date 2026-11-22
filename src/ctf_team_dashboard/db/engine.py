@@ -101,6 +101,9 @@ class Database:
         connection = self.connect()
         with self._lock:
             connection.executescript(script)
+            from ctf_team_dashboard.features import apply_feature_schemas
+
+            apply_feature_schemas(connection)
 
     def reset(self) -> None:
         """Drop every table and recreate the schema."""
@@ -121,9 +124,7 @@ class Database:
     def table_names(self) -> set[str]:
         """Return the set of user tables currently present."""
         with self.cursor() as cursor:
-            rows = cursor.execute(
-                "SELECT name FROM sqlite_master WHERE type = 'table'"
-            ).fetchall()
+            rows = cursor.execute("SELECT name FROM sqlite_master WHERE type = 'table'").fetchall()
         return {str(row["name"]) for row in rows}
 
 

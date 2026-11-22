@@ -2,10 +2,22 @@
  * React bindings for the realtime channel.
  */
 
-import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 import { useActivityStore } from "../stores/activityStore";
 import { useDashboardStore } from "../stores/dashboardStore";
-import { RealtimeClient, type ConnectionState, type EventPayload } from "./socket";
+import {
+  RealtimeClient,
+  type ConnectionState,
+  type EventPayload,
+} from "./socket";
 
 /** The value exposed by the realtime context. */
 export interface RealtimeContextValue {
@@ -51,7 +63,11 @@ export interface RealtimeProviderProps {
  * @param props - The component props.
  * @returns The provider element.
  */
-export function RealtimeProvider({ children, enabled = true, baseUrl }: RealtimeProviderProps) {
+export function RealtimeProvider({
+  children,
+  enabled = true,
+  baseUrl,
+}: RealtimeProviderProps) {
   const [state, setState] = useState<ConnectionState>("idle");
   const [received, setReceived] = useState(0);
   const clientRef = useRef<RealtimeClient | null>(null);
@@ -101,5 +117,9 @@ export function RealtimeProvider({ children, enabled = true, baseUrl }: Realtime
     [received, state],
   );
 
-  return <RealtimeContext.Provider value={value}>{children}</RealtimeContext.Provider>;
+  return (
+    <RealtimeContext.Provider value={value}>
+      {children}
+    </RealtimeContext.Provider>
+  );
 }

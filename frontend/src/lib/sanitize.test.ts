@@ -29,7 +29,9 @@ describe("normaliseNote", () => {
   });
 
   it("rejects an oversized note", () => {
-    expect(() => normaliseNote("a".repeat(MAX_NOTE_LENGTH + 1))).toThrow(/must not exceed/);
+    expect(() => normaliseNote("a".repeat(MAX_NOTE_LENGTH + 1))).toThrow(
+      /must not exceed/,
+    );
   });
 
   it("removes the control characters", () => {
@@ -51,7 +53,9 @@ describe("normaliseFlag", () => {
   });
 
   it("rejects an oversized flag", () => {
-    expect(() => normaliseFlag("a".repeat(MAX_FLAG_LENGTH + 1))).toThrow(/must not exceed/);
+    expect(() => normaliseFlag("a".repeat(MAX_FLAG_LENGTH + 1))).toThrow(
+      /must not exceed/,
+    );
   });
 });
 

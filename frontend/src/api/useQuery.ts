@@ -3,7 +3,13 @@
  * stale-while-revalidate semantics.
  */
 
-import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import { queryCache, type CacheSnapshot, type QueryCache } from "./cache";
 import { toApiError } from "./client";
 
@@ -139,7 +145,8 @@ export function useQuery<T>(options: UseQueryOptions<T>): UseQueryResult<T> {
     if (!key || !enabled) return;
 
     const entry = cache.get(key);
-    const isFresh = entry !== undefined && Date.now() - entry.updatedAt < staleTime;
+    const isFresh =
+      entry !== undefined && Date.now() - entry.updatedAt < staleTime;
 
     if (isFresh) return;
 
@@ -172,7 +179,8 @@ export function useQuery<T>(options: UseQueryOptions<T>): UseQueryResult<T> {
     error: snapshot.error,
     isLoading,
     isFetching,
-    isFresh: snapshot.updatedAt > 0 && Date.now() - snapshot.updatedAt < staleTime,
+    isFresh:
+      snapshot.updatedAt > 0 && Date.now() - snapshot.updatedAt < staleTime,
     refetch,
     invalidate,
   };

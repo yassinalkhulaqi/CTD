@@ -31,9 +31,7 @@ class ChallengeService:
         status: ChallengeStatus | None = None,
     ) -> list[Challenge]:
         """Return challenges filtered by team, category and status."""
-        return self.repositories.challenges.list_all(
-            team_id, category=category, status=status
-        )
+        return self.repositories.challenges.list_all(team_id, category=category, status=status)
 
     def get_challenge(self, challenge_id: str) -> Challenge:
         """Return a challenge or raise :class:`NotFoundError`."""
@@ -67,9 +65,7 @@ class ChallengeService:
             raise ValidationError("Challenge points must not be negative")
         if starts_at is not None and ends_at is not None and ends_at <= starts_at:
             raise ValidationError("Challenge end time must be after its start time")
-        normalised_tags = tuple(
-            dict.fromkeys(tag.strip().lower() for tag in tags if tag.strip())
-        )
+        normalised_tags = tuple(dict.fromkeys(tag.strip().lower() for tag in tags if tag.strip()))
         challenge = Challenge(
             id=challenge_id or f"challenge-{uuid.uuid4().hex[:12]}",
             team_id=team_id,
@@ -132,9 +128,7 @@ class ChallengeService:
         resolved_category = category if category is not None else challenge.category
         resolved_difficulty = difficulty if difficulty is not None else challenge.difficulty
         resolved_status = status if status is not None else challenge.status
-        resolved_description = (
-            description if description is not None else challenge.description
-        )
+        resolved_description = description if description is not None else challenge.description
         resolved_tags = tuple(tags) if tags is not None else challenge.tags
         updated = Challenge(
             id=challenge.id,

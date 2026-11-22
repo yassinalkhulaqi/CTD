@@ -3,7 +3,14 @@
  */
 
 import { del, get, post } from "../../api";
-import type { ApiKey, AuthConfig, AuthUser, LoginResponse, Principal, TokenPair } from "./types";
+import type {
+  ApiKey,
+  AuthConfig,
+  AuthUser,
+  LoginResponse,
+  Principal,
+  TokenPair,
+} from "./types";
 
 /**
  * Authenticate with a username and password.
@@ -12,7 +19,10 @@ import type { ApiKey, AuthConfig, AuthUser, LoginResponse, Principal, TokenPair 
  * @param password - The plain text password.
  * @returns The login response including the issued tokens.
  */
-export function login(username: string, password: string): Promise<LoginResponse> {
+export function login(
+  username: string,
+  password: string,
+): Promise<LoginResponse> {
   return post<LoginResponse>("/api/auth/login", { username, password });
 }
 
@@ -62,7 +72,9 @@ export function fetchAuthConfig(): Promise<AuthConfig> {
  * @returns The list of API keys.
  */
 export function fetchApiKeys(userId: string): Promise<ApiKey[]> {
-  return get<ApiKey[]>(`/api/auth/api-keys?user_id=${encodeURIComponent(userId)}`);
+  return get<ApiKey[]>(
+    `/api/auth/api-keys?user_id=${encodeURIComponent(userId)}`,
+  );
 }
 
 /**
@@ -92,7 +104,9 @@ export function createApiKey(
  * @param userId - The owner of the key.
  */
 export function revokeApiKey(keyId: string, userId: string): Promise<void> {
-  return del<void>(`/api/auth/api-keys/${encodeURIComponent(keyId)}?user_id=${encodeURIComponent(userId)}`);
+  return del<void>(
+    `/api/auth/api-keys/${encodeURIComponent(keyId)}?user_id=${encodeURIComponent(userId)}`,
+  );
 }
 
 /**
@@ -103,6 +117,10 @@ export function revokeApiKey(keyId: string, userId: string): Promise<void> {
  * @param password - The plain text password.
  * @returns The created user.
  */
-export function register(username: string, email: string, password: string): Promise<AuthUser> {
+export function register(
+  username: string,
+  email: string,
+  password: string,
+): Promise<AuthUser> {
   return post<AuthUser>("/api/auth/register", { username, email, password });
 }

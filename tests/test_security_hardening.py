@@ -191,9 +191,7 @@ def test_audit_log_records_a_login(client: TestClient) -> None:
             "password": "password123",
         },
     )
-    client.post(
-        "/api/auth/login", json={"username": "audited", "password": "password123"}
-    )
+    client.post("/api/auth/login", json={"username": "audited", "password": "password123"})
     actions = [entry.action for entry in get_audit_log().recent(limit=50)]
     assert AuditAction.LOGIN_SUCCESS in actions
 
@@ -202,9 +200,7 @@ def test_audit_log_records_a_failed_login(client: TestClient) -> None:
     """A failed login should be recorded in the audit trail."""
     from ctf_team_dashboard.security.audit import get_audit_log
 
-    client.post(
-        "/api/auth/login", json={"username": "ghost", "password": "password123"}
-    )
+    client.post("/api/auth/login", json={"username": "ghost", "password": "password123"})
     entries = get_audit_log().recent(limit=50)
     assert any(entry.action is AuditAction.LOGIN_FAILURE for entry in entries)
 

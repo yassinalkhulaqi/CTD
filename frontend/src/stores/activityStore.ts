@@ -44,7 +44,10 @@ export interface ActivityState {
  * @param filter - The active filter.
  * @returns `true` when the event should be shown.
  */
-export function matchesFilter(event: ActivityEvent, filter: EventKind | "all"): boolean {
+export function matchesFilter(
+  event: ActivityEvent,
+  filter: EventKind | "all",
+): boolean {
   return filter === "all" || event.kind === filter;
 }
 
@@ -59,7 +62,10 @@ export const useActivityStore = create<ActivityState>()((set) => ({
       if (state.paused) return { missedCount: state.missedCount + 1 };
       const next = [event, ...state.events];
       return {
-        events: next.length > MAX_ACTIVITY_EVENTS ? next.slice(0, MAX_ACTIVITY_EVENTS) : next,
+        events:
+          next.length > MAX_ACTIVITY_EVENTS
+            ? next.slice(0, MAX_ACTIVITY_EVENTS)
+            : next,
         missedCount: 0,
       };
     }),
@@ -67,15 +73,20 @@ export const useActivityStore = create<ActivityState>()((set) => ({
   pushMany: (incoming) =>
     set((state) => {
       if (incoming.length === 0) return {};
-      if (state.paused) return { missedCount: state.missedCount + incoming.length };
+      if (state.paused)
+        return { missedCount: state.missedCount + incoming.length };
       const next = [...incoming.reverse(), ...state.events];
       return {
-        events: next.length > MAX_ACTIVITY_EVENTS ? next.slice(0, MAX_ACTIVITY_EVENTS) : next,
+        events:
+          next.length > MAX_ACTIVITY_EVENTS
+            ? next.slice(0, MAX_ACTIVITY_EVENTS)
+            : next,
         missedCount: 0,
       };
     }),
 
-  replace: (events) => set({ events: events.slice(0, MAX_ACTIVITY_EVENTS), missedCount: 0 }),
+  replace: (events) =>
+    set({ events: events.slice(0, MAX_ACTIVITY_EVENTS), missedCount: 0 }),
   clear: () => set({ events: [], missedCount: 0 }),
   setPaused: (paused) => set({ paused }),
   togglePaused: () => set((state) => ({ paused: !state.paused })),
@@ -90,7 +101,9 @@ export const useActivityStore = create<ActivityState>()((set) => ({
  */
 export function useFilteredActivity(): ActivityEvent[] {
   return useActivityStore(
-    useShallow((state) => state.events.filter((event) => matchesFilter(event, state.kindFilter))),
+    useShallow((state) =>
+      state.events.filter((event) => matchesFilter(event, state.kindFilter)),
+    ),
   );
 }
 
@@ -99,7 +112,11 @@ export function useFilteredActivity(): ActivityEvent[] {
  *
  * @returns The counters.
  */
-export function useActivitySummary(): { total: number; missed: number; paused: boolean } {
+export function useActivitySummary(): {
+  total: number;
+  missed: number;
+  paused: boolean;
+} {
   return useActivityStore(
     useShallow((state) => ({
       total: state.events.length,
@@ -117,7 +134,8 @@ export function useActivitySummary(): { total: number; missed: number; paused: b
 export function useSolveEventCount(): number {
   return useActivityStore(
     useShallow(
-      (state) => state.events.filter((event) => event.kind === "solve.created").length,
+      (state) =>
+        state.events.filter((event) => event.kind === "solve.created").length,
     ),
   );
 }

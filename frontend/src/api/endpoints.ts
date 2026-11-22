@@ -2,7 +2,15 @@
  * Typed endpoint definitions for every dashboard resource.
  */
 
-import { buildQuery, del, get, patch, post, put, type RequestOptions } from "./client";
+import {
+  buildQuery,
+  del,
+  get,
+  patch,
+  post,
+  put,
+  type RequestOptions,
+} from "./client";
 import type {
   ActivityEvent,
   Challenge,
@@ -161,8 +169,16 @@ export const teamsApi = {
    * @param options - Request options.
    * @returns The updated team.
    */
-  update(teamId: string, payload: TeamUpdateInput, options?: RequestOptions): Promise<Team> {
-    return patch<Team>(`/api/teams/${encodeURIComponent(teamId)}`, payload, options);
+  update(
+    teamId: string,
+    payload: TeamUpdateInput,
+    options?: RequestOptions,
+  ): Promise<Team> {
+    return patch<Team>(
+      `/api/teams/${encodeURIComponent(teamId)}`,
+      payload,
+      options,
+    );
   },
 
   /**
@@ -198,9 +214,15 @@ export const membersApi = {
    * @param options - Request options.
    * @returns The contributions.
    */
-  contributions(query?: TeamQuery, options?: RequestOptions): Promise<MemberContribution[]> {
+  contributions(
+    query?: TeamQuery,
+    options?: RequestOptions,
+  ): Promise<MemberContribution[]> {
     const search = buildQuery({ team_id: query?.teamId });
-    return get<MemberContribution[]>(`/api/members/contributions${search}`, options);
+    return get<MemberContribution[]>(
+      `/api/members/contributions${search}`,
+      options,
+    );
   },
 
   /**
@@ -221,7 +243,10 @@ export const membersApi = {
    * @param options - Request options.
    * @returns The created member.
    */
-  create(payload: MemberCreateInput, options?: RequestOptions): Promise<Member> {
+  create(
+    payload: MemberCreateInput,
+    options?: RequestOptions,
+  ): Promise<Member> {
     return post<Member>("/api/members", payload, options);
   },
 
@@ -238,7 +263,11 @@ export const membersApi = {
     payload: MemberUpdateInput,
     options?: RequestOptions,
   ): Promise<Member> {
-    return patch<Member>(`/api/members/${encodeURIComponent(memberId)}`, payload, options);
+    return patch<Member>(
+      `/api/members/${encodeURIComponent(memberId)}`,
+      payload,
+      options,
+    );
   },
 
   /**
@@ -298,9 +327,15 @@ export const challengesApi = {
    * @param options - Request options.
    * @returns The board.
    */
-  board(teamId: string, options?: RequestOptions): Promise<Record<string, Challenge[]>> {
+  board(
+    teamId: string,
+    options?: RequestOptions,
+  ): Promise<Record<string, Challenge[]>> {
     const search = buildQuery({ team_id: teamId });
-    return get<Record<string, Challenge[]>>(`/api/challenges/board${search}`, options);
+    return get<Record<string, Challenge[]>>(
+      `/api/challenges/board${search}`,
+      options,
+    );
   },
 
   /**
@@ -311,7 +346,10 @@ export const challengesApi = {
    * @returns The challenge.
    */
   get(challengeId: string, options?: RequestOptions): Promise<Challenge> {
-    return get<Challenge>(`/api/challenges/${encodeURIComponent(challengeId)}`, options);
+    return get<Challenge>(
+      `/api/challenges/${encodeURIComponent(challengeId)}`,
+      options,
+    );
   },
 
   /**
@@ -321,7 +359,10 @@ export const challengesApi = {
    * @param options - Request options.
    * @returns The created challenge.
    */
-  create(payload: ChallengeCreateInput, options?: RequestOptions): Promise<Challenge> {
+  create(
+    payload: ChallengeCreateInput,
+    options?: RequestOptions,
+  ): Promise<Challenge> {
     return post<Challenge>("/api/challenges", payload, options);
   },
 
@@ -373,7 +414,10 @@ export const challengesApi = {
    * @returns A promise resolved when the challenge was removed.
    */
   remove(challengeId: string, options?: RequestOptions): Promise<void> {
-    return del<void>(`/api/challenges/${encodeURIComponent(challengeId)}`, options);
+    return del<void>(
+      `/api/challenges/${encodeURIComponent(challengeId)}`,
+      options,
+    );
   },
 };
 
@@ -480,7 +524,11 @@ export const statsApi = {
    * @param options - Request options.
    * @returns The hourly buckets.
    */
-  timeline(hours = 24, teamId?: string, options?: RequestOptions): Promise<number[]> {
+  timeline(
+    hours = 24,
+    teamId?: string,
+    options?: RequestOptions,
+  ): Promise<number[]> {
     const search = buildQuery({ hours, team_id: teamId });
     return get<number[]>(`/api/stats/timeline${search}`, options);
   },
@@ -537,7 +585,11 @@ export const statsApi = {
    * @param options - Request options.
    * @returns The events.
    */
-  events(limit = 50, teamId?: string, options?: RequestOptions): Promise<ActivityEvent[]> {
+  events(
+    limit = 50,
+    teamId?: string,
+    options?: RequestOptions,
+  ): Promise<ActivityEvent[]> {
     const search = buildQuery({ limit, team_id: teamId });
     return get<ActivityEvent[]>(`/api/stats/events${search}`, options);
   },
@@ -571,7 +623,10 @@ export const dashboardApi = {
    * @param options - Request options.
    * @returns The snapshot.
    */
-  snapshot(teamId?: string, options?: RequestOptions): Promise<DashboardSnapshot> {
+  snapshot(
+    teamId?: string,
+    options?: RequestOptions,
+  ): Promise<DashboardSnapshot> {
     const search = buildQuery({ team_id: teamId });
     return get<DashboardSnapshot>(`/api/dashboard${search}`, options);
   },

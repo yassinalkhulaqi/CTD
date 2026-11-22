@@ -42,7 +42,9 @@ export interface UseVirtualListResult<T> {
  * @param options - The hook options.
  * @returns The virtualisation state.
  */
-export function useVirtualList<T>(options: UseVirtualListOptions<T>): UseVirtualListResult<T> {
+export function useVirtualList<T>(
+  options: UseVirtualListOptions<T>,
+): UseVirtualListResult<T> {
   const { items, itemHeight, viewportHeight, overscan = 4 } = options;
   const [scrollTop, setScrollTop] = useState(0);
   const scrollRef = useRef<HTMLDivElement | null>(null);

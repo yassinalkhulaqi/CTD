@@ -14,8 +14,14 @@ export const challengeDetailsApi = {
    * @param options - Request options.
    * @returns The notes, oldest first.
    */
-  listNotes(challengeId: string, options?: { signal?: AbortSignal }): Promise<Note[]> {
-    return get<Note[]>(`/api/challenges/${encodeURIComponent(challengeId)}/notes`, options);
+  listNotes(
+    challengeId: string,
+    options?: { signal?: AbortSignal },
+  ): Promise<Note[]> {
+    return get<Note[]>(
+      `/api/challenges/${encodeURIComponent(challengeId)}/notes`,
+      options,
+    );
   },
 
   /**
@@ -88,7 +94,10 @@ export const challengeDetailsApi = {
    * @param options - Request options.
    * @returns The timeline entries, newest first.
    */
-  timeline(challengeId: string, options?: { signal?: AbortSignal }): Promise<TimelineEntry[]> {
+  timeline(
+    challengeId: string,
+    options?: { signal?: AbortSignal },
+  ): Promise<TimelineEntry[]> {
     return get<TimelineEntry[]>(
       `/api/challenges/${encodeURIComponent(challengeId)}/timeline`,
       options,

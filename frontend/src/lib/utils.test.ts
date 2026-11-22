@@ -75,7 +75,9 @@ describe("formatRelativeTime", () => {
   });
 
   it("reports minutes in the past", () => {
-    expect(formatRelativeTime("2026-01-01T11:45:00Z", now)).toBe("15 minutes ago");
+    expect(formatRelativeTime("2026-01-01T11:45:00Z", now)).toBe(
+      "15 minutes ago",
+    );
   });
 
   it("returns a dash for invalid timestamps", () => {

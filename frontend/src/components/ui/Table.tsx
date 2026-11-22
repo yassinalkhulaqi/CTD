@@ -21,9 +21,18 @@ export interface TableProps extends HTMLAttributes<HTMLTableElement> {
  * @param props - The component props.
  * @returns The table element.
  */
-export function Table({ sticky = false, scroll = true, className, children, ...rest }: TableProps) {
+export function Table({
+  sticky = false,
+  scroll = true,
+  className,
+  children,
+  ...rest
+}: TableProps) {
   const table = (
-    <table className={cn(styles.table, sticky && styles.tableSticky, className)} {...rest}>
+    <table
+      className={cn(styles.table, sticky && styles.tableSticky, className)}
+      {...rest}
+    >
       {children}
     </table>
   );
@@ -31,7 +40,12 @@ export function Table({ sticky = false, scroll = true, className, children, ...r
   if (!scroll) return table;
 
   return (
-    <div className={styles.scroll} role="region" aria-label="Data table" tabIndex={0}>
+    <div
+      className={styles.scroll}
+      role="region"
+      aria-label="Data table"
+      tabIndex={0}
+    >
       {table}
     </div>
   );
@@ -94,7 +108,12 @@ export function TableRow({
 }: TableRowProps) {
   return (
     <tr
-      className={cn(styles.row, selected && styles.rowSelected, onActivate && styles.rowInteractive, className)}
+      className={cn(
+        styles.row,
+        selected && styles.rowSelected,
+        onActivate && styles.rowInteractive,
+        className,
+      )}
       onClick={onActivate}
       {...rest}
     >
@@ -137,18 +156,32 @@ export function TableHeaderCell({
     ) : sortDirection === "desc" ? (
       <ArrowDown size={13} aria-hidden="true" />
     ) : (
-      <ChevronsUpDown size={13} className={styles.sortIdle} aria-hidden="true" />
+      <ChevronsUpDown
+        size={13}
+        className={styles.sortIdle}
+        aria-hidden="true"
+      />
     );
 
   return (
     <th
       className={cn(styles.headerCell, styles[`align-${align}`], className)}
-      aria-sort={sortDirection === "asc" ? "ascending" : sortDirection === "desc" ? "descending" : undefined}
+      aria-sort={
+        sortDirection === "asc"
+          ? "ascending"
+          : sortDirection === "desc"
+            ? "descending"
+            : undefined
+      }
       scope="col"
       {...rest}
     >
       {sortable ? (
-        <button type="button" className={styles.sortButton} onClick={() => onSort?.(sortKey!)}>
+        <button
+          type="button"
+          className={styles.sortButton}
+          onClick={() => onSort?.(sortKey!)}
+        >
           {children}
           {icon}
         </button>
@@ -171,9 +204,17 @@ export interface TableCellProps extends HTMLAttributes<HTMLTableCellElement> {
  * @param props - The component props.
  * @returns The cell element.
  */
-export function TableCell({ align = "left", className, children, ...rest }: TableCellProps) {
+export function TableCell({
+  align = "left",
+  className,
+  children,
+  ...rest
+}: TableCellProps) {
   return (
-    <td className={cn(styles.cell, styles[`align-${align}`], className)} {...rest}>
+    <td
+      className={cn(styles.cell, styles[`align-${align}`], className)}
+      {...rest}
+    >
       {children}
     </td>
   );
@@ -224,7 +265,8 @@ export function SortableTable<T>({
     return [...rows].sort((left, right) => {
       const a = column.sortValue!(left);
       const b = column.sortValue!(right);
-      if (typeof a === "number" && typeof b === "number") return (a - b) * factor;
+      if (typeof a === "number" && typeof b === "number")
+        return (a - b) * factor;
       return String(a).localeCompare(String(b)) * factor;
     });
   }, [rows, sortKey, direction, columns]);

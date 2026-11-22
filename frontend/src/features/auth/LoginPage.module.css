@@ -4,8 +4,16 @@
   place-items: center;
   padding: var(--space-6);
   background:
-    radial-gradient(1200px 600px at 20% -10%, rgb(99 102 241 / 18%), transparent 60%),
-    radial-gradient(900px 500px at 100% 0%, rgb(56 189 248 / 14%), transparent 55%),
+    radial-gradient(
+      1200px 600px at 20% -10%,
+      rgb(99 102 241 / 18%),
+      transparent 60%
+    ),
+    radial-gradient(
+      900px 500px at 100% 0%,
+      rgb(56 189 248 / 14%),
+      transparent 55%
+    ),
     var(--surface-base);
 }
 

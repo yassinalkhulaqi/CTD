@@ -236,4 +236,3 @@ def get_summary(repositories: RepositoriesDep) -> dict[str, float]:
         "seconds_remaining": window.seconds_remaining(),
         "progress": window.progress(),
     }
-

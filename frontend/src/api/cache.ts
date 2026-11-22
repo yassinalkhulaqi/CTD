@@ -186,7 +186,12 @@ export class QueryCache {
       erroredAt: 0,
       error: undefined,
       listeners: new Set<() => void>(),
-      snapshot: { data: undefined, error: undefined, updatedAt: 0, erroredAt: 0 },
+      snapshot: {
+        data: undefined,
+        error: undefined,
+        updatedAt: 0,
+        erroredAt: 0,
+      },
     };
     this.entries.set(key, entry);
     entry.listeners.add(listener);
@@ -259,7 +264,8 @@ export function queryKey(name: string, params?: unknown): string {
  * @returns The deterministic representation.
  */
 export function stableStringify(value: unknown): string {
-  if (value === null || typeof value !== "object") return JSON.stringify(value) ?? "null";
+  if (value === null || typeof value !== "object")
+    return JSON.stringify(value) ?? "null";
   if (Array.isArray(value)) {
     return `[${value.map(stableStringify).join(",")}]`;
   }

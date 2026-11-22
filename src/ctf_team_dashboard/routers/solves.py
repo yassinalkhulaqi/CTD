@@ -43,9 +43,7 @@ def list_solves(
     team_id: str | None = None,
 ) -> list[SolveRead]:
     """Return solves filtered by member, challenge and team."""
-    found = service.list_solves(
-        member_id=member_id, challenge_id=challenge_id, team_id=team_id
-    )
+    found = service.list_solves(member_id=member_id, challenge_id=challenge_id, team_id=team_id)
     return [_to_read(solve) for solve in found]
 
 

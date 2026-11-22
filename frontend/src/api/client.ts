@@ -74,7 +74,10 @@ export interface RequestOptions extends Omit<RequestInit, "body"> {
 
 /** The base URL of the dashboard API. */
 export const API_BASE_URL =
-  (import.meta.env?.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, "") ?? "";
+  (import.meta.env?.VITE_API_BASE_URL as string | undefined)?.replace(
+    /\/$/,
+    "",
+  ) ?? "";
 
 /** Resolves the bearer token used for authenticated requests. */
 export type TokenResolver = () => string | null;
@@ -91,7 +94,10 @@ let refreshResolver: RefreshResolver = async () => false;
  * @param resolveToken - Resolves the current access token.
  * @param refresh - Attempts to refresh an expired session.
  */
-export function configureAuth(resolveToken: TokenResolver, refresh?: RefreshResolver): void {
+export function configureAuth(
+  resolveToken: TokenResolver,
+  refresh?: RefreshResolver,
+): void {
   tokenResolver = resolveToken;
   if (refresh) refreshResolver = refresh;
 }
@@ -206,7 +212,8 @@ async function performRequest<T>(
       body: json === undefined ? undefined : JSON.stringify(json),
     });
   } catch (error) {
-    if (signal?.aborted) throw new ApiError("The request was cancelled", 0, "aborted");
+    if (signal?.aborted)
+      throw new ApiError("The request was cancelled", 0, "aborted");
     throw toApiError(error);
   } finally {
     clearTimeout(timer);
@@ -239,7 +246,10 @@ async function performRequest<T>(
  * @returns The parsed response body.
  * @throws {ApiError} When the server responds with an error status.
  */
-export async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
+export async function request<T>(
+  path: string,
+  options: RequestOptions = {},
+): Promise<T> {
   const method = (options.method ?? "GET").toUpperCase();
   const retries = options.retries ?? (method === "GET" ? 2 : 0);
   const retryDelay = options.retryDelay ?? 300;
@@ -255,7 +265,9 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
       } catch (error) {
         const apiError = toApiError(error);
         const canRetry =
-          attempt < retries && apiError.isRetryable && apiError.code !== "aborted";
+          attempt < retries &&
+          apiError.isRetryable &&
+          apiError.code !== "aborted";
 
         if (!canRetry) {
           if (apiError.isUnauthorized && (await refreshResolver())) {
@@ -304,7 +316,11 @@ export function get<T>(path: string, options: RequestOptions = {}): Promise<T> {
  * @param options - Request options.
  * @returns The parsed response body.
  */
-export function post<T>(path: string, json?: unknown, options: RequestOptions = {}): Promise<T> {
+export function post<T>(
+  path: string,
+  json?: unknown,
+  options: RequestOptions = {},
+): Promise<T> {
   return request<T>(path, { ...options, method: "POST", json });
 }
 
@@ -316,7 +332,11 @@ export function post<T>(path: string, json?: unknown, options: RequestOptions = 
  * @param options - Request options.
  * @returns The parsed response body.
  */
-export function patch<T>(path: string, json?: unknown, options: RequestOptions = {}): Promise<T> {
+export function patch<T>(
+  path: string,
+  json?: unknown,
+  options: RequestOptions = {},
+): Promise<T> {
   return request<T>(path, { ...options, method: "PATCH", json });
 }
 
@@ -328,7 +348,11 @@ export function patch<T>(path: string, json?: unknown, options: RequestOptions =
  * @param options - Request options.
  * @returns The parsed response body.
  */
-export function put<T>(path: string, json?: unknown, options: RequestOptions = {}): Promise<T> {
+export function put<T>(
+  path: string,
+  json?: unknown,
+  options: RequestOptions = {},
+): Promise<T> {
   return request<T>(path, { ...options, method: "PUT", json });
 }
 

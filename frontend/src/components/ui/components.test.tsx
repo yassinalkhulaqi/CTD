@@ -9,11 +9,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "./Tabs";
 describe("Button", () => {
   it("renders its label", () => {
     render(<Button>Record solve</Button>);
-    expect(screen.getByRole("button", { name: "Record solve" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Record solve" }),
+    ).toBeInTheDocument();
   });
 
   it("disables itself while loading", () => {
-    render(<Button loading loadingLabel="Saving…">Save</Button>);
+    render(
+      <Button loading loadingLabel="Saving…">
+        Save
+      </Button>,
+    );
     const button = screen.getByRole("button");
     expect(button).toBeDisabled();
     expect(button).toHaveAttribute("aria-busy", "true");
@@ -30,7 +36,9 @@ describe("Button", () => {
 describe("IconButton", () => {
   it("exposes an accessible label", () => {
     render(<IconButton icon={<span>x</span>} label="Notifications" />);
-    expect(screen.getByRole("button", { name: "Notifications" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Notifications" }),
+    ).toBeInTheDocument();
   });
 });
 
@@ -50,7 +58,10 @@ describe("Input", () => {
 
   it("marks the control invalid when an error is present", () => {
     render(<Input label="Flag" error="Bad format" />);
-    expect(screen.getByLabelText("Flag")).toHaveAttribute("aria-invalid", "true");
+    expect(screen.getByLabelText("Flag")).toHaveAttribute(
+      "aria-invalid",
+      "true",
+    );
     expect(screen.getByRole("alert")).toHaveTextContent("Bad format");
   });
 });
@@ -74,20 +85,27 @@ describe("Select", () => {
 describe("Progress", () => {
   it("exposes the completion ratio", () => {
     render(<Progress value={42} label="Completion" />);
-    expect(screen.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "42");
+    expect(screen.getByRole("progressbar")).toHaveAttribute(
+      "aria-valuenow",
+      "42",
+    );
   });
 });
 
 describe("ScoreRing", () => {
   it("labels the completion percentage", () => {
     render(<ScoreRing value={0.5} />);
-    expect(screen.getByRole("img", { name: "50% complete" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("img", { name: "50% complete" }),
+    ).toBeInTheDocument();
   });
 });
 
 describe("EmptyState", () => {
   it("renders the title and description", () => {
-    render(<EmptyState title="No solves" description="Record the first flag." />);
+    render(
+      <EmptyState title="No solves" description="Record the first flag." />,
+    );
     expect(screen.getByText("No solves")).toBeInTheDocument();
     expect(screen.getByText("Record the first flag.")).toBeInTheDocument();
   });

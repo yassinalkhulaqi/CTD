@@ -17,10 +17,15 @@ import type { FlagResult, Note, TimelineEntry } from "./types";
 export function useChallengeNotes(challengeId: string | null) {
   const key = queryKey("challenges:notes", { challengeId });
   const fetcher = useCallback(
-    (signal: AbortSignal) => challengeDetailsApi.listNotes(challengeId ?? "", { signal }),
+    (signal: AbortSignal) =>
+      challengeDetailsApi.listNotes(challengeId ?? "", { signal }),
     [challengeId],
   );
-  return useQuery<Note[]>({ key: challengeId ? key : null, fetcher, staleTime: 15_000 });
+  return useQuery<Note[]>({
+    key: challengeId ? key : null,
+    fetcher,
+    staleTime: 15_000,
+  });
 }
 
 /**
@@ -32,7 +37,8 @@ export function useChallengeNotes(challengeId: string | null) {
 export function useChallengeTimeline(challengeId: string | null) {
   const key = queryKey("challenges:timeline", { challengeId });
   const fetcher = useCallback(
-    (signal: AbortSignal) => challengeDetailsApi.timeline(challengeId ?? "", { signal }),
+    (signal: AbortSignal) =>
+      challengeDetailsApi.timeline(challengeId ?? "", { signal }),
     [challengeId],
   );
   return useQuery<TimelineEntry[]>({
@@ -57,7 +63,11 @@ export interface SubmitFlagInput {
 export function useSubmitFlag() {
   return useMutation<SubmitFlagInput, FlagResult>({
     mutationFn: (input) =>
-      challengeDetailsApi.submitFlag(input.challengeId, input.memberId, input.flag),
+      challengeDetailsApi.submitFlag(
+        input.challengeId,
+        input.memberId,
+        input.flag,
+      ),
     invalidates: [
       queryKey("challenges"),
       queryKey("solves"),
@@ -82,7 +92,11 @@ export interface AddNoteInput {
 export function useAddNote(challengeId: string | null) {
   return useMutation<AddNoteInput, Note>({
     mutationFn: (input) =>
-      challengeDetailsApi.createNote(challengeId ?? "", input.memberId, input.body),
+      challengeDetailsApi.createNote(
+        challengeId ?? "",
+        input.memberId,
+        input.body,
+      ),
     invalidates: [queryKey("challenges:notes", { challengeId })],
   });
 }
@@ -94,7 +108,8 @@ export function useAddNote(challengeId: string | null) {
  */
 export function useDeleteNote() {
   return useMutation<{ noteId: string; memberId: string }, void>({
-    mutationFn: (input) => challengeDetailsApi.deleteNote(input.noteId, input.memberId),
+    mutationFn: (input) =>
+      challengeDetailsApi.deleteNote(input.noteId, input.memberId),
     invalidatesPrefixes: [queryKey("challenges:notes")],
   });
 }
