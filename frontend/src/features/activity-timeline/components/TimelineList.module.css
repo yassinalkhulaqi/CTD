@@ -1,0 +1,61 @@
+.list {
+  max-height: min(72vh, 920px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--surface-base);
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+.dayRow,
+.hourRow {
+  position: relative;
+}
+
+.dayRow::before,
+.hourRow::before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 21px;
+  width: 1px;
+  background: var(--border-default);
+  content: "";
+}
+
+.eventRow {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 88px;
+}
+
+.more {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-4);
+  border-top: 1px solid var(--border-subtle);
+  background: var(--surface-raised);
+}
+
+.list:focus-visible {
+  outline: 2px solid var(--accent-base);
+  outline-offset: 2px;
+}
+
+@media (max-width: 600px) {
+  .list {
+    max-height: 68vh;
+    border-radius: var(--radius-md);
+  }
+
+  .dayRow::before,
+  .hourRow::before {
+    left: 17px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .list {
+    scroll-behavior: auto;
+  }
+}
