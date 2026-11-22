@@ -4,21 +4,110 @@
   gap: var(--space-4);
 }
 
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.statusChips {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex-wrap: wrap;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-raised);
+  color: var(--text-secondary);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  text-transform: capitalize;
+  cursor: pointer;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+.chip:hover {
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+}
+
+.chip:focus-visible {
+  outline: var(--ring-width) solid var(--ring-color);
+  outline-offset: 1px;
+}
+
+.chipActive {
+  background: var(--accent-soft);
+  border-color: color-mix(in srgb, var(--accent-base) 46%, transparent);
+  color: var(--accent-text);
+}
+
+.chipDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-tertiary);
+}
+
+.chip[data-status="active"] .chipDot {
+  background: var(--accent-base);
+}
+
+.chip[data-status="solved"] .chipDot {
+  background: var(--success-base);
+}
+
+.chip[data-status="locked"] .chipDot {
+  background: var(--danger-base);
+}
+
+.chip[data-status="pending"] .chipDot {
+  background: var(--warning-base);
+}
+
+.chipCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: var(--radius-full);
+  background: var(--surface-sunken);
+  color: var(--text-tertiary);
+  font-size: 10px;
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.chipActive .chipCount {
+  background: color-mix(in srgb, var(--accent-base) 20%, transparent);
+  color: var(--accent-text);
+}
+
 .headerActions {
   display: flex;
   align-items: center;
   gap: var(--space-3);
 }
 
-.toolbar {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin-bottom: var(--space-4);
-}
-
-.search {
-  width: 280px;
+.resultCount {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
 }
 
 .skeletons {
@@ -28,46 +117,23 @@
 }
 
 .challengeName {
-  font-weight: 550;
+  font-weight: var(--weight-medium);
 }
 
-.description {
-  font-size: var(--text-sm);
-  color: var(--text-secondary);
-  margin-bottom: var(--space-4);
-}
+@media (max-width: 700px) {
+  .header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
 
-.details {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: var(--space-3);
-  margin: 0;
-}
+  .headerActions {
+    width: 100%;
+    justify-content: space-between;
+  }
 
-.details div {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.details dt {
-  font-size: 10px;
-  font-weight: 650;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
-}
-
-.details dd {
-  margin: 0;
-  font-size: var(--text-sm);
-  color: var(--text-primary);
-  text-transform: capitalize;
-}
-
-.tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  margin-top: var(--space-4);
+  .chip {
+    height: 26px;
+    padding: 0 10px;
+  }
 }
