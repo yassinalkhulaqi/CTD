@@ -15,6 +15,23 @@ from ctf_team_dashboard.repositories import Repositories
 from ctf_team_dashboard.seed import build_seed_data, persist_seed_data
 
 
+@pytest.fixture(autouse=True)
+async def reset_shared_state() -> AsyncIterator[None]:
+    """Reset process-wide limiters and audit state before every test.
+
+    The merged program runs twenty feature suites in one process. The rate
+    limiter and audit log are intentionally process-wide in production, so
+    without this fixture requests from earlier tests would exhaust the shared
+    request budget and leak audit entries into later assertions.
+    """
+    from ctf_team_dashboard.dependencies import get_rate_limiter
+    from ctf_team_dashboard.security.audit import get_audit_log
+
+    await get_rate_limiter().reset()
+    get_audit_log().clear()
+    yield
+
+
 @pytest.fixture
 def settings(tmp_path: Path) -> Settings:
     """Return settings pointing at an isolated temporary database."""
