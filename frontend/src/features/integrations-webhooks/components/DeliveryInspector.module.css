@@ -1,0 +1,126 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.row {
+  padding: var(--space-3);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+  transition: border-color var(--duration-fast) var(--ease-out);
+}
+
+.row:hover {
+  border-color: var(--border-strong);
+}
+
+.rowOpen {
+  border-color: var(--accent-base);
+}
+
+.summary {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  font: inherit;
+}
+
+.toggle:focus-visible {
+  outline: 2px solid var(--accent-base);
+  outline-offset: 2px;
+}
+
+.chevron,
+.chevronOpen {
+  color: var(--text-tertiary);
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.event {
+  font-weight: 600;
+}
+
+.target {
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+}
+
+.metric {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+.simulate {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px dashed var(--border-subtle);
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+.payload {
+  margin-top: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--surface-sunken);
+  overflow-x: auto;
+}
+
+.payload pre {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-primary);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.signature {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--border-subtle);
+  font-size: var(--text-xs);
+  color: var(--success-base);
+}
+
+.signature code {
+  font-family: var(--font-mono);
+  word-break: break-all;
+}
+
+.backoff {
+  margin-left: auto;
+  color: var(--text-tertiary);
+}
+
+@media (max-width: 720px) {
+  .summary {
+    align-items: flex-start;
+  }
+}
