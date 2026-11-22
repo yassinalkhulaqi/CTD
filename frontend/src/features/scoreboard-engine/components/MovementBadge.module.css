@@ -1,0 +1,61 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  min-width: 38px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.glyph {
+  font-size: var(--text-sm);
+  font-weight: 750;
+  line-height: 1;
+}
+
+.text {
+  font-size: 10px;
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+.compact {
+  min-width: 26px;
+  padding-inline: 5px;
+}
+
+.up .glyph {
+  color: var(--success-base);
+}
+
+.down .glyph {
+  color: var(--danger-base);
+}
+
+.new .glyph {
+  letter-spacing: 0.04em;
+  font-size: 9px;
+}
+
+.stable .glyph {
+  color: var(--text-tertiary);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .badge {
+    transition:
+      transform var(--duration-fast) var(--ease-out),
+      box-shadow var(--duration-fast) var(--ease-out);
+  }
+
+  .badge:hover {
+    transform: translateY(-1px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .badge {
+    transition: none;
+  }
+}

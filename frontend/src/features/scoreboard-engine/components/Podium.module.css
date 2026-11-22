@@ -1,0 +1,240 @@
+.podium {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-4);
+  align-items: end;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.slot,
+.placeholder {
+  display: flex;
+  min-width: 0;
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: 196px;
+  padding: var(--space-4) var(--space-4) 44px;
+  overflow: hidden;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(
+    160deg,
+    var(--surface-raised),
+    var(--surface-sunken)
+  );
+  box-shadow: var(--shadow-sm);
+}
+
+.first {
+  min-height: 234px;
+  border-color: color-mix(
+    in srgb,
+    var(--warning-base) 42%,
+    var(--border-default)
+  );
+  box-shadow: var(--shadow-md);
+}
+
+.second {
+  min-height: 208px;
+}
+
+.third {
+  min-height: 188px;
+}
+
+.gold {
+  --podium-accent: #f5b301;
+}
+
+.silver {
+  --podium-accent: #94a3b8;
+}
+
+.bronze {
+  --podium-accent: #c2763f;
+}
+
+.neutral {
+  --podium-accent: var(--accent-base);
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  background: var(--podium-accent);
+}
+
+.first::after {
+  content: "";
+  position: absolute;
+  top: -64px;
+  right: -48px;
+  width: 170px;
+  height: 170px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--podium-accent) 22%, transparent),
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+.selected {
+  outline: 2px solid var(--accent-base);
+  outline-offset: 2px;
+}
+
+.place {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--podium-accent);
+}
+
+.medal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-full);
+  background: color-mix(in srgb, var(--podium-accent) 16%, transparent);
+}
+
+.identity {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.nameBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.teamName {
+  overflow: hidden;
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--text-primary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.first .teamName {
+  font-size: var(--text-2xl);
+}
+
+.teamMeta {
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-top: auto;
+}
+
+.selectButton {
+  padding: 5px 10px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-full);
+  background: var(--surface-raised);
+  color: var(--text-secondary);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.selectButton:hover {
+  color: var(--accent-text);
+  border-color: var(--accent-base);
+}
+
+.selectButton:focus-visible {
+  outline: 2px solid var(--accent-base);
+  outline-offset: 2px;
+}
+
+.column {
+  position: absolute;
+  inset: auto 0 0;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(
+    in srgb,
+    var(--podium-accent) 14%,
+    var(--surface-sunken)
+  );
+  border-top: 1px solid
+    color-mix(in srgb, var(--podium-accent) 24%, transparent);
+}
+
+.columnValue {
+  font-size: var(--text-sm);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--podium-accent);
+}
+
+@media (max-width: 860px) {
+  .podium {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+
+  .card,
+  .first,
+  .second,
+  .third {
+    min-height: 150px;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .card {
+    transition:
+      transform var(--duration-base) var(--ease-out),
+      box-shadow var(--duration-base) var(--ease-out);
+  }
+
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    transition: none;
+  }
+
+  .card:hover {
+    transform: none;
+  }
+}
